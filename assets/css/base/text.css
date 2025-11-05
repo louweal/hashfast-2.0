@@ -1,0 +1,16 @@
+.h1 {
+    font-size: 3.5rem;
+    font-weight: 600;
+    line-height: 1.125;
+
+    @media (min-width: 64rem) {
+        font-size: 5rem;
+    }
+}
+
+.h2 {
+}
+
+.text-wide {
+    letter-spacing: 4px;
+}

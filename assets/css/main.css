@@ -1,0 +1,9 @@
+/* Base */
+@import "./base/variables";
+@import "./base/tailwind";
+@import "./base/global";
+@import "./base/text";
+@import "./base/form";
+
+/* Components */
+@import "./components/btn";

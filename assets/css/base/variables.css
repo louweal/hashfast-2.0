@@ -1,0 +1,19 @@
+:root {
+    /* Colors */
+    --color-light: #ffffff;
+    --color-dark: #111827;
+    --color-background: #1f2937;
+    --color-heading: #fbf9ff;
+    --color-body: #ffffff;
+    --color-primary: #9333ea;
+    --color-secondary: #6ee7b7;
+    --color-border: #374151;
+
+    /* Sizes */
+    --container-width: 75rem;
+    --header-height: 4rem;
+
+    @media (min-width: 64rem) {
+        /* --header-height: 6.5rem; */
+    }
+}

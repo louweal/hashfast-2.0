@@ -1,0 +1,39 @@
+form {
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    input[type="email"],
+    input[type="password"],
+    select {
+        outline: none;
+        border-radius: 0.25rem;
+        background-color: var(--color-dark);
+        border: 1px solid var(--color-border);
+        padding: 0.75rem 0.75rem;
+        min-width: 330px;
+        width: 100%;
+
+        @media (min-width: 64rem) {
+            width: 330px;
+        }
+
+        &::placeholder {
+            color: var(--color-body);
+            opacity: 0.5;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #f7f7f7;
+        }
+    }
+
+    label {
+        color: #e5e7e8;
+
+        .required {
+            color: #fb7185;
+        }
+    }
+}
