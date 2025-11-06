@@ -4,7 +4,7 @@
         <div class="container pt-32 h-full flex flex-col justify-center items-center gap-10 animate-slide-up">
             <FormCreate />
 
-            <p class="text-[22px]">More features are waiting for you</p>
+            <p class="text-[22px]">More features are waiting for you.</p>
 
             <NuxtLink to="/pro" class="btn">Discover HashFast Pro</NuxtLink>
         </div>

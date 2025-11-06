@@ -30,7 +30,7 @@ export default defineNuxtConfig({
             meta: [
                 {
                     name: "description",
-                    content: "Create and pay payment links for your HBAR, USDC on Hedera",
+                    content: "Safely receive HBAR and USDC on Hedera",
                 },
             ],
             // script: [

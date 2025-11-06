@@ -10,30 +10,46 @@ form {
         background-color: var(--color-dark);
         border: 1px solid var(--color-border);
         padding: 0.75rem 0.75rem;
-        min-width: 330px;
+        transition: border-color 0.3s cubic-bezier(0.2, 0, 0.2, 1);
         width: 100%;
 
-        @media (min-width: 64rem) {
-            width: 330px;
+        &:focus {
+            border-color: var(--color-primary);
         }
 
         &::placeholder {
             color: var(--color-body);
             opacity: 0.5;
         }
+    }
 
-        &:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background-color: #f7f7f7;
-        }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type="number"] {
+        -moz-appearance: textfield;
     }
 
     label {
         color: #e5e7e8;
-
+        font-weight: 500;
+        font-size: 14px;
         .required {
             color: #fb7185;
         }
+    }
+
+    .error {
+        display: flex;
+        align-items: flex-end;
+        line-height: 16px;
+        gap: 4px;
+        color: #fb7185;
+        font-size: 14px;
+        font-weight: 500;
+        margin-top: 4px;
     }
 }
