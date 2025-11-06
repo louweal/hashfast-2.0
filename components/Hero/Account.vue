@@ -37,7 +37,7 @@
                                         <button class="btn btn--dark btn--square" @click="detectWallet">Detect</button>
                                     </div>
                                 </div>
-                                <div v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</div>
+                                <div v-if="error" class="text-red-500 mt-2">{{ error }}</div>
                                 <div class="flex gap-4">
                                     <button type="submit" :disabled="creating" class="btn">
                                         {{ creating ? "Processing..." : "Update" }}

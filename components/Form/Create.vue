@@ -1,151 +1,172 @@
 <template>
-    <form @submit.prevent="handleSubmit" class="flex flex-col gap-12 border border-border rounded-lg p-8 bg-background">
-        <div class="flex gap-16 flex-wrap flex-col-reverse md:flex-nowrap md:flex-row">
-            <div class="flex flex-col gap-6 xs:w-xs">
-                <div class="flex flex-col gap-1">
-                    <label for="wallet" class="text-sm text-body/50"
-                        >Your Wallet Address<span class="required">*</span></label
-                    >
-                    <div class="relative">
-                        <input type="text" id="wallet" placeholder="0.0.12345678" v-model="wallet" />
-                        <div class="absolute top-2 right-2 btn btn--small">Detect</div>
+    <div>
+        <form
+            @submit.prevent="handleSubmit"
+            class="flex flex-col gap-12 border border-border rounded-lg p-8 bg-background"
+        >
+            <div class="flex gap-16 flex-wrap flex-col-reverse md:flex-nowrap md:flex-row">
+                <div class="flex flex-col gap-6 xs:w-xs">
+                    <div class="flex flex-col gap-1">
+                        <label for="wallet" class="text-body/50"
+                            >Your Wallet Address<span class="required">*</span></label
+                        >
+                        <div class="relative">
+                            <input type="text" id="wallet" placeholder="0.0.12345678" v-model="wallet" />
+                            <div class="absolute top-2 right-2 btn btn--transparent btn--small">Detect</div>
+                        </div>
+                        <div class="error" v-if="!isWallet(wallet)">
+                            <IconError />
+                            <span>Please enter a valid wallet address</span>
+                        </div>
                     </div>
-                    <div class="error" v-if="!isWallet(wallet)">
-                        <IconError />
-                        <span>Please enter a valid wallet address</span>
-                    </div>
-                </div>
 
-                <div class="flex flex-col gap-1">
-                    <label for="wallet" class="text-sm text-body/50">Amount</label>
-                    <div class="relative">
-                        <input type="number" min="0" id="amount" @input="(e) => setAmount(e)" />
-                        <div class="absolute top-2 right-2">
-                            <div class="flex gap-1">
-                                <span
-                                    class="btn btn--small"
-                                    :class="{
-                                        'is-active': currencies.includes('hbar'),
-                                    }"
-                                    @click="setCurrency('hbar')"
-                                    >HBAR</span
-                                >
-                                <span
-                                    class="btn btn--small"
-                                    :class="{
-                                        'is-active': currencies.includes('usdc'),
-                                    }"
-                                    @click="setCurrency('usdc')"
-                                    >USDC</span
-                                >
+                    <div class="flex flex-col gap-1">
+                        <label for="wallet" class="text-body/50">Amount</label>
+                        <div class="relative">
+                            <input type="number" min="0" id="amount" @input="(e) => setAmount(e)" v-model="amount" />
+                            <div class="absolute top-2 right-2">
+                                <div class="flex gap-1">
+                                    <span
+                                        class="btn btn--transparent btn--small"
+                                        :class="{
+                                            'is-active': currencies.includes('hbar'),
+                                        }"
+                                        @click="setCurrency('hbar')"
+                                        >HBAR</span
+                                    >
+                                    <span
+                                        class="btn btn--transparent btn--small"
+                                        :class="{
+                                            'is-active': currencies.includes('usdc'),
+                                        }"
+                                        @click="setCurrency('usdc')"
+                                        >USDC</span
+                                    >
+                                </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <label for="email" class="flex items-center gap-1 leading-[0.9]">
+                            <span>Email<span class="required">*</span></span>
+                            <Tooltip text="You get an email notification whenever you receive payment.">
+                                <IconQuestion />
+                            </Tooltip>
+                        </label>
+                        <div class="relative">
+                            <input type="email" id="email" v-model="email" required />
+                        </div>
+                        <div class="error" v-if="!isEmail(email)">
+                            <IconError />
+
+                            <span>Please enter a valid email address</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex flex-col">
-                    <label for="email" class="flex items-center gap-1 leading-[0.9]">
-                        <span>Email<span class="required">*</span></span>
-                        <Tooltip text="You get an email notification whenever you receive payment.">
-                            <IconQuestion />
-                        </Tooltip>
-                    </label>
-                    <div class="relative">
-                        <input type="email" id="email" v-model="email" required />
-                    </div>
-                    <div class="error" v-if="!isEmail(email)">
-                        <IconError />
+                <div class="flex flex-col gap-8 items-center mt-4">
+                    <client-only>
+                        <Tooltip text="This is a preview.">
+                            <div class="preview">
+                                <div class="preview__bg"></div>
+                                <div class="preview__blur"></div>
 
-                        <span>Please enter a valid email address</span>
-                    </div>
-                </div>
-            </div>
+                                <div class="flex flex-col gap-12 p-6 relative z-2">
+                                    <div class="flex justify-between gap-4">
+                                        <IconLogo />
 
-            <div class="flex flex-col gap-8 items-center mt-4">
-                <client-only>
-                    <Tooltip text="This is a preview.">
-                        <div class="preview">
-                            <div class="preview__bg"></div>
-                            <div class="preview__blur"></div>
-
-                            <div class="flex flex-col gap-12 p-6 relative z-2">
-                                <div class="flex justify-between gap-4">
-                                    <IconLogo />
-
-                                    <IconQR />
-                                </div>
-
-                                <div class="flex flex-col gap-5">
-                                    <div class="flex w-full justify-between" v-if="wallet">
-                                        <span class="label">Receiver</span>
-                                        <span class="value">{{ wallet }}</span>
+                                        <IconQR />
                                     </div>
-                                    <div class="flex w-full justify-between" v-if="amount != ''">
-                                        <span class="label">Amount</span>
-                                        <span class="value"
-                                            >{{ amount }}
-                                            <span v-if="currencies.length === 1">{{
-                                                currencies[0].toUpperCase()
-                                            }}</span></span
-                                        >
-                                    </div>
-                                    <div v-else>
-                                        <div class="flex flex-col w-full items-start">
+
+                                    <div class="flex flex-col gap-5">
+                                        <div class="flex w-full justify-between" v-if="wallet">
+                                            <span class="label">Receiver</span>
+                                            <span class="value">{{ wallet }}</span>
+                                        </div>
+                                        <div class="flex w-full justify-between" v-if="amount != ''">
                                             <span class="label">Amount</span>
-                                            <div class="relative w-full">
-                                                <input
-                                                    type="number"
-                                                    min="0"
-                                                    id="preview-amount"
-                                                    v-model="amount"
-                                                    disabled
-                                                    class="w-full min-w-0"
-                                                />
-                                                <div class="absolute top-2 right-2">
-                                                    <div class="flex gap-1">
-                                                        <span
-                                                            class="btn btn--small"
-                                                            :class="{
-                                                                'is-active': currencies.includes('hbar'),
-                                                            }"
-                                                            @click="setCurrency('hbar')"
-                                                            >HBAR</span
-                                                        >
-                                                        <span
-                                                            class="btn btn--small"
-                                                            :class="{
-                                                                'is-active': currencies.includes('usdc'),
-                                                            }"
-                                                            >USDC</span
-                                                        >
+                                            <span class="value"
+                                                >{{ amount }}
+                                                <span v-if="currencies.length === 1">{{
+                                                    currencies[0].toUpperCase()
+                                                }}</span></span
+                                            >
+                                        </div>
+                                        <div v-else>
+                                            <div class="flex flex-col w-full items-start">
+                                                <span class="label">Amount</span>
+                                                <div class="relative w-full">
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        id="preview-amount"
+                                                        v-model="amount"
+                                                        placeholder="__"
+                                                        disabled
+                                                        class="w-full min-w-0"
+                                                    />
+                                                    <div class="absolute top-2 right-2">
+                                                        <div class="flex gap-1">
+                                                            <span
+                                                                class="btn btn--transparent btn--small"
+                                                                :class="{
+                                                                    'is-active': currencies.includes('hbar'),
+                                                                }"
+                                                                @click="setCurrency('hbar')"
+                                                                >HBAR</span
+                                                            >
+                                                            <span
+                                                                class="btn btn--transparent btn--small"
+                                                                :class="{
+                                                                    'is-active': currencies.includes('usdc'),
+                                                                }"
+                                                                >USDC</span
+                                                            >
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <button class="btn">Pay now</button>
                                     </div>
-                                    <button class="btn">Pay now</button>
                                 </div>
+                                <div class="preview__overlay"></div>
                             </div>
-                            <div class="preview__overlay"></div>
-                        </div>
-                    </Tooltip>
-                </client-only>
-                <!-- <div class="flex items-center gap-3">
+                        </Tooltip>
+                    </client-only>
+                    <!-- <div class="flex items-center gap-3">
                     <IconShield />
                     <span>Safe payment using HashPack</span>
                 </div> -->
+                </div>
+            </div>
+
+            <button class="btn" :disabled="!wallet || !email || !isWallet || !isEmail">
+                Create Payment Request Link
+            </button>
+        </form>
+
+        <div
+            class="fixed top-8 left-1/2 -translate-x-1/2 flex gap-20 p-2 pl-4 items-center rounded-sm border border-border bg-background font-medium z-2"
+        >
+            <span>Payment link created!</span>
+            <button class="btn btn--transparent btn--small flex gap-2 items-center cursor-pointer">
+                Copy link <IconCopy />
+            </button>
+
+            <div class="size-8 absolute -right-4 -top-4 flex justify-center items-center">
+                <div class="size-4 rounded-full bg-primary flex justify-center items-center cursor-pointer">x</div>
             </div>
         </div>
-
-        <button class="btn" :disabled="!wallet || !email || !isWallet || !isEmail">Create Payment Request Link</button>
-    </form>
+    </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 
 const wallet = ref("0.0.1234567");
-const amount = ref("");
+const amount = ref("10");
 const currencies = ref(["hbar"]);
 const email = ref("your@email.com");
 
@@ -181,7 +202,7 @@ const setCurrency = (currency) => {
         currencies.value = [currency];
     } else {
         // check if currency is already in currencies array
-        if (currencies.value.includes(currency)) {
+        if (currencies.value.includes(currency) && currencies.value.length > 1) {
             // remove currency
             currencies.value = currencies.value.filter((c) => c !== currency);
         } else {
@@ -259,7 +280,7 @@ const setCurrency = (currency) => {
     .value {
         font-size: 14px;
         letter-spacing: 4px;
-        font-weight: 600;
+        font-weight: 500;
     }
 }
 

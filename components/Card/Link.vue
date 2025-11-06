@@ -25,7 +25,7 @@
                         {{ name }}
                         <i v-if="!name">No description</i>
                     </h3>
-                    <span class="color-body/50 text-sm font-normal">
+                    <span class="color-body/50 font-normal">
                         <span v-if="memo"
                             >Memo: <span class="opacity-50">{{ memo }}</span></span
                         >
@@ -61,7 +61,7 @@
 
             <div class="lg:col-span-2">
                 <div>{{ new Date(createdAt).toLocaleDateString("en-US") }}</div>
-                <div v-if="expires" class="text-sm opacity-40">
+                <div v-if="expires" class="opacity-40">
                     Expires: {{ new Date(expires).toLocaleDateString("en-US") }}
                 </div>
             </div>
