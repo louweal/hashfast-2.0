@@ -1,5 +1,5 @@
 <template>
-    <div class="hero relative pt-20 min-h-dvh hero--center">
+    <div class="hero relative mt-20 min-h-dvh hero--center">
         <div class="container z-2 h-full sticky top-20">
             <div class="grid md:grid-cols-12 translate-y-12">
                 <div class="md:col-span-8 md:col-start-3">

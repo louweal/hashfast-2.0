@@ -1,5 +1,5 @@
 <template>
-    <div class="header fixed top-0 left-0 right-0 py-4 px-5 z-2">
+    <div class="header fixed top-0 left-0 right-0 py-4 px-5">
         <div class="flex justify-between items-center">
             <Logo :homeUrl="user ? '/dashboard' : '/'" />
 
