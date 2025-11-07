@@ -3,22 +3,20 @@
         <div class="payment__blur"><div class="payment__bg"></div></div>
 
         <div class="flex flex-col gap-12 p-6 relative z-2">
-            <div class="flex justify-between gap-4">
+            <div class="flex justify-between items-center gap-4">
                 <IconLogo />
 
-                <div
-                    @click="flipCard"
-                    class="cursor-pointer opacity-80 hover:opacity-100 transition-opacity duration-300"
-                >
+                <div @click="flipCard" class="cursor-pointer opacity-80 hover:opacity-100 size-5">
                     <IconQR v-if="showFront" />
-                    <IconCross v-else class="scale-150" />
+
+                    <IconCross v-else :size="20" />
                 </div>
             </div>
 
-            <form @submit.prevent="handlePayment" class="flex flex-col gap-5" v-if="showFront">
-                <div class="flex w-full justify-between" v-if="wallet">
+            <form @submit.prevent="handlePayment" class="flex flex-col gap-5" v-if="showFront" key="front">
+                <div class="flex w-full justify-between">
                     <span class="label">Receiver</span>
-                    <span class="value">{{ wallet }}</span>
+                    <span class="value" v-if="wallet">{{ wallet }}</span>
                 </div>
                 <div class="flex w-full justify-between" v-if="amount">
                     <span class="label">Amount</span>
@@ -54,7 +52,7 @@
                 </div>
                 <button class="btn">Pay now</button>
             </form>
-            <div class="bg-white" v-else>
+            <div class="bg-white" key="back" v-else>
                 <QrCode />
             </div>
         </div>
@@ -63,11 +61,7 @@
 </template>
 
 <script setup>
-// get current page url
-// const route = useRoute();
-
-// const pageUrl = `${window.location.origin}${useRoute().path}`;
-// console.log("pageUrl :>> ", pageUrl);
+import { ref } from "vue";
 
 const props = defineProps({
     wallet: {
@@ -93,13 +87,11 @@ const isFlipping = ref(false);
 
 function flipCard() {
     showFront.value = !showFront.value;
-    // trigger animation
     isFlipping.value = true;
 
-    // stop animation after it runs
     setTimeout(() => {
         isFlipping.value = false;
-    }, 300); // match animation duration
+    }, 300);
 }
 
 const handlePayment = () => {
@@ -132,7 +124,7 @@ const handlePayment = () => {
         background-size: cover;
         background-size: 160%;
         background-position: 70% 10%;
-        animation: move 60s cubic-bezier(0.98, 0, 0, 1) infinite alternate;
+        animation: moveBg 60s cubic-bezier(0.98, 0, 0, 1) infinite alternate;
     }
 
     .payment__blur {
@@ -172,23 +164,26 @@ const handlePayment = () => {
     backface-visibility: hidden;
 
     &.isFlipping {
-        animation: flip3d 0.4s cubic-bezier(0.2, 0, 0.2, 1);
+        animation: flip3d 0.3s cubic-bezier(0.2, 0, 0.2, 1);
     }
 }
 
 @keyframes flip3d {
     0% {
         transform: rotateY(0);
+        opacity: 1;
     }
     50% {
-        transform: rotateY(90deg);
+        transform: rotateY(60deg);
+        opacity: 0;
     }
     100% {
         transform: rotateY(0);
+        opacity: 1;
     }
 }
 
-@keyframes move {
+@keyframes moveBg {
     to {
         transform: rotate(-360deg) scale(-1);
     }

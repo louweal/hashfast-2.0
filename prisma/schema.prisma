@@ -44,3 +44,15 @@ model Payment {
   @@index([linkId])           // (optional) speeds up queries by link
   createdAt        DateTime @default(now())
 }
+
+model Survey {
+    id         String @id @default(cuid())
+    answer1    String?
+    answer2    String?
+    answer3    String?
+    answer4    String?
+    answer5    String?
+    name       String?
+    consent    Boolean
+    createdAt  DateTime @default(now())
+}

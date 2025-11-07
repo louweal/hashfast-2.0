@@ -4,9 +4,17 @@
             <Logo :homeUrl="user ? '/dashboard' : '/'" />
 
             <nav>
-                <ul v-if="!user" class="flex gap-7 items-center text-white">
+                <ul v-if="!user" class="flex gap-7 items-center">
                     <li>
                         <NuxtLink to="/login" class="btn btn--dark">Login</NuxtLink>
+                    </li>
+                </ul>
+                <ul v-else class="flex gap-7 items-center">
+                    <li>
+                        <NuxtLink to="/dashboard" class="text-base font-medium">Dashboard</NuxtLink>
+                    </li>
+                    <li>
+                        <button class="btn btn--dark" @click="signOut">Logout</button>
                     </li>
                 </ul>
             </nav>

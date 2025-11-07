@@ -9,8 +9,7 @@
             <div class="flex justify-between items-center gap-4">
                 <div class="flex grow gap-2">
                     <div
-                        v-if="curQuestion <= numQuestions"
-                        class="flex flex-1 bg-[#9ca3af] h-[3px] rounded-sm"
+                        class="flex flex-1 bg-[#9ca3af] h-[3px] rounded-sm transition-colors duration-300 ease-in-out"
                         :class="{
                             'bg-primary': i === curQuestion,
                         }"
@@ -18,57 +17,99 @@
                     ></div>
                 </div>
 
-                <IconCross
-                    class="cursor-pointer scale-125"
-                    @click="
-                        isOpen = false;
-                        curQuestion = 1;
-                    "
-                />
+                <IconCross :size="15" class="cursor-pointer" @click="isOpen = false" />
             </div>
 
             <form v-if="curQuestion === 1" class="flex flex-col gap-5">
-                <h3 class="font-medium text-base">
-                    How would you rate the overall user experience and user interface?
-                </h3>
+                <h3 class="text-base">How would you rate your overall experience?</h3>
+                <p>In the next questions you can share any suggestions for improvement.</p>
+
+                <client-only>
+                    <div class="flex gap-2 justify-center items-center">
+                        <Rating @click="answer1 = 1" :rating="1" :curRating="answer1">
+                            <IconRatingVeryBad />
+                        </Rating>
+                        <Rating @click="answer1 = 2" :rating="2" :curRating="answer1">
+                            <IconRatingBad />
+                        </Rating>
+                        <Rating @click="answer1 = 3" :rating="3" :curRating="answer1">
+                            <IconRatingNeutral />
+                        </Rating>
+                        <Rating @click="answer1 = 4" :rating="4" :curRating="answer1">
+                            <IconRatingHappy />
+                        </Rating>
+                        <Rating @click="answer1 = 5" :rating="5" :curRating="answer1">
+                            <IconRatingVeryHappy />
+                        </Rating>
+                    </div>
+                </client-only>
             </form>
             <form v-else-if="curQuestion === 2" class="flex flex-col gap-5">
-                <h3 class="font-medium text-base">
-                    Did you <strong>create</strong> a payment request link and how was your experience?
+                <h3 class="font-regular text-base">
+                    Did you <strong>create</strong> a payment request link? What works well, and what challenges have
+                    you encountered?
                 </h3>
 
-                <textarea rows="3" cols="20" @input="handleInput"
-                    >{{ answers[curQuestion] ?? "Type your answer here" }}
+                <textarea
+                    id="answer2"
+                    rows="3"
+                    cols="20"
+                    @input="handleInput"
+                    placeholder="Type your answer here"
+                    v-model="answer2"
+                >
                 </textarea>
             </form>
             <form v-else-if="curQuestion === 3" class="flex flex-col gap-5">
-                <h3 class="font-medium text-base">
-                    Did you <strong>pay</strong> a payment request link and how was your experience?
+                <h3 class="text-base">
+                    Did you <strong>pay</strong> a payment request? What works well, and what challenges have you
+                    encountered?
                 </h3>
 
-                <textarea rows="3" cols="20" @input="handleInput">{{
-                    answers[curQuestion] ?? "Type your answer here"
-                }}</textarea>
+                <textarea
+                    id="answer3"
+                    rows="3"
+                    cols="20"
+                    @input="handleInput"
+                    placeholder="Type your answer here"
+                    v-model="answer3"
+                ></textarea>
             </form>
             <form v-else-if="curQuestion === 4" class="flex flex-col gap-5">
-                <h3 class="font-medium text-base">
-                    Did you create a Pro account? And do you like the features that Pro offers?
+                <h3 class="text-base">
+                    Did you create a Pro account? Please describe what you like about Pro or what could be improved.
                 </h3>
 
-                <textarea rows="3" cols="20" @input="handleInput"
-                    >{{ answers[curQuestion] ?? "Type your answer here" }}
+                <textarea
+                    id="answer4"
+                    rows="3"
+                    cols="20"
+                    @input="handleInput"
+                    placeholder="Type your answer here"
+                    v-model="answer4"
+                >
                 </textarea>
             </form>
 
             <form v-else-if="curQuestion === 5" class="flex flex-col gap-5">
-                <h3 class="font-medium text-base">Please share any additional feedback</h3>
+                <h3 class="text-base leading-snug">
+                    Do you have any other feedback, ideas, or suggestions to help us improve your experience?
+                </h3>
 
-                <textarea rows="3" cols="20" @input="handleInput"
-                    >{{ answers[curQuestion] ?? "Type your answer here" }}
-                </textarea>
+                <textarea
+                    id="answer5"
+                    rows="3"
+                    cols="20"
+                    @input="handleInput"
+                    placeholder="Type your answer here"
+                ></textarea>
             </form>
 
-            <form v-else-if="curQuestion === 6" class="flex flex-col gap-5">
+            <div v-else>
+                <p class="text-center text-lg">Thank you for your feedback!</p>
+            </div>
+
+            <!-- <form v-else-if="curQuestion === 6" class="flex flex-col gap-5">
                 <p>Thank you for your feedback!</p>
                 <input type="text" placeholder="Name" />
 
@@ -79,13 +120,13 @@
                         <span class="opacity-50">(optional)</span></span
                     >
                 </div>
-            </form>
+            </form> -->
 
-            <div class="flex justify-end gap-2">
+            <div class="flex justify-end gap-2" v-if="curQuestion < numQuestions + 1">
                 <button class="btn btn--transparent" @click="curQuestion = curQuestion - 1" v-if="curQuestion > 1">
                     Previous
                 </button>
-                <button class="btn" @click="handleSubmit">
+                <button class="btn" @click="curQuestion >= numQuestions ? handleSubmit() : handleNext()">
                     {{ curQuestion >= numQuestions ? "Submit" : "Next" }}
                 </button>
             </div>
@@ -107,14 +148,63 @@ import { ref } from "vue";
 const isOpen = ref(true);
 const numQuestions = ref(5);
 const curQuestion = ref(1);
-const answers = ref({});
+const answer1 = ref(0);
+const answer2 = ref("");
+const answer3 = ref("");
+const answer4 = ref("");
+const answer5 = ref("");
+// const name = ref("");
+// const consent = ref(false);
 
-const handleSubmit = () => {
+const handleNext = () => {
     curQuestion.value++;
-    // todo store feedback in db
+};
+
+const handleSubmit = async () => {
+    curQuestion.value++;
+
+    // store answers
+    try {
+        const response = await $fetch("/api/survey", {
+            method: "POST",
+            body: {
+                answer1: answer1.value.toString(),
+                answer2: answer2.value,
+                answer3: answer3.value,
+                answer4: answer4.value,
+                answer5: answer5.value,
+                consent: false,
+            },
+        });
+        if (!response.id) {
+            throw new Error("Failed to create survey entry");
+        }
+
+        console.log("response.id :>> ", response.id);
+    } catch (error) {
+        console.error("Failed to create survey entry:", error);
+    }
 };
 
 const handleInput = (e) => {
-    answers.value[curQuestion.value] = e.target.value;
+    switch (curQuestion.value) {
+        case 1:
+            answer1.value = e.target.value ? +e.target.value : null;
+            break;
+        case 2:
+            answer2.value = e.target.value;
+            break;
+        case 3:
+            answer3.value = e.target.value;
+            break;
+        case 4:
+            answer4.value = e.target.value;
+            break;
+        case 5:
+            answer5.value = e.target.value;
+            break;
+        default:
+            break;
+    }
 };
 </script>

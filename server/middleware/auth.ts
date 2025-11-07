@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
         { path: "/pro", method: "ANY" },
         { pathPrefix: "/pay/", method: "ANY" },
         { pathPrefix: "/api/auth", method: "ANY" },
+        { pathPrefix: "/api/survey", method: "POST" },
         { pathPrefix: "/api/users", method: "ANY" },
         { pathPrefix: "/api/links", method: "ANY" },
         { pathPrefix: "/api/payments", method: "POST" },
