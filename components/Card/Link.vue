@@ -110,7 +110,6 @@
 
 <script setup>
 import { HederaService } from "~/lib/hedera";
-import IconTrash from "../Icon/Trash.vue";
 import { useAsyncData } from "nuxt/app";
 
 const hederaService = new HederaService();
