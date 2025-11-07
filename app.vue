@@ -1,5 +1,6 @@
 <template>
     <NuxtPage />
+    <SurveyWidget />
 </template>
 
 <style scoped></style>

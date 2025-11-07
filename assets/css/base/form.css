@@ -4,6 +4,7 @@ form {
     input[type="number"],
     input[type="email"],
     input[type="password"],
+    textarea,
     select {
         outline: none;
         border-radius: 0.25rem;
