@@ -11,8 +11,7 @@ npm install
 3. **Set up the database**
 
 ```bash
-# Run migrations
-npm run db:migrate
+npx prisma db push
 
 ```
 

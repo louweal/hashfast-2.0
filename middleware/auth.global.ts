@@ -7,7 +7,7 @@ export default defineNuxtRouteMiddleware(async (to: any) => {
 
     if (publicPages.includes(to.path)) return;
 
-    if (to.path.startsWith("/link/view/")) {
+    if (to.path.startsWith("/pay/")) {
         return;
     }
 

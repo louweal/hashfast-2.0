@@ -17,20 +17,21 @@ model User {
   updatedAt    DateTime @updatedAt
   lastLogin    DateTime?
   links        Link[]
+  image        String?
 }
 
 model Link {
   id               String   @id @default(cuid())
-  name             String? @default("")
-  image            String?
-  accountId        String?
+  accountId        String
+  currency         String
+  email            String
+  name             String?
   amount           Decimal? @db.Decimal(15,2)
-  currency         String?
   memo             String?
   expires          DateTime?
   maxPayments      Int?
-  authorId         String
-  author           User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  userId           String?
+  user             User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   payments         Payment[]

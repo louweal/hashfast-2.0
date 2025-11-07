@@ -2,7 +2,7 @@
     <div>
         <form
             @submit.prevent="handleSubmit"
-            class="flex flex-col gap-12 border border-border rounded-lg p-8 bg-background"
+            class="flex flex-col gap-12 border border-border rounded-lg p-6 sm:p-8 bg-background"
         >
             <div class="flex gap-16 flex-wrap flex-col-reverse md:flex-nowrap md:flex-row">
                 <div class="flex flex-col gap-6 xs:w-xs">
@@ -11,8 +11,24 @@
                             >Your Wallet Address<span class="required">*</span></label
                         >
                         <div class="relative">
-                            <input type="text" id="wallet" placeholder="0.0.12345678" v-model="wallet" />
-                            <div class="absolute top-2 right-2 btn btn--transparent btn--small">Detect</div>
+                            <input
+                                type="text"
+                                id="wallet"
+                                placeholder="0.0.12345678"
+                                v-model="wallet"
+                                :class="{
+                                    'border-secondary!': wallet === detectedWallet,
+                                }"
+                            />
+                            <div
+                                class="absolute top-2 right-2 btn btn--transparent btn--small"
+                                :class="{
+                                    'is-active': wallet !== detectedWallet,
+                                }"
+                                @click="detectWallet"
+                            >
+                                Detect
+                            </div>
                         </div>
                         <div class="error" v-if="!isWallet(wallet)">
                             <IconError />
@@ -23,7 +39,7 @@
                     <div class="flex flex-col gap-1">
                         <label for="wallet" class="text-body/50">Amount</label>
                         <div class="relative">
-                            <input type="number" min="0" id="amount" @input="(e) => setAmount(e)" v-model="amount" />
+                            <input type="number" min="0" id="amount" @input="(e) => setAmount(e)" :value="amount" />
                             <div class="absolute top-2 right-2">
                                 <div class="flex gap-1">
                                     <span
@@ -65,74 +81,15 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col gap-8 items-center mt-4">
+                <div class="flex flex-col gap-8 items-center mt-4 w-[280px]">
                     <client-only>
                         <Tooltip text="This is a preview.">
-                            <div class="preview">
-                                <div class="preview__bg"></div>
-                                <div class="preview__blur"></div>
-
-                                <div class="flex flex-col gap-12 p-6 relative z-2">
-                                    <div class="flex justify-between gap-4">
-                                        <IconLogo />
-
-                                        <IconQR />
-                                    </div>
-
-                                    <div class="flex flex-col gap-5">
-                                        <div class="flex w-full justify-between" v-if="wallet">
-                                            <span class="label">Receiver</span>
-                                            <span class="value">{{ wallet }}</span>
-                                        </div>
-                                        <div class="flex w-full justify-between" v-if="amount != ''">
-                                            <span class="label">Amount</span>
-                                            <span class="value"
-                                                >{{ amount }}
-                                                <span v-if="currencies.length === 1">{{
-                                                    currencies[0].toUpperCase()
-                                                }}</span></span
-                                            >
-                                        </div>
-                                        <div v-else>
-                                            <div class="flex flex-col w-full items-start">
-                                                <span class="label">Amount</span>
-                                                <div class="relative w-full">
-                                                    <input
-                                                        type="number"
-                                                        min="0"
-                                                        id="preview-amount"
-                                                        v-model="amount"
-                                                        placeholder="__"
-                                                        disabled
-                                                        class="w-full min-w-0"
-                                                    />
-                                                    <div class="absolute top-2 right-2">
-                                                        <div class="flex gap-1">
-                                                            <span
-                                                                class="btn btn--transparent btn--small"
-                                                                :class="{
-                                                                    'is-active': currencies.includes('hbar'),
-                                                                }"
-                                                                @click="setCurrency('hbar')"
-                                                                >HBAR</span
-                                                            >
-                                                            <span
-                                                                class="btn btn--transparent btn--small"
-                                                                :class="{
-                                                                    'is-active': currencies.includes('usdc'),
-                                                                }"
-                                                                >USDC</span
-                                                            >
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button class="btn">Pay now</button>
-                                    </div>
-                                </div>
-                                <div class="preview__overlay"></div>
-                            </div>
+                            <CardPayment
+                                :amount="amount ? +amount : null"
+                                :currency="currencies.length > 1 ? '*' : currencies[0]"
+                                :wallet="wallet"
+                                :preview="true"
+                            />
                         </Tooltip>
                     </client-only>
                     <!-- <div class="flex items-center gap-3">
@@ -142,21 +99,22 @@
                 </div>
             </div>
 
-            <button class="btn" :disabled="!wallet || !email || !isWallet || !isEmail">
-                Create Payment Request Link
-            </button>
+            <button class="btn" :disabled="!isWallet || !isEmail">Create Payment Request Link</button>
         </form>
 
         <div
+            v-if="linkId"
             class="fixed top-8 left-1/2 -translate-x-1/2 flex gap-20 p-2 pl-4 items-center rounded-sm border border-border bg-background font-medium z-2"
         >
             <span>Payment link created!</span>
-            <button class="btn btn--transparent btn--small flex gap-2 items-center cursor-pointer">
-                Copy link <IconCopy />
+            <button class="btn btn--transparent btn--small flex gap-2 items-center cursor-pointer" @click="copyLink">
+                {{ copied ? "Copied!" : "Copy link" }} <IconCopy />
             </button>
 
-            <div class="size-8 absolute -right-4 -top-4 flex justify-center items-center">
-                <div class="size-4 rounded-full bg-primary flex justify-center items-center cursor-pointer">x</div>
+            <div class="size-8 absolute -right-4 -top-4 flex justify-center items-center" @click="linkId = null">
+                <div class="size-4 rounded-full bg-primary flex justify-center items-center cursor-pointer">
+                    <IconCross class="scale-75" />
+                </div>
             </div>
         </div>
     </div>
@@ -164,30 +122,57 @@
 
 <script setup>
 import { ref } from "vue";
+import { HederaService } from "~/lib/hedera";
+
+const hederaService = new HederaService();
 
 const wallet = ref("0.0.1234567");
-const amount = ref("10");
+const amount = ref(10);
 const currencies = ref(["hbar"]);
 const email = ref("your@email.com");
+const detectedWallet = ref(null);
+const linkId = ref(null);
+const copied = ref(false);
 
 const isWallet = (wallet) => {
-    if (!wallet) return true;
+    // if (!wallet) return true;
     return wallet.startsWith("0.0.");
 };
 
 const isEmail = (email) => {
-    if (!email) return true;
-    if (email.length < 8) return true;
+    // if (!email) return true;
+    // if (email.length < 8) return true;
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
-const errorWallet = ref(false);
-const errorEmail = ref(false);
+const handleSubmit = async () => {
+    if (!isWallet(wallet.value) || !isEmail(email.value)) {
+        return;
+    }
 
-const handleSubmit = () => {};
+    try {
+        const response = await $fetch("/api/links", {
+            method: "POST",
+            body: {
+                accountId: wallet.value,
+                email: email.value,
+                amount: amount.value ? +amount.value : null,
+                currency: currencies.value.length > 1 ? "*" : currencies.value[0],
+            },
+        });
+
+        // get ID
+        if (!response.id) {
+            throw new Error("Failed to create link");
+        }
+        linkId.value = response.id;
+    } catch (error) {
+        console.error("Failed to create link:", error);
+    }
+};
 
 const setAmount = (e) => {
-    amount.value = e.target.value;
+    amount.value = +e.target.value;
 
     if (amount.value && currencies.value.length > 1) {
         currencies.value = ["hbar"];
@@ -214,79 +199,37 @@ const setCurrency = (currency) => {
     // remove duplicates
     currencies.value = [...new Set(currencies.value)];
 };
+
+const detectWallet = async (event) => {
+    event.preventDefault();
+    try {
+        await hederaService.initHashConnect();
+        await hederaService.waitForPairing();
+
+        if (hederaService.pairingData) {
+            // get last item in array
+            detectedWallet.value =
+                hederaService.pairingData.accountIds[hederaService.pairingData.accountIds.length - 1];
+            wallet.value = detectedWallet.value;
+        }
+    } catch (error) {
+        console.error("Failed to detect wallet:", error);
+    }
+};
+
+const copyLink = async () => {
+    const paymentLink = `${window.location.origin}/pay/${linkId.value}`;
+
+    try {
+        await navigator.clipboard.writeText(paymentLink);
+        copied.value = true;
+        setTimeout(() => {
+            copied.value = false;
+        }, 5000);
+    } catch (err) {
+        console.error("Failed to copy:", err);
+    }
+};
 </script>
 
-<style scoped>
-.preview {
-    position: relative;
-    width: 280px;
-    overflow: hidden;
-    border-radius: 1rem;
-    border: 1px solid var(--color-border) !important;
-
-    /* input[type="number"] {
-        @media (min-width: 64rem) {
-            border: 1px solid gold !important;
-            width: 100% !important;
-            min-width: 0;
-        }
-    } */
-
-    &:hover {
-        .preview__overlay {
-            opacity: 0.3;
-        }
-
-        /* .preview__bg {
-            animation-play-state: paused;
-        } */
-    }
-
-    .preview__bg {
-        position: absolute;
-        inset: 0;
-        background-image: url("/images/card-bg.png");
-        background-repeat: repeat;
-        background-size: cover;
-        background-size: 160%;
-        background-position: 70% 10%;
-        animation: move 60s cubic-bezier(0.98, 0, 0, 1) infinite alternate;
-    }
-
-    .preview__blur {
-        position: absolute;
-        /* opacity: 0; */
-        inset: 0;
-        background-color: rgba(17, 24, 39, 0.4);
-        backdrop-filter: blur(28px);
-        -webkit-backdrop-filter: blur(28px);
-    }
-
-    .preview__overlay {
-        position: absolute;
-        inset: 0;
-        background-color: #111827;
-        opacity: 0;
-        z-index: 2;
-        transition: opacity 0.3s cubic-bezier(0.2, 0, 0.2, 1);
-    }
-
-    .label {
-        opacity: 0.5;
-        font-size: 14px;
-        color: var(--color-heading);
-    }
-
-    .value {
-        font-size: 14px;
-        letter-spacing: 4px;
-        font-weight: 500;
-    }
-}
-
-@keyframes move {
-    to {
-        transform: rotate(-360deg) scale(-1);
-    }
-}
-</style>
+<style scoped></style>

@@ -1,5 +1,5 @@
 <template>
-    <div class="relative inline-block group">
+    <div class="relative group">
         <button
             class="cursor-pointer"
             onclick="this.nextElementSibling.classList.toggle('opacity-100'); this.nextElementSibling.classList.toggle('pointer-events-auto');"
@@ -8,9 +8,9 @@
         </button>
 
         <div
-            class="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 w-max max-w-lg rounded-sm bg-dark shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition duration-200 border border-border"
+            class="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 min-w-32 sm:w-max lg:max-w-lg rounded-sm bg-dark shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition duration-200 border border-border"
         >
-            <div class="relative bg-dark w-full h-full px-2 py-0.5 rounded-sm font-normal z-10">
+            <div class="relative bg-dark w-full h-full px-2 py-0.5 rounded-sm font-normal z-10 text-center">
                 {{ text }}
             </div>
             <div

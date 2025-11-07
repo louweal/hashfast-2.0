@@ -12,9 +12,10 @@ export default defineEventHandler(async (event) => {
         { path: "/register", method: "ANY" },
         { path: "/create", method: "ANY" },
         { path: "/pro", method: "ANY" },
-        { pathPrefix: "/link/view/", method: "ANY" },
+        { pathPrefix: "/pay/", method: "ANY" },
         { pathPrefix: "/api/auth", method: "ANY" },
         { pathPrefix: "/api/users", method: "ANY" },
+        { pathPrefix: "/api/links", method: "ANY" },
         { pathPrefix: "/api/payments", method: "POST" },
         { regex: /^\/api\/links\/[^/]+$/, method: "GET" }, // Allow GET /api/links/:id
     ];
