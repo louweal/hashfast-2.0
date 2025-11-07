@@ -1,11 +1,8 @@
 <template>
-    <div>
-        <form
-            @submit.prevent="handleSubmit"
-            class="flex flex-col gap-12 border border-border rounded-lg p-6 sm:p-8 bg-background"
-        >
+    <div class="">
+        <div class="flex flex-col gap-12 border border-border rounded-lg p-6 sm:p-8 bg-background">
             <div class="flex gap-16 flex-wrap flex-col-reverse md:flex-nowrap md:flex-row">
-                <div class="flex flex-col gap-6 xs:w-xs">
+                <form class="flex flex-col gap-6 xs:w-xs">
                     <div class="flex flex-col gap-1">
                         <label for="wallet" class="text-body/50"
                             >Your Wallet Address<span class="required">*</span></label
@@ -79,7 +76,7 @@
                             <span>Please enter a valid email address</span>
                         </div>
                     </div>
-                </div>
+                </form>
 
                 <div class="flex flex-col gap-8 items-center mt-4 w-[280px]">
                     <client-only>
@@ -99,12 +96,14 @@
                 </div>
             </div>
 
-            <button class="btn" :disabled="!isWallet || !isEmail">Create Payment Request Link</button>
-        </form>
+            <button class="btn" :disabled="!isWallet || !isEmail" @click="handleSubmit">
+                Create Payment Request Link
+            </button>
+        </div>
 
         <div
             v-if="linkId"
-            class="fixed top-8 left-1/2 -translate-x-1/2 flex gap-20 p-2 pl-4 items-center rounded-sm border border-border bg-background font-medium z-2"
+            class="fixed top-8 left-1/2 -translate-x-1/2 flex gap-20 p-2 pl-4 items-center rounded-sm border border-border bg-background font-medium"
         >
             <span>Payment link created!</span>
             <button class="btn btn--transparent btn--small flex gap-2 items-center cursor-pointer" @click="copyLink">

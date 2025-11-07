@@ -15,7 +15,7 @@
                 </div>
             </div>
 
-            <form class="flex flex-col gap-5" v-if="showFront">
+            <form @submit.prevent="handlePayment" class="flex flex-col gap-5" v-if="showFront">
                 <div class="flex w-full justify-between" v-if="wallet">
                     <span class="label">Receiver</span>
                     <span class="value">{{ wallet }}</span>
@@ -101,6 +101,10 @@ function flipCard() {
         isFlipping.value = false;
     }, 300); // match animation duration
 }
+
+const handlePayment = () => {
+    // TODO
+};
 </script>
 
 <style scoped>
