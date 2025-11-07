@@ -7,9 +7,9 @@ import { onMounted, watch, ref } from "vue";
 import QRCode from "qrcode";
 
 const props = defineProps({
-    value: {
+    url: {
         type: String,
-        required: true,
+        required: false,
     },
 });
 
@@ -18,9 +18,12 @@ const emit = defineEmits(["change"]);
 const canvasRef = ref(null);
 
 const generateQRCode = async () => {
-    if (canvasRef.value && props.value) {
+    let url = props.url ? props.url : window.location.href;
+    console.log("url :>> ", url);
+
+    if (canvasRef.value) {
         try {
-            await QRCode.toCanvas(canvasRef.value, props.value, { errorCorrectionLevel: "L", width: 256 });
+            await QRCode.toCanvas(canvasRef.value, url, { errorCorrectionLevel: "L", width: 232 });
             const dataUrl = canvasRef.value.toDataURL();
             emit("change", dataUrl);
         } catch (err) {
@@ -33,3 +36,5 @@ onMounted(generateQRCode);
 
 watch(() => props.value, generateQRCode);
 </script>
+
+<style scoped></style>

@@ -1,5 +1,5 @@
 <template>
-    <form class="payment" :class="{ 'payment--preview': preview }">
+    <div class="payment" :class="{ 'payment--preview': preview, isFlipping: isFlipping }">
         <div class="payment__blur"><div class="payment__bg"></div></div>
 
         <div class="flex flex-col gap-12 p-6 relative z-2">
@@ -7,14 +7,15 @@
                 <IconLogo />
 
                 <div
-                    @click="toggleQr()"
+                    @click="flipCard"
                     class="cursor-pointer opacity-80 hover:opacity-100 transition-opacity duration-300"
                 >
-                    <IconQR />
+                    <IconQR v-if="showFront" />
+                    <IconCross v-else class="scale-150" />
                 </div>
             </div>
 
-            <div class="flex flex-col gap-5">
+            <form class="flex flex-col gap-5" v-if="showFront">
                 <div class="flex w-full justify-between" v-if="wallet">
                     <span class="label">Receiver</span>
                     <span class="value">{{ wallet }}</span>
@@ -52,13 +53,22 @@
                     </div>
                 </div>
                 <button class="btn">Pay now</button>
+            </form>
+            <div class="bg-white" v-else>
+                <QrCode />
             </div>
         </div>
         <div class="payment__overlay"></div>
-    </form>
+    </div>
 </template>
 
 <script setup>
+// get current page url
+// const route = useRoute();
+
+// const pageUrl = `${window.location.origin}${useRoute().path}`;
+// console.log("pageUrl :>> ", pageUrl);
+
 const props = defineProps({
     wallet: {
         type: String,
@@ -77,6 +87,20 @@ const props = defineProps({
         default: false,
     },
 });
+
+const showFront = ref(true);
+const isFlipping = ref(false);
+
+function flipCard() {
+    showFront.value = !showFront.value;
+    // trigger animation
+    isFlipping.value = true;
+
+    // stop animation after it runs
+    setTimeout(() => {
+        isFlipping.value = false;
+    }, 300); // match animation duration
+}
 </script>
 
 <style scoped>
@@ -135,6 +159,28 @@ const props = defineProps({
         font-size: 14px;
         letter-spacing: 4px;
         font-weight: 500;
+    }
+
+    /* transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1);
+    transform-origin: center; */
+    perspective: 1000px;
+    transform-origin: center;
+    backface-visibility: hidden;
+
+    &.isFlipping {
+        animation: flip3d 0.4s cubic-bezier(0.2, 0, 0.2, 1);
+    }
+}
+
+@keyframes flip3d {
+    0% {
+        transform: rotateY(0);
+    }
+    50% {
+        transform: rotateY(90deg);
+    }
+    100% {
+        transform: rotateY(0);
     }
 }
 
