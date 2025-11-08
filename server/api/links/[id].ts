@@ -1,5 +1,4 @@
 // server/api/links/[id].ts
-
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();

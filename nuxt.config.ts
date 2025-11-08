@@ -6,9 +6,12 @@ export default defineNuxtConfig({
     modules: ["@nuxtjs/tailwindcss"],
     css: ["~/assets/css/main.css"],
     runtimeConfig: {
+        public: {
+            hederaNetwork: process.env.HEDERA_NETWORK,
+        },
         // Private keys (only available on server-side)
-        databaseUrl: process.env.DATABASE_URL,
-        jwtSecret: process.env.JWT_SECRET,
+        // databaseUrl: process.env.DATABASE_URL,
+        // jwtSecret: process.env.JWT_SECRET,
     },
     app: {
         head: {

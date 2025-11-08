@@ -6,21 +6,21 @@ const prisma = new PrismaClient();
 export default defineEventHandler(async (event) => {
     const query = getQuery(event);
 
-    if (!query.authorId || typeof query.authorId !== "string") {
+    if (!query.userId || typeof query.userId !== "string") {
         throw createError({
             statusCode: 400,
-            statusMessage: "Missing or invalid 'authorId'",
+            statusMessage: "Missing or invalid 'userId'",
         });
     }
 
-    const authorId = query.authorId;
+    const userId = query.userId;
 
     try {
         const links = await prisma.link.findMany({
-            where: { authorId },
+            where: { userId },
             orderBy: { createdAt: "desc" },
             include: {
-                author: true,
+                user: true,
                 payments: {
                     orderBy: {
                         createdAt: "desc",

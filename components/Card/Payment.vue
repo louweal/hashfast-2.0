@@ -6,7 +6,7 @@
             <div class="flex justify-between items-center gap-4">
                 <IconLogo />
 
-                <div @click="flipCard" class="cursor-pointer opacity-80 hover:opacity-100 size-5">
+                <div v-if="!isPaid" @click="flipCard" class="cursor-pointer opacity-80 hover:opacity-100 size-5">
                     <IconQR v-if="showFront" />
 
                     <IconCross v-else :size="20" />
@@ -14,10 +14,16 @@
             </div>
 
             <form @submit.prevent="handlePayment" class="flex flex-col gap-5" v-if="showFront" key="front">
+                <p class="text-lg text-center">{{ name }}</p>
+                <div class="flex w-full justify-between" v-if="expires">
+                    <span class="label">Expires</span>
+                    <span class="value">{{ new Date(expires).toLocaleDateString("en-US") }}</span>
+                </div>
                 <div class="flex w-full justify-between">
                     <span class="label">Receiver</span>
-                    <span class="value" v-if="wallet">{{ wallet }}</span>
+                    <span class="value" v-if="accountId">{{ accountId }}</span>
                 </div>
+
                 <div class="flex w-full justify-between" v-if="amount">
                     <span class="label">Amount</span>
                     <span class="value"
@@ -50,7 +56,8 @@
                         </div>
                     </div>
                 </div>
-                <button class="btn">Pay now</button>
+                <div v-if="isPaid"><p class="text-lg text-secondary text-center">Payment received!</p></div>
+                <button v-else class="btn">Pay now</button>
             </form>
             <div class="bg-white" key="back" v-else>
                 <QrCode />
@@ -64,21 +71,41 @@
 import { ref } from "vue";
 
 const props = defineProps({
-    wallet: {
+    accountId: {
         type: String,
         required: true,
     },
     amount: {
-        type: Number,
-        default: 0,
+        type: String,
+        default: null,
     },
     currency: {
         type: String,
         required: true,
     },
+    expires: {
+        type: String,
+        required: false,
+    },
+    memo: {
+        type: String,
+        required: false,
+    },
+    name: {
+        type: String,
+        required: false,
+    },
     preview: {
         type: Boolean,
         default: false,
+    },
+    isPaid: {
+        type: Boolean,
+        default: false,
+    },
+    handlePayment: {
+        type: Function,
+        required: true,
     },
 });
 
@@ -93,16 +120,12 @@ function flipCard() {
         isFlipping.value = false;
     }, 300);
 }
-
-const handlePayment = () => {
-    // TODO
-};
 </script>
 
 <style scoped>
 .payment {
     position: relative;
-    width: 280px;
+    width: min(calc(100vw - 2rem), 280px);
     overflow: hidden;
     border-radius: 1rem;
     border: 1px solid var(--color-border) !important;

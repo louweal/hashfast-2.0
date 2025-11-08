@@ -26,21 +26,21 @@
 
                 <client-only>
                     <div class="flex gap-2 justify-center items-center">
-                        <Rating @click="answer1 = 1" :rating="1" :curRating="answer1">
+                        <RatingButton @click="answer1 = 1" :rating="1" :curRating="answer1">
                             <IconRatingVeryBad />
-                        </Rating>
-                        <Rating @click="answer1 = 2" :rating="2" :curRating="answer1">
+                        </RatingButton>
+                        <RatingButton @click="answer1 = 2" :rating="2" :curRating="answer1">
                             <IconRatingBad />
-                        </Rating>
-                        <Rating @click="answer1 = 3" :rating="3" :curRating="answer1">
+                        </RatingButton>
+                        <RatingButton @click="answer1 = 3" :rating="3" :curRating="answer1">
                             <IconRatingNeutral />
-                        </Rating>
-                        <Rating @click="answer1 = 4" :rating="4" :curRating="answer1">
+                        </RatingButton>
+                        <RatingButton @click="answer1 = 4" :rating="4" :curRating="answer1">
                             <IconRatingHappy />
-                        </Rating>
-                        <Rating @click="answer1 = 5" :rating="5" :curRating="answer1">
+                        </RatingButton>
+                        <RatingButton @click="answer1 = 5" :rating="5" :curRating="answer1">
                             <IconRatingVeryHappy />
-                        </Rating>
+                        </RatingButton>
                     </div>
                 </client-only>
             </form>
@@ -145,7 +145,7 @@
 <script setup>
 import { ref } from "vue";
 
-const isOpen = ref(true);
+const isOpen = ref(false);
 const numQuestions = ref(5);
 const curQuestion = ref(1);
 const answer1 = ref(0);

@@ -36,13 +36,6 @@ export class HederaService {
     private networkUrl: string;
     private usdcTokenId: string;
 
-    private appMetadata = {
-        name: "HashFast",
-        description: "HashFast Payments",
-        icons: ["https://www.hashfast.app/app-icon.svg"],
-        url: "https://www.hashfast.app",
-    };
-
     private hashconnect: HashConnect;
 
     // public state: HashConnectConnectionState = HashConnectConnectionState.Disconnected
@@ -54,24 +47,44 @@ export class HederaService {
 
         // Initialize client based on network
         if (config.public.hederaNetwork === "mainnet") {
+            const appMetadata = {
+                name: "HashFast",
+                description: "",
+                icons: ["https://www.hashfast.app/app-icon.svg"],
+                url: "https://www.hashfast.app",
+            };
+
             this.client = Client.forMainnet();
             this.network = "mainnet";
             this.networkUrl = "https://mainnet.mirrornode.hedera.com";
             this.usdcTokenId = "0.0.456858";
+
+            this.hashconnect = new HashConnect(
+                LedgerId.MAINNET,
+                "b8b1efb6a5dc745fcde127bf04d22506",
+                appMetadata,
+                false,
+            );
         } else {
+            // Testnet
+            const appMetadata = {
+                name: "HashFast",
+                description: "",
+                icons: ["https://testnet.hashfast.app/app-icon.svg"],
+                url: "https://testnet.hashfast.app",
+            };
+
             this.client = Client.forTestnet();
             this.network = "testnet";
             this.networkUrl = "https://testnet.mirrornode.hedera.com";
             this.usdcTokenId = "0.0.429274";
+            this.hashconnect = new HashConnect(
+                LedgerId.TESTNET,
+                "b8b1efb6a5dc745fcde127bf04d22506",
+                appMetadata,
+                false,
+            );
         }
-
-        //create the hashconnect instance
-        this.hashconnect = new HashConnect(
-            LedgerId.TESTNET,
-            "b8b1efb6a5dc745fcde127bf04d22506",
-            this.appMetadata,
-            false,
-        );
     }
 
     async initHashConnect() {
