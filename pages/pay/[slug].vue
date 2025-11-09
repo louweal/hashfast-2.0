@@ -1,12 +1,13 @@
 <template>
     <main>
         <div class="container flex justify-center pt-32">
-            <div v-if="link && link.id" class="flex flex-col gap-8 items-center justify-center">
+            <div v-if="link && link.id" class="flex flex-col gap-8 items-center justify-center w-full">
+                <!-- <div class="btn" @click="sendEmail('0.0.4505361@1762693361.955169462')">Send Test Email</div> -->
                 <CardPayment v-bind="publicLink" :handlePayment="handlePayment" :isPaid="isPaid" />
 
                 <div
                     v-if="isPaid"
-                    class="thank-you rounded-lg border border-border p-6 bg-background flex flex-col gap-5"
+                    class="thank-you w-full xs:w-[300px] rounded-lg border border-border p-6 bg-background flex flex-col gap-5"
                 >
                     <h3 class="font-semibold text-lg">Thank you for using HashFast</h3>
                     <p>Did you know that you can create your own payment request links to share with others?</p>
@@ -26,6 +27,9 @@
 
 <script setup>
 import { HederaService } from "~/lib/hedera";
+import sgMail from "@sendgrid/mail";
+import { ClassificationType } from "typescript";
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const hederaService = new HederaService();
 
@@ -43,8 +47,6 @@ const publicLink = computed(() => {
         updatedAt: null,
     };
 });
-
-console.log(link.value);
 
 const handlePayment = async () => {
     // console.log("handle payment!");
@@ -68,6 +70,11 @@ const handlePayment = async () => {
             } catch (storeErr) {
                 console.error("Failed to store payment:", storeErr);
             }
+
+            // send email
+            if (link.value.email) {
+                sendEmail(transactionId);
+            }
         } else {
             console.log("Payment receipt:", receipt);
         }
@@ -75,10 +82,33 @@ const handlePayment = async () => {
         console.error("Failed to send payment:", err);
     }
 };
+
+const sendEmail = async (transactionId) => {
+    const [payerAccountId, timestampPart] = transactionId.split("@");
+    const timestampInSeconds = timestampPart.split(".")[0] * 1000;
+    const paymentDate = new Date(timestampInSeconds).toLocaleString("en-US");
+
+    try {
+        // post to api/send-email
+        await $fetch("/api/send-email", {
+            method: "POST",
+            body: {
+                email: link.value.email,
+                payerAccountId,
+                accountId: link.value.accountId,
+                paymentDate,
+                amount: link.value.amount,
+                currency: link.value.currency.toUpperCase(),
+            },
+        });
+    } catch (err) {
+        console.error("Failed to send email:", err);
+    }
+};
 </script>
 
 <style scoped>
 .thank-you {
-    width: min(calc(100vw - 2rem), 280px);
+    /* width: min(calc(100vw - 2rem), 280px); */
 }
 </style>

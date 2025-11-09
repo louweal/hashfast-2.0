@@ -1,7 +1,7 @@
 <template>
     <div class="">
         <div class="flex flex-col gap-12 border border-border rounded-lg p-6 sm:p-8 bg-background">
-            <div class="flex gap-16 flex-wrap flex-col-reverse md:flex-nowrap md:flex-row">
+            <div class="flex gap-16 flex-wrap flex-col-reverse md:flex-nowrap md:flex-row w-full">
                 <form class="flex flex-col gap-6 xs:w-xs">
                     <div class="flex flex-col gap-1">
                         <label for="wallet" class="text-body/50"
@@ -78,13 +78,13 @@
                     </div>
                 </form>
 
-                <div class="flex flex-col gap-8 items-center mt-4 w-[280px]">
+                <div class="flex flex-col gap-8 items-center mt-4 w-full xs:w-[300px]">
                     <client-only>
                         <Tooltip text="This is a preview.">
                             <CardPayment
                                 :amount="amount ? +amount : null"
                                 :currency="currencies.length > 1 ? '*' : currencies[0]"
-                                :wallet="wallet"
+                                :accountId="wallet"
                                 :preview="true"
                             />
                         </Tooltip>

@@ -2,7 +2,7 @@
     <main class="min-h-dvh flex justify-center items-center">
         <div class="container flex flex-col justify-center items-center gap-6">
             <Logo />
-            <div class="animate-slide-up bg-background p-8 rounded-lg border border-border">
+            <div class="animate-slide-up bg-background p-8 rounded-lg border border-border w-full xs:w-[300px]">
                 <div class="flex flex-col gap-4">
                     <form @submit.prevent="handleLogin" class="space-y-4">
                         <div class="flex flex-col">

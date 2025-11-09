@@ -1,5 +1,8 @@
 <template>
-    <div class="payment" :class="{ 'payment--preview': preview, isFlipping: isFlipping }">
+    <div
+        class="payment w-[300px] xxxmax-w-[calc(100vw-4rem)]"
+        :class="{ 'payment--preview': preview, isFlipping: isFlipping }"
+    >
         <div class="payment__blur"><div class="payment__bg"></div></div>
 
         <div class="flex flex-col gap-12 p-6 relative z-2">
@@ -21,7 +24,13 @@
                 </div>
                 <div class="flex w-full justify-between">
                     <span class="label">Receiver</span>
-                    <span class="value" v-if="accountId">{{ accountId }}</span>
+                    <a
+                        class="value"
+                        v-if="accountId"
+                        :href="`https://hashscan.io/${network}/account/${accountId}/operations`"
+                        target="_blank"
+                        >{{ accountId }}</a
+                    >
                 </div>
 
                 <div class="flex w-full justify-between" v-if="amount">
@@ -69,6 +78,9 @@
 
 <script setup>
 import { ref } from "vue";
+
+const config = useRuntimeConfig();
+const network = config.public.hederaNetwork;
 
 const props = defineProps({
     accountId: {
@@ -125,7 +137,7 @@ function flipCard() {
 <style scoped>
 .payment {
     position: relative;
-    width: min(calc(100vw - 2rem), 280px);
+    /* width: min(calc(100vw - 2rem), 280px); */
     overflow: hidden;
     border-radius: 1rem;
     border: 1px solid var(--color-border) !important;

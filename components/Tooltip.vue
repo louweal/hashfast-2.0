@@ -1,11 +1,14 @@
 <template>
     <div class="relative group">
-        <button
+        <div
             class="cursor-pointer"
-            onclick="this.nextElementSibling.classList.toggle('opacity-100'); this.nextElementSibling.classList.toggle('pointer-events-auto');"
+            @click="
+                this.nextElementSibling.classList.toggle('opacity-100');
+                this.nextElementSibling.classList.toggle('pointer-events-auto');
+            "
         >
             <slot />
-        </button>
+        </div>
 
         <div
             class="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 min-w-32 sm:w-max lg:max-w-lg rounded-sm bg-dark shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition duration-200 border border-border"
