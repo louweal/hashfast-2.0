@@ -11,12 +11,12 @@
                             <input
                                 type="text"
                                 id="wallet"
-                                placeholder="0.0.12345678"
                                 v-model="wallet"
                                 :class="{
                                     'border-secondary!': wallet === detectedWallet,
                                 }"
                             />
+
                             <div
                                 class="absolute top-2 right-2 btn btn--transparent btn--small"
                                 :class="{
@@ -60,7 +60,7 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-col">
+                    <div class="flex flex-col" v-if="!pro">
                         <label for="email" class="flex items-center gap-1 leading-[0.9]">
                             <span>Email<span class="required">*</span></span>
                             <Tooltip text="You get an email notification whenever you receive payment.">
@@ -76,6 +76,8 @@
                             <span>Please enter a valid email address</span>
                         </div>
                     </div>
+
+                    <div class="flex flex-col" v-if="pro">todo: label* (first),, memo, expiration date</div>
                 </form>
 
                 <div class="flex flex-col gap-8 items-center mt-4 w-full xs:w-[300px]">
@@ -125,7 +127,22 @@ import { HederaService } from "~/lib/hedera";
 
 const hederaService = new HederaService();
 
-const wallet = ref("0.0.1234567");
+const props = defineProps({
+    pro: {
+        type: Boolean,
+        default: false,
+    },
+    accountId: {
+        type: String,
+        default: null,
+    },
+    image: {
+        type: String,
+        default: null,
+    },
+});
+
+const wallet = ref(props.accountId);
 const amount = ref(10);
 const currencies = ref(["hbar"]);
 const email = ref("your@email.com");
