@@ -1,6 +1,6 @@
 <template>
-    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="20" fill="none">
-        <g fill="#F9FAFB" opacity=".8">
+    <svg xmlns="http://www.w3.org/2000/svg" :width="width" :height="height" viewBox="0 0 25 20" fill="none">
+        <g fill="#F9FAFB" opacity="1">
             <path
                 d="M16.593 1.639a7.99 7.99 0 1 1 0 15.978 7.99 7.99 0 0 1 0-15.978Zm-1.926 2.868-2.294 6.883h4.59l-2.296 4.589 6.883-6.883h-4.588l2.294-4.589h-4.589Z"
             />
@@ -10,3 +10,18 @@
         </g>
     </svg>
 </template>
+
+<script setup>
+const props = defineProps({
+    width: {
+        // width
+        type: Number,
+        default: 25,
+    },
+    height: {
+        // height
+        type: Number,
+        default: 20,
+    },
+});
+</script>

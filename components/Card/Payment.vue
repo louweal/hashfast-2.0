@@ -7,7 +7,7 @@
 
         <div class="flex flex-col gap-12 p-6 relative z-2">
             <div class="flex justify-between items-center gap-4">
-                <IconLogo />
+                <IconLogo class="opacity-80" />
 
                 <div v-if="!isPaid" @click="flipCard" class="cursor-pointer opacity-80 hover:opacity-100 size-5">
                     <IconQR v-if="showFront" />
