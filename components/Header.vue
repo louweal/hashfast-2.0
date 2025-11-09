@@ -10,9 +10,9 @@
                     </li>
                 </ul>
                 <ul v-else class="flex gap-7 items-center">
-                    <li>
+                    <!-- <li>
                         <NuxtLink to="/dashboard" class="text-base font-medium">Dashboard</NuxtLink>
-                    </li>
+                    </li> -->
                     <li>
                         <button class="btn btn--dark" @click="signOut">Logout</button>
                     </li>
@@ -25,6 +25,7 @@
 <script setup>
 // import { HashConnectConnectionState } from "hashconnect";
 import { HederaService } from "~/lib/hedera";
+import Hamburger from "./Hamburger.vue";
 const { user, loading, error, isLoggedIn, fetchUser, logout } = useAuth();
 await fetchUser();
 

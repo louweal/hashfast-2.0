@@ -43,7 +43,7 @@ const handleLogin = async () => {
             credentials: "include", // send cookies
         });
 
-        await router.push("/dashboard");
+        await router.push("/dashboard/links");
     } catch (err) {
         error.value = err?.data?.message || "Login failed";
     } finally {

@@ -1,9 +1,6 @@
 <template>
-    <div
-        class="payment w-[300px] xxxmax-w-[calc(100vw-4rem)]"
-        :class="{ 'payment--preview': preview, isFlipping: isFlipping }"
-    >
-        <div class="payment__blur"><div class="payment__bg"></div></div>
+    <div class="card-gradient w-[300px]" :class="{ 'card-gradient--preview': preview, isFlipping: isFlipping }">
+        <div class="card-gradient__blur"><div class="card-gradient__bg"></div></div>
 
         <div class="flex flex-col gap-12 p-6 relative z-2">
             <div class="flex justify-between items-center gap-4">
@@ -72,7 +69,7 @@
                 <QrCode />
             </div>
         </div>
-        <div class="payment__overlay"></div>
+        <div class="card-gradient__overlay"></div>
     </div>
 </template>
 
@@ -134,93 +131,4 @@ function flipCard() {
 }
 </script>
 
-<style scoped>
-.payment {
-    position: relative;
-    /* width: min(calc(100vw - 2rem), 280px); */
-    overflow: hidden;
-    border-radius: 1rem;
-    border: 1px solid var(--color-border) !important;
-
-    &.payment--preview {
-        &:hover {
-            .payment__overlay {
-                visibility: visible;
-                opacity: 0.3;
-            }
-        }
-    }
-
-    .payment__bg {
-        position: absolute;
-        inset: 0;
-        background-image: url("/images/card-bg.png");
-        background-repeat: repeat;
-        background-size: cover;
-        background-size: 160%;
-        background-position: 70% 10%;
-        animation: moveBg 60s cubic-bezier(0.98, 0, 0, 1) infinite alternate;
-    }
-
-    .payment__blur {
-        position: absolute;
-        inset: 0;
-        background-color: rgba(17, 24, 39, 0.4);
-        filter: blur(28px);
-        -webkit-filter: blur(28px);
-    }
-
-    .payment__overlay {
-        position: absolute;
-        inset: 0;
-        background-color: #111827;
-        visibility: hidden;
-        opacity: 0;
-        z-index: 2;
-        transition: opacity 0.3s cubic-bezier(0.2, 0, 0.2, 1);
-    }
-
-    .label {
-        opacity: 0.5;
-        font-size: 14px;
-        color: var(--color-heading);
-    }
-
-    .value {
-        font-size: 14px;
-        letter-spacing: 4px;
-        font-weight: 500;
-    }
-
-    /* transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1);
-    transform-origin: center; */
-    perspective: 1000px;
-    transform-origin: center;
-    backface-visibility: hidden;
-
-    &.isFlipping {
-        animation: flip3d 0.3s cubic-bezier(0.2, 0, 0.2, 1);
-    }
-}
-
-@keyframes flip3d {
-    0% {
-        transform: rotateY(0);
-        opacity: 1;
-    }
-    50% {
-        transform: rotateY(60deg);
-        opacity: 0;
-    }
-    100% {
-        transform: rotateY(0);
-        opacity: 1;
-    }
-}
-
-@keyframes moveBg {
-    to {
-        transform: rotate(-360deg) scale(-1);
-    }
-}
-</style>
+<style scoped></style>

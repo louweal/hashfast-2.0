@@ -2,17 +2,23 @@
     <main>
         <Header />
         <div class="container pt-32 h-full flex flex-col justify-center items-center gap-10 animate-slide-up">
-            <FormCreate />
+            <FormCreate :pro="user ? true : false" :accountId="user ? user.wallet : null" />
 
-            <p class="text-[22px]">More features are waiting for you.</p>
+            <div class="flex flex-col gap-10" v-if="!user">
+                <p class="text-[22px]">More features are waiting for you.</p>
 
-            <NuxtLink to="/pro" class="btn">Discover HashFast Pro</NuxtLink>
+                <NuxtLink to="/pro" class="btn">Discover HashFast Pro</NuxtLink>
+            </div>
         </div>
     </main>
 </template>
 
 <script setup>
 import { ref } from "vue";
+import { useAuth } from "~/composables/useAuth";
+// const user = null;
+const { user, loading, error, isLoggedIn, fetchUser, logout } = useAuth();
+await fetchUser();
 
 useHead({
     title: "Create link - HashFast",
