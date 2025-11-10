@@ -149,19 +149,18 @@ export class HederaService {
         return data.transactions[0];
     }
 
-    async getTransactionData(transactionId: string, receiverId: string): Promise<TransactionData> {
+    async getTransactionData(transactionId: string, receiverId: string, currency: string): Promise<TransactionData> {
         let paymentData = await this.getAllTransactionData(transactionId);
 
         let amount = 0;
-        let currency = "?";
 
         let memo = atob(paymentData["memo_base64"]);
         let timestamp = paymentData["consensus_timestamp"];
         let transfers = paymentData["transfers"];
         let tokenTransfers = paymentData["token_transfers"];
 
-        if (tokenTransfers.length > 0) {
-            currency = "USDC";
+        if (currency == "usdc" && tokenTransfers.length > 0) {
+            // currency = "USDC";
             for (let i = 0; i < tokenTransfers.length; i++) {
                 // find the relevant token transfer
                 if (tokenTransfers[i]["token_id"] == this.usdcTokenId && tokenTransfers[i]["account"] == receiverId) {
@@ -169,8 +168,8 @@ export class HederaService {
                     break;
                 }
             }
-        } else if (transfers.length > 0) {
-            currency = "HBAR";
+        } else if (currency == "hbar" && transfers.length > 0) {
+            // currency = "HBAR";
             for (let i = 0; i < transfers.length; i++) {
                 // find the relevant token transfer
                 if (transfers[i]["account"] == receiverId) {
@@ -183,11 +182,21 @@ export class HederaService {
         return { amount, currency, memo, timestamp };
     }
 
-    async getTotalTransactionAmount(paymentIds: string[], receiverId: string): Promise<number> {
+    async getTotalHBARTransactionAmount(paymentIds: string[], receiverId: string): Promise<number> {
         let amount = 0;
 
         for (let i = 0; i < paymentIds.length; i++) {
-            amount += (await this.getTransactionData(paymentIds[i], receiverId)).amount;
+            amount += (await this.getTransactionData(paymentIds[i], receiverId, "hbar")).amount;
+        }
+
+        return parseFloat(amount.toFixed(2));
+    }
+
+    async getTotalUSDCTransactionAmount(paymentIds: string[], receiverId: string): Promise<number> {
+        let amount = 0;
+
+        for (let i = 0; i < paymentIds.length; i++) {
+            amount += (await this.getTransactionData(paymentIds[i], receiverId, "usdc")).amount;
         }
 
         return parseFloat(amount.toFixed(2));

@@ -82,10 +82,10 @@ const network = config.public.hederaNetwork;
 const props = defineProps({
     accountId: {
         type: String,
-        required: true,
+        required: false,
     },
     amount: {
-        type: String,
+        type: Number,
         default: null,
     },
     currency: {
@@ -114,7 +114,7 @@ const props = defineProps({
     },
     handlePayment: {
         type: Function,
-        required: true,
+        required: false,
     },
 });
 

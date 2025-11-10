@@ -1,7 +1,7 @@
 <template>
-    <div class="fixed bottom-8 left-8">
+    <div class="fixed bottom-6 right-6 z-9">
         <div
-            class="absolute left-0 bottom-0 flex gap-6 flex-col border border-border rounded-lg bg-background p-5 w-xs transition-opacity duration-300 ease-in-out"
+            class="absolute right-0 bottom-0 flex gap-6 flex-col border border-border rounded-lg bg-background p-5 w-xs transition-opacity duration-300 ease-in-out"
             :class="{
                 'opacity-0 invisible': !isOpen,
             }"
@@ -132,12 +132,12 @@
             </div>
         </div>
         <div
-            class="absolute left-0 bottom-0 transition-opacity duration-300"
+            class="absolute right-0 bottom-0 transition-opacity duration-300"
             :class="{
                 'opacity-0 invisible': isOpen,
             }"
         >
-            <div class="btn" @click="isOpen = true">Share feedback</div>
+            <div class="btn btn--secondary" @click="isOpen = true">Share feedback</div>
         </div>
     </div>
 </template>

@@ -45,6 +45,7 @@
         &:hover {
             background-color: var(--color-dark);
             color: var(--color-heading);
+            border: 1px solid var(--color-heading);
 
             svg {
                 filter: invert(100%);

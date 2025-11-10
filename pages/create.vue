@@ -2,7 +2,17 @@
     <main>
         <Header />
         <div class="container pt-32 h-full flex flex-col justify-center items-center gap-10 animate-slide-up">
-            <FormCreate :pro="user ? true : false" :accountId="user ? user.wallet : null" />
+            <div class="flex flex-col gap-4">
+                <NuxtLink
+                    to="/dashboard/links"
+                    class="flex gap-2.5 items-center self-start font-medium leading-none"
+                    v-if="user"
+                >
+                    <IconArrowLeft :scale="0.75" />
+                    <span>Back</span>
+                </NuxtLink>
+                <FormCreate :pro="user ? true : false" :accountId="user ? user.wallet : null" />
+            </div>
 
             <div class="flex flex-col gap-10" v-if="!user">
                 <p class="text-[22px]">More features are waiting for you.</p>

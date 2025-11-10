@@ -16,27 +16,16 @@ export default defineEventHandler(async (event) => {
     const userId = query.userId;
 
     try {
-        const links = await prisma.link.findMany({
+        const links = await prisma.payment.findMany({
             where: { userId },
             orderBy: { createdAt: "desc" },
             include: {
-                // user: true,
-                payments: {
-                    orderBy: {
-                        createdAt: "desc",
-                    },
-                },
+                user: true,
+                link: true,
             },
         });
 
-        const publicLink = links.map((link) => {
-            return {
-                ...link,
-                email: null,
-            };
-        });
-
-        return publicLink;
+        return links;
     } catch (e) {
         console.error(e);
         return createError({ statusCode: 400, message: "Link query failed" });

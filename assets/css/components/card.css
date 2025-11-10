@@ -16,6 +16,12 @@
         }
     }
 
+    &.no-animation {
+        .card-gradient__bg {
+            animation: none;
+        }
+    }
+
     .card-gradient__bg {
         position: absolute;
         inset: 0;

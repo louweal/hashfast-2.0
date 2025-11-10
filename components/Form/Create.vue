@@ -12,6 +12,7 @@
                                 type="text"
                                 id="wallet"
                                 v-model="wallet"
+                                placeholder="0.0.1234567"
                                 :class="{
                                     'border-secondary!': wallet === detectedWallet,
                                 }"
@@ -151,7 +152,7 @@ const linkId = ref(null);
 const copied = ref(false);
 
 const isWallet = (wallet) => {
-    // if (!wallet) return true;
+    if (!wallet) return false;
     return wallet.startsWith("0.0.");
 };
 

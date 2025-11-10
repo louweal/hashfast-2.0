@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
         { pathPrefix: "/api/survey", method: "POST" },
         { pathPrefix: "/api/users", method: "ANY" },
         { pathPrefix: "/api/links", method: "ANY" },
-        { pathPrefix: "/api/payments", method: "POST" },
+        { pathPrefix: "/api/payments", method: "ANY" },
         { regex: /^\/api\/links\/[^/]+$/, method: "GET" }, // Allow GET /api/links/:id
     ];
 

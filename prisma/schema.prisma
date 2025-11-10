@@ -18,6 +18,7 @@ model User {
   lastLogin    DateTime?
   links        Link[]
   image        String?
+  payments     Payment[]
 }
 
 model Link {
@@ -35,12 +36,15 @@ model Link {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   payments         Payment[]
+  archived         Boolean @default(false)
 }
 
 model Payment {
   transactionId   String @id
   linkId          String
   link            Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  userId          String?
+  user            User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@index([linkId])           // (optional) speeds up queries by link
   createdAt        DateTime @default(now())
 }
