@@ -14,7 +14,7 @@
                     :class="{ 'opacity-100': activeLink === 'links' }"
                 >
                     <NuxtLink to="/dashboard/links" class="flex items-center gap-4">
-                        <IconLink />
+                        <!-- <IconLink /> -->
                         Links
                     </NuxtLink>
                 </li>
@@ -23,7 +23,7 @@
                     :class="{ 'opacity-100': activeLink === 'transactions' }"
                 >
                     <NuxtLink to="/dashboard/transactions" class="flex items-center gap-4 text-lg font-medium">
-                        <IconTransaction />
+                        <!-- <IconTransaction /> -->
                         Transactions
                     </NuxtLink>
                 </li>

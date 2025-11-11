@@ -84,6 +84,19 @@
                 </div>
             </div>
         </div>
+
+        <div class="fixed inset-0 flex justify-center items-center" v-if="showContactModal">
+            <div class="absolute inset-0 bg-dark/20 cursor-pointer" @click="showContactModal = false"></div>
+
+            <div class="bg-background rounded-lg border border-border p-6 z-2 relative">
+                <div class="absolute top-4 right-4 cursor-pointer" @click="showContactModal = false"><IconCross /></div>
+                <h3>Add contact</h3>
+                <form>
+                    <input type="text" id="name" name="name" />
+                    <div class="btn">Add</div>
+                </form>
+            </div>
+        </div>
     </main>
 </template>
 
@@ -99,6 +112,7 @@ const showMobileNav = ref(false);
 const currency = ref("hbar");
 const searchText = ref(null);
 const payments = ref([]);
+const showContactModal = ref(true);
 
 const sumAmount = computed(() => {
     return filteredTransactions.value.reduce((total, payment) => {

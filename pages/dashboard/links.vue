@@ -43,7 +43,13 @@
 
                             <div class="flex flex-col gap-8">
                                 <TransitionGroup name="list">
-                                    <CardLink v-for="link in waitingLinks" :key="link.id" v-bind="link" />
+                                    <CardLink
+                                        v-for="link in waitingLinks"
+                                        :key="link.id"
+                                        v-bind="link"
+                                        :handleDelete="handleDelete"
+                                        :handleCopy="handleCopy"
+                                    />
                                 </TransitionGroup>
                             </div>
                         </div>
@@ -55,7 +61,13 @@
 
                             <div class="flex flex-col gap-8">
                                 <TransitionGroup name="list">
-                                    <CardLink v-for="link in activeLinks" :key="link.id" v-bind="link" />
+                                    <CardLink
+                                        v-for="link in activeLinks"
+                                        :key="link.id"
+                                        v-bind="link"
+                                        :handleDelete="handleDelete"
+                                        :handleCopy="handleCopy"
+                                    />
                                 </TransitionGroup>
                             </div>
                         </div>
@@ -67,7 +79,12 @@
 
                             <div class="flex flex-col gap-8">
                                 <TransitionGroup name="list">
-                                    <CardLink v-for="link in archivedLinks" :key="link.id" v-bind="link" />
+                                    <CardLink
+                                        v-for="link in archivedLinks"
+                                        :key="link.id"
+                                        v-bind="link"
+                                        :handleDelete="handlePermanentDelete"
+                                    />
                                 </TransitionGroup>
                             </div>
                         </div>
@@ -77,7 +94,10 @@
         </div>
 
         <div
-            class="fixed top-8 left-1/2 -translate-x-1/2 flex gap-20 p-2 px-4 items-center rounded-sm border border-secondary bg-background font-medium shadow-lg"
+            class="fixed top-8 left-1/2 -translate-x-1/2 flex gap-20 p-2 px-4 items-center rounded-sm border border-secondary bg-background font-medium shadow-lg opacity-0 xxxtranslate-y-20 invisible transition-all duration-300 shadow-2xl"
+            :class="{
+                'opacity-100 translate-y-0 visible': copied,
+            }"
         >
             <span>Payment link copied!</span>
 
@@ -157,7 +177,8 @@ const archivedLinks = computed(() => {
             (link.memo && link.memo.toLowerCase().includes(term)) ||
             link.accountId.includes(term);
 
-        const matchesCategory = link.archived && link.archived == true;
+        const matchesCategory =
+            (link.archived && link.archived == true) || (link.expires && new Date(link.expires) < Date.now());
 
         return matchesSearch && matchesCategory;
     });
@@ -168,6 +189,50 @@ const signOut = async () => {
         logout();
     } catch (err) {
         console.error("Failed to sign out:", err);
+    }
+};
+
+const handleDelete = async (id) => {
+    try {
+        let res = await $fetch(`/api/links/${id}`, {
+            method: "PATCH",
+            body: { archived: true },
+        });
+
+        // update links
+        links.value = links.value.map((link) => {
+            if (link.id === id) {
+                link.archived = true;
+            }
+            return link;
+        });
+    } catch (err) {
+        console.error("Failed to delete link:", err);
+    }
+};
+
+const handlePermanentDelete = async (id) => {
+    try {
+        let res = await $fetch(`/api/links/${id}`, {
+            method: "DELETE",
+        });
+        // filter out deleted link
+        links.value = links.value.filter((link) => link.id !== id);
+    } catch (err) {
+        console.error("Failed to delete link:", err);
+    }
+};
+
+const handleCopy = async (id) => {
+    try {
+        await navigator.clipboard.writeText(`${window.location.origin}/pay/${id}`);
+        copied.value = true;
+
+        setTimeout(() => {
+            copied.value = false;
+        }, 2400);
+    } catch (err) {
+        console.error("Failed to copy:", err);
     }
 };
 

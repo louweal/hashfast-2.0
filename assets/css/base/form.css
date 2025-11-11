@@ -13,13 +13,18 @@ form {
         padding: 0.75rem 0.75rem;
         transition: border-color 0.3s cubic-bezier(0.2, 0, 0.2, 1);
         width: 100%;
+        cursor: pointer;
 
         &:focus {
             border-color: var(--color-primary);
         }
 
+        &:hover {
+            border-color: #4b5563;
+        }
+
         &::placeholder {
-            color: var(--color-body);
+            color: #9ca3af;
             opacity: 0.5;
         }
     }

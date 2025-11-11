@@ -21,10 +21,11 @@
                 <div class="lg:order-2 flex justify-end lg:justify-start">
                     <!-- <client-only> -->
                     <div
-                        class="text-heading rounded-sm px-2 py-1 border border-border text-wide font-medium"
+                        class="text-heading rounded-sm px-2 py-1 border border-border text-wide font-medium flex gap-2 items-center"
                         :style="`background-color: hsl(${hue(accountId)}, 60%, 40%)`"
                     >
                         {{ accountId }}
+                        <IconAddContact />
                     </div>
                     <!-- </client-only> -->
                 </div>

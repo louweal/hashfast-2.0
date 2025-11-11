@@ -1,32 +1,28 @@
 <template>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" fill="none" class="icon-trash">
         <path
-            fill="#1C1C1C"
-            fillRule="evenodd"
-            d="M12 24C5.372 24 0 18.628 0 12S5.372 0 12 0s12 5.372 12 12-5.372 12-12 12Z"
-            clipRule="evenodd"
-        />
-        <path
-            stroke="#D9D9D9"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-            d="M16.96 9.667H6.8a.8.8 0 0 1-.8-.8v-.735a.8.8 0 0 1 .8-.799H16.96c.441 0 .799.358.799.799v.735a.8.8 0 0 1-.8.8v0Z"
-            clipRule="evenodd"
-        />
-        <path
-            stroke="#D9D9D9"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-            d="m16.547 9.667-.66 7.907A1.556 1.556 0 0 1 14.338 19H9.423c-.809 0-1.483-.62-1.55-1.426l-.659-7.907"
-        />
-        <path
-            stroke="#D9D9D9"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="1.5"
-            d="M8.769 7.333 9.72 5.43c.131-.264.4-.43.695-.43h2.928c.295 0 .564.166.695.43l.952 1.903"
+            :fill="color"
+            fill-rule="evenodd"
+            d="m1.592 3.539.773 11.8a.69.69 0 0 0 .68.661h7.911a.69.69 0 0 0 .68-.662l.773-11.8H1.592ZM.523 2.472c-.697 0-.697-1.066 0-1.066h4.015l.42-1.12A.396.396 0 0 1 5.339 0h3.323c.16 0 .31.1.37.259l.43 1.147h4.016c.697 0 .697 1.066 0 1.066H.523Zm7.674 10.394.316-7.183c.03-.699 1.086-.653 1.055.046l-.316 7.183c-.03.7-1.085.653-1.055-.046Zm-3.763-7.09c-.03-.7 1.025-.746 1.055-.046l.314 7.137c.03.698-1.025.746-1.055.046l-.314-7.137Z"
+            clip-rule="evenodd"
         />
     </svg>
 </template>
+
+<script setup>
+const props = defineProps({
+    color: {
+        type: String,
+        default: "#D1D5DB",
+    },
+});
+</script>
+
+<style scoped>
+.icon-trash {
+    transition: filter 0.2s cubic-bezier(0.2, 0, 0.2, 1);
+    &:hover {
+        filter: brightness(1.25);
+    }
+}
+</style>

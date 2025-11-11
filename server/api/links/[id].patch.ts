@@ -8,12 +8,12 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event);
 
     try {
-        const user = await prisma.user.update({
+        const link = await prisma.link.update({
             where: { id },
             data: body,
         });
-        return user;
+        return link;
     } catch (e) {
-        return createError({ statusCode: 400, message: "User update failed" });
+        return createError({ statusCode: 400, message: "Link update failed" });
     }
 });
