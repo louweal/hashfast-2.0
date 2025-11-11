@@ -13,7 +13,12 @@
                 </div>
             </div>
 
-            <form @submit.prevent="handlePayment" class="flex flex-col gap-5" v-if="showFront" key="front">
+            <form
+                @submit.prevent="handlePayment(inputAmount, inputCurrency)"
+                class="flex flex-col gap-5"
+                v-if="showFront"
+                key="front"
+            >
                 <p class="text-lg text-center">{{ name }}</p>
                 <div class="flex w-full justify-between" v-if="expires">
                     <span class="label">Expires</span>
@@ -40,20 +45,30 @@
                     <div class="flex flex-col w-full items-start">
                         <span class="label">Amount</span>
                         <div class="relative w-full">
-                            <input type="number" min="0" id="amount" placeholder="..." class="w-full min-w-0" />
+                            <input
+                                type="number"
+                                min="0"
+                                id="amount"
+                                v-model="inputAmount"
+                                placeholder="..."
+                                class="w-full min-w-0"
+                            />
                             <div class="absolute top-2 right-2">
                                 <div class="flex gap-1">
                                     <span
+                                        v-if="currency === 'hbar' || currency === '*'"
                                         class="btn btn--transparent btn--small"
                                         :class="{
-                                            'is-active': currency === 'hbar' || currency === '*',
+                                            'is-active': inputCurrency === 'hbar',
                                         }"
+                                        @click="inputCurrency = 'hbar'"
                                         >HBAR</span
                                     >
                                     <span
+                                        v-if="currency === 'usdc' || currency === '*'"
                                         class="btn btn--transparent btn--small"
                                         :class="{
-                                            'is-active': currency === 'usdc' || currency === '*',
+                                            'is-active': inputCurrency === 'usdc',
                                         }"
                                         >USDC</span
                                     >
@@ -120,6 +135,8 @@ const props = defineProps({
 
 const showFront = ref(true);
 const isFlipping = ref(false);
+const inputAmount = ref(null);
+const inputCurrency = ref(props.currency);
 
 function flipCard() {
     showFront.value = !showFront.value;

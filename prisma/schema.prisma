@@ -8,55 +8,56 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  password     String
-  name         String?
-  wallet       String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  lastLogin    DateTime?
-  links        Link[]
-  image        String?
-  payments     Payment[]
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  name      String?
+  wallet    String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  lastLogin DateTime?
+  links     Link[]
+  image     String?
+  payments  Payment[]
 }
 
 model Link {
-  id               String   @id @default(cuid())
-  accountId        String
-  currency         String
-  email            String
-  name             String?
-  amount           Decimal? @db.Decimal(15,2)
-  memo             String?
-  expires          DateTime?
-  maxPayments      Int?
-  userId           String?
-  user             User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  payments         Payment[]
-  archived         Boolean @default(false)
+  id          String    @id @default(cuid())
+  accountId   String
+  currency    String
+  email       String
+  name        String?
+  amount      Decimal?  @db.Decimal(18, 8)
+  memo        String?
+  expires     DateTime?
+  maxPayments Int?
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  payments    Payment[]
+  archived    Boolean   @default(false)
 }
 
 model Payment {
-  transactionId   String @id
-  linkId          String
-  link            Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
-  userId          String?
-  user            User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  @@index([linkId])           // (optional) speeds up queries by link
-  createdAt        DateTime @default(now())
+  transactionId String   @id
+  linkId        String
+  link          Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+
+  @@index([linkId]) // (optional) speeds up queries by link
 }
 
 model Survey {
-    id         String @id @default(cuid())
-    answer1    String?
-    answer2    String?
-    answer3    String?
-    answer4    String?
-    answer5    String?
-    name       String?
-    consent    Boolean
-    createdAt  DateTime @default(now())
+  id        String   @id @default(cuid())
+  answer1   String?
+  answer2   String?
+  answer3   String?
+  answer4   String?
+  answer5   String?
+  name      String?
+  consent   Boolean
+  createdAt DateTime @default(now())
 }

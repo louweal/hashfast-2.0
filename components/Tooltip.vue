@@ -1,12 +1,6 @@
 <template>
     <div class="relative group">
-        <div
-            class="cursor-pointer"
-            @click="
-                this.nextElementSibling.classList.toggle('opacity-100');
-                this.nextElementSibling.classList.toggle('pointer-events-auto');
-            "
-        >
+        <div class="cursor-pointer">
             <slot />
         </div>
 

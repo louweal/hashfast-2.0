@@ -1,7 +1,15 @@
 <template>
-    <svg xmlns="http://www.w3.org/2000/svg" :width="width" :height="height" viewBox="0 0 25 20" fill="none">
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        :width="width"
+        :height="height"
+        viewBox="0 0 25 20"
+        fill="none"
+        class="logo"
+    >
         <g fill="#F9FAFB" opacity="1">
             <path
+                class="flash"
                 d="M16.593 1.639a7.99 7.99 0 1 1 0 15.978 7.99 7.99 0 0 1 0-15.978Zm-1.926 2.868-2.294 6.883h4.59l-2.296 4.589 6.883-6.883h-4.588l2.294-4.589h-4.589Z"
             />
             <path
@@ -25,3 +33,30 @@ const props = defineProps({
     },
 });
 </script>
+
+<style scoped>
+.logo {
+    &:hover {
+        .flash {
+            animation: flip 0.5s cubic-bezier(0.2, 0, 0.2, 1) forwards;
+        }
+    }
+
+    .flash {
+        transform-origin: center;
+        transform-box: fill-box;
+    }
+}
+
+@keyframes flip {
+    0% {
+        transform: scaleX(1);
+    }
+    50% {
+        transform: scaleX(-1);
+    }
+    100% {
+        transform: scaleX(1);
+    }
+}
+</style>

@@ -36,6 +36,8 @@ export class HederaService {
     private networkUrl: string;
     private usdcTokenId: string;
 
+    private USD_FEE: number;
+
     private hashconnect: HashConnect;
 
     // public state: HashConnectConnectionState = HashConnectConnectionState.Disconnected
@@ -44,6 +46,8 @@ export class HederaService {
 
     constructor() {
         const config = useRuntimeConfig();
+
+        this.USD_FEE = 0.01;
 
         // Initialize client based on network
         if (config.public.hederaNetwork === "mainnet") {
@@ -239,6 +243,7 @@ export class HederaService {
 
         if (link.currency == "hbar") {
             const tinybarAmount = Number(link.amount) * 100_000_000;
+            const hbarFee = this.hbarPrice();
 
             const transaction = await new TransferTransaction()
                 .addHbarTransfer(fromAccount, Hbar.fromTinybars(-1 * tinybarAmount)) //Sending account
@@ -281,5 +286,25 @@ export class HederaService {
 
             return { transactionId: null, receipt: null };
         }
+    }
+
+    async hbarPrice() {
+        // CoinGecko endpoint: get HBAR price in USD
+        const resp = await fetch(
+            "https://api.coingecko.com/api/v3/simple/price?ids=hedera-hashgraph&vs_currencies=usd",
+        );
+        if (!resp.ok) {
+            throw new Error("Failed to fetch price: " + resp.statusText);
+        }
+        const data = await resp.json();
+        const hbarPriceUsd = data["hedera-hashgraph"].usd;
+        if (hbarPriceUsd == null) {
+            throw new Error("HBAR price field missing");
+        }
+
+        // If you assume USDC = USD, then price in USDC = price in USD
+        const hbarPriceUsdc = hbarPriceUsd;
+
+        return hbarPriceUsdc;
     }
 }

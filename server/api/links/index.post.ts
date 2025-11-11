@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
 import { H3Event, sendError, createError } from "h3";
 

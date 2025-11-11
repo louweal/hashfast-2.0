@@ -10,9 +10,9 @@
                     </li>
                 </ul>
                 <ul v-else class="flex gap-7 items-center">
-                    <!-- <li>
-                        <NuxtLink to="/dashboard" class="text-base font-medium">Dashboard</NuxtLink>
-                    </li> -->
+                    <li class="hidden md:block">
+                        <NuxtLink to="/dashboard/links" class="text-base font-medium">Dashboard</NuxtLink>
+                    </li>
                     <li>
                         <button class="btn btn--dark" @click="signOut">Sign out</button>
                     </li>

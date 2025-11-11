@@ -3,6 +3,50 @@
         <div class="flex flex-col gap-12 border border-border rounded-lg p-6 sm:p-8 bg-background">
             <div class="flex gap-16 flex-wrap flex-col-reverse md:flex-nowrap md:flex-row w-full">
                 <form class="flex flex-col gap-6 xs:w-xs">
+                    <div class="flex flex-col gap-1" v-if="pro">
+                        <label for="name" class="text-body/50">Description </label>
+                        <div class="relative">
+                            <input type="text" id="name" v-model="name" placeholder="Drinks" />
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label for="wallet" class="text-body/50">Amount</label>
+                        <div class="relative">
+                            <input
+                                type="number"
+                                min="0"
+                                id="amount"
+                                @input="(e) => setAmount(e)"
+                                :value="amount"
+                                :min="minAmount"
+                            />
+                            <div class="absolute top-2 right-2">
+                                <div class="flex gap-1">
+                                    <span
+                                        class="btn btn--transparent btn--small"
+                                        :class="{
+                                            'is-active': currencies.includes('hbar'),
+                                        }"
+                                        @click="setCurrency('hbar')"
+                                        >HBAR</span
+                                    >
+                                    <span
+                                        class="btn btn--transparent btn--small"
+                                        :class="{
+                                            'is-active': currencies.includes('usdc'),
+                                        }"
+                                        @click="setCurrency('usdc')"
+                                        >USDC</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                        <div class="error" v-if="amount && amount < minAmount">
+                            <IconError />
+                            <span>The minimum amount is {{ minAmount }} {{ currency.toUpperCase() }}</span>
+                        </div>
+                    </div>
                     <div class="flex flex-col gap-1">
                         <label for="wallet" class="text-body/50"
                             >Your Wallet Address<span class="required">*</span></label
@@ -34,34 +78,27 @@
                         </div>
                     </div>
 
-                    <div class="flex flex-col gap-1">
-                        <label for="wallet" class="text-body/50">Amount</label>
+                    <div class="flex flex-col gap-1" v-if="pro">
+                        <label for="expires" class="flex items-center gap-1 leading-[0.9]">Expiration Date</label>
                         <div class="relative">
-                            <input type="number" min="0" id="amount" @input="(e) => setAmount(e)" :value="amount" />
-                            <div class="absolute top-2 right-2">
-                                <div class="flex gap-1">
-                                    <span
-                                        class="btn btn--transparent btn--small"
-                                        :class="{
-                                            'is-active': currencies.includes('hbar'),
-                                        }"
-                                        @click="setCurrency('hbar')"
-                                        >HBAR</span
-                                    >
-                                    <span
-                                        class="btn btn--transparent btn--small"
-                                        :class="{
-                                            'is-active': currencies.includes('usdc'),
-                                        }"
-                                        @click="setCurrency('usdc')"
-                                        >USDC</span
-                                    >
-                                </div>
-                            </div>
+                            <input type="date" id="expires" v-model="expires" :min="today" />
+                        </div>
+                        <div class="error" v-if="expires < today">
+                            <IconError />
+                            <span>Invalid expiration date</span>
                         </div>
                     </div>
 
-                    <div class="flex flex-col" v-if="!pro">
+                    <div class="flex flex-col gap-1" v-if="pro">
+                        <label for="memo" class="flex items-center gap-1 leading-[0.9]">
+                            <span>Memo</span>
+                        </label>
+                        <div class="relative">
+                            <input type="text" id="memo" v-model="memo" />
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-1" v-if="!pro">
                         <label for="email" class="flex items-center gap-1 leading-[0.9]">
                             <span>Email<span class="required">*</span></span>
                             <Tooltip text="You get an email notification whenever you receive payment.">
@@ -77,29 +114,58 @@
                             <span>Please enter a valid email address</span>
                         </div>
                     </div>
-
-                    <div class="flex flex-col" v-if="pro">todo: label* (first),, memo, expiration date</div>
                 </form>
 
-                <div class="flex flex-col gap-8 items-center mt-4 w-full xs:w-[300px]">
-                    <client-only>
-                        <Tooltip text="This is a preview.">
-                            <CardPayment
-                                :amount="amount ? +amount : null"
-                                :currency="currencies.length > 1 ? '*' : currencies[0]"
-                                :accountId="wallet"
-                                :preview="true"
-                            />
-                        </Tooltip>
-                    </client-only>
-                    <!-- <div class="flex items-center gap-3">
-                    <IconShield />
-                    <span>Safe payment using HashPack</span>
-                </div> -->
+                <div class="flex flex-col gap-1 items-center mt-4 w-full xs:w-[300px]">
+                    <div class="text-sm text-center opacity-30">Preview:</div>
+                    <CardPayment
+                        :name="name"
+                        :expires="expires"
+                        :memo="memo"
+                        :amount="amount ? +amount : null"
+                        :currency="currencies.length > 1 ? '*' : currencies[0]"
+                        :accountId="wallet"
+                        :preview="true"
+                    />
+
+                    <div class="flex items-center gap-3 mt-4">
+                        <div v-if="pro" class="text-sm opacity-50 text-center">
+                            <div class="flex items-center gap-1">
+                                <p>
+                                    Fees apply for
+                                    <NuxtLink to="/pro" class="font-medium text-secondary">Pro</NuxtLink> users.
+                                </p>
+                                <Tooltip
+                                    :text="`Fee: $0.01. Paid in ${
+                                        currency === '*' ? 'HBAR or USDC' : currency.toUpperCase()
+                                    }.`"
+                                >
+                                    <IconQuestion />
+                                </Tooltip>
+                            </div>
+                            <!-- <p>
+                                Fee:
+                                <span class="font-medium" v-if="currency === '*'"
+                                    >{{ hbarFee }} HBAR or {{ usdFee }} USDC</span
+                                >
+                                <span class="font-medium" v-else-if="currency === 'hbar'">{{ hbarFee }} HBAR</span>
+                                <span class="font-medium" v-else>{{ usdFee }} USDC</span>
+                            </p> -->
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <button class="btn" :disabled="!isWallet || !isEmail" @click="handleSubmit">
+            <button
+                class="btn"
+                :disabled="
+                    !isWallet(wallet) ||
+                    (!pro && !isEmail(email)) ||
+                    !isValidDate(expires) ||
+                    (amount && amount < minAmount)
+                "
+                @click="handleSubmit"
+            >
                 Create Payment Request Link
             </button>
         </div>
@@ -133,7 +199,15 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    userId: {
+        type: String,
+        default: null,
+    },
     accountId: {
+        type: String,
+        default: null,
+    },
+    email: {
         type: String,
         default: null,
     },
@@ -143,7 +217,10 @@ const props = defineProps({
     },
 });
 
-const wallet = ref(props.accountId);
+const name = ref("Drinks");
+const memo = ref("");
+const expires = ref(null);
+const wallet = ref(props.accountId || "0.0.1234567");
 const amount = ref(10);
 const currencies = ref(["hbar"]);
 const email = ref("your@email.com");
@@ -151,15 +228,41 @@ const detectedWallet = ref(null);
 const linkId = ref(null);
 const copied = ref(false);
 
+const currency = computed(() => {
+    if (currencies.value.length > 1) return "*";
+    return currencies.value[0];
+});
+
+const minAmount = computed(() => {
+    if (!props.pro) return 0;
+    if (currency.value === "usdc") return usdFee.value * 2;
+    return hbarFee.value * 2;
+});
+
+const today = computed(() => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+});
+
+const usdFee = ref("0.01");
+const hbarFee = ref((usdFee.value / (await hederaService.hbarPrice())).toFixed(5));
+
 const isWallet = (wallet) => {
     if (!wallet) return false;
     return wallet.startsWith("0.0.");
 };
 
 const isEmail = (email) => {
-    // if (!email) return true;
-    // if (email.length < 8) return true;
+    if (!email) return false;
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+const isValidDate = (date) => {
+    if (!date) return true;
+    return date >= today.value;
 };
 
 const handleSubmit = async () => {
@@ -171,10 +274,14 @@ const handleSubmit = async () => {
         const response = await $fetch("/api/links", {
             method: "POST",
             body: {
+                name: name.value,
+                memo: memo.value,
+                expires: expires.value ? new Date(expires.value) : null,
                 accountId: wallet.value,
-                email: email.value,
+                email: props.pro ? props.email : email.value,
                 amount: amount.value ? +amount.value : null,
                 currency: currencies.value.length > 1 ? "*" : currencies.value[0],
+                user: { connect: { id: props.userId } },
             },
         });
 

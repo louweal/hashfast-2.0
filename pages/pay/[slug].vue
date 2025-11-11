@@ -28,7 +28,7 @@
 <script setup>
 import { HederaService } from "~/lib/hedera";
 import sgMail from "@sendgrid/mail";
-import { ClassificationType } from "typescript";
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const hederaService = new HederaService();
@@ -42,15 +42,22 @@ const isPaid = ref(false);
 const publicLink = computed(() => {
     return {
         ...link.value,
+        amount: +link.value.amount,
         email: null,
         createdAt: null,
         updatedAt: null,
     };
 });
 
-const handlePayment = async () => {
-    // console.log("handle payment!");
-    // return;
+const handlePayment = async (inputAmount, inputCurrency) => {
+    if (inputAmount) {
+        link.value.amount = inputAmount;
+    }
+
+    if (link.value.currency !== inputCurrency) {
+        link.value.currency = inputCurrency;
+    }
+
     try {
         const response = await hederaService.sendPayment(link.value);
 
@@ -65,7 +72,7 @@ const handlePayment = async () => {
             try {
                 await $fetch("/api/payments", {
                     method: "POST",
-                    body: { transactionId, linkId: link.value.id },
+                    body: { transactionId, linkId: link.value.id, userId: link.value.userId },
                 });
             } catch (storeErr) {
                 console.error("Failed to store payment:", storeErr);

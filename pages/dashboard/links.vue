@@ -38,7 +38,7 @@
                         <div class="flex flex-col gap-12">
                             <h3 class="flex gap-1 items-center">
                                 <span class="text-xl font-semibold">Waiting</span>
-                                <Tooltip text="Waiting for payment"> <IconQuestion /></Tooltip>
+                                <Tooltip text="Not yet paid"> <IconQuestion /></Tooltip>
                             </h3>
 
                             <div class="flex flex-col gap-8">
@@ -61,8 +61,8 @@
                         </div>
                         <div class="flex flex-col gap-12">
                             <h3 class="flex gap-1 items-center">
-                                <span class="text-xl font-semibold">Archive</span>
-                                <Tooltip text="Deleted and expired links"> <IconQuestion /></Tooltip>
+                                <span class="text-xl font-semibold">Archived</span>
+                                <Tooltip text="Deleted or expired links"> <IconQuestion /></Tooltip>
                             </h3>
 
                             <div class="flex flex-col gap-8">
@@ -74,6 +74,18 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div
+            class="fixed top-8 left-1/2 -translate-x-1/2 flex gap-20 p-2 px-4 items-center rounded-sm border border-secondary bg-background font-medium shadow-lg"
+        >
+            <span>Payment link copied!</span>
+
+            <!-- <div class="size-8 absolute -right-4 -top-4 flex justify-center items-center" @click="linkId = null">
+                <div class="size-4 rounded-full bg-primary flex justify-center items-center cursor-pointer">
+                    <IconCross class="scale-75" />
+                </div>
+            </div> -->
         </div>
     </main>
 </template>
@@ -89,6 +101,7 @@ await fetchUser();
 const showMobileNav = ref(false);
 const searchText = ref(null);
 const links = ref([]);
+const copied = ref(false);
 
 // get all transactions
 if (user.value) {

@@ -11,7 +11,12 @@
                     <IconArrowLeft :scale="0.75" />
                     <span>Back</span>
                 </NuxtLink>
-                <FormCreate :pro="user ? true : false" :accountId="user ? user.wallet : null" />
+                <FormCreate
+                    :pro="user ? true : false"
+                    :userId="user ? user.id : null"
+                    :accountId="user ? user.wallet : null"
+                    :email="user ? user.email : null"
+                />
             </div>
 
             <div class="flex flex-col gap-10" v-if="!user">
