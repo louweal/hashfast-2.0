@@ -14,7 +14,7 @@
                             <input v-model="password" type="password" id="password" required />
                         </div>
                         <button type="submit" class="btn w-full">Log in</button>
-                        <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
+                        <p v-if="error" class="text-error">{{ error }}</p>
                     </form>
                 </div>
             </div>
@@ -23,35 +23,35 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const email = ref("");
-const password = ref("");
-const error = ref("");
+const email = ref('');
+const password = ref('');
+const error = ref('');
 const loading = ref(false);
 const router = useRouter();
 
 const handleLogin = async () => {
-    error.value = "";
+    error.value = '';
     loading.value = true;
 
     try {
-        const res = await $fetch("/api/auth/login", {
-            method: "POST",
+        const res = await $fetch('/api/auth/login', {
+            method: 'POST',
             body: { email: email.value, password: password.value },
-            credentials: "include", // send cookies
+            credentials: 'include', // send cookies
         });
 
-        await router.push("/dashboard/links");
+        await router.push('/dashboard/links');
     } catch (err) {
-        error.value = err?.data?.message || "Login failed";
+        error.value = err?.data?.message || 'Login failed';
     } finally {
         loading.value = false;
     }
 };
 
 useHead({
-    title: "Login - HashFast",
+    title: 'Login - HashFast',
 });
 </script>

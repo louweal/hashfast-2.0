@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
     --breakpoint-xs: 30rem;
@@ -13,6 +13,7 @@
     --color-border: var(--color-border);
     --color-dark: var(--color-dark);
     --color-heading: var(--color-heading);
+    --color-error: var(--color-error);
 
     /* Animations */
     --animate-slide-up: slide-up 0.45s cubic-bezier(0.2, 0, 0.2, 1) forwards;

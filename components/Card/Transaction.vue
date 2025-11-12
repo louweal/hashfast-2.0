@@ -2,9 +2,9 @@
     <a
         :href="`https://hashscan.io/${network}/transaction/${transactionId}`"
         target="_blank"
-        class="flex flex-col gap-2 justify-center items-center"
+        class="flex flex-col gap-2 justify-center items-center animate-slide-up"
     >
-        <span class="xxxlg:hidden">
+        <span>
             <client-only>
                 {{ new Date(timestamp).toLocaleString() }}
             </client-only>

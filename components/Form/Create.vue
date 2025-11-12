@@ -176,7 +176,7 @@
         >
             <span>Payment link created!</span>
             <button class="btn btn--transparent btn--small flex gap-2 items-center cursor-pointer" @click="copyLink">
-                {{ copied ? "Copied!" : "Copy link" }} <IconCopy />
+                {{ copied ? 'Copied!' : 'Copy link' }} <IconCopy />
             </button>
 
             <div class="size-8 absolute -right-4 -top-4 flex justify-center items-center" @click="linkId = null">
@@ -189,8 +189,8 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { HederaService } from "~/lib/hedera";
+import { ref } from 'vue';
+import { HederaService } from '~/lib/hedera';
 
 const hederaService = new HederaService();
 
@@ -217,42 +217,42 @@ const props = defineProps({
     },
 });
 
-const name = ref("Drinks");
-const memo = ref("");
+const name = ref('Drinks');
+const memo = ref('');
 const expires = ref(null);
-const wallet = ref(props.accountId || "0.0.1234567");
+const wallet = ref(props.accountId || '0.0.1234567');
 const amount = ref(10);
-const currencies = ref(["hbar"]);
-const email = ref("your@email.com");
+const currencies = ref(['hbar']);
+const email = ref('your@email.com');
 const detectedWallet = ref(null);
 const linkId = ref(null);
 const copied = ref(false);
 
 const currency = computed(() => {
-    if (currencies.value.length > 1) return "*";
+    if (currencies.value.length > 1) return '*';
     return currencies.value[0];
 });
 
 const minAmount = computed(() => {
     if (!props.pro) return 0;
-    if (currency.value === "usdc") return usdFee.value * 2;
+    if (currency.value === 'usdc') return usdFee.value * 2;
     return hbarFee.value * 2;
 });
 
 const today = computed(() => {
     const date = new Date();
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
 });
 
-const usdFee = ref("0.01");
+const usdFee = ref('0.01');
 const hbarFee = ref((usdFee.value / (await hederaService.hbarPrice())).toFixed(5));
 
 const isWallet = (wallet) => {
     if (!wallet) return false;
-    return wallet.startsWith("0.0.");
+    return wallet.startsWith('0.0.');
 };
 
 const isEmail = (email) => {
@@ -271,8 +271,8 @@ const handleSubmit = async () => {
     }
 
     try {
-        const response = await $fetch("/api/links", {
-            method: "POST",
+        const response = await $fetch('/api/links', {
+            method: 'POST',
             body: {
                 name: name.value,
                 memo: memo.value,
@@ -280,18 +280,18 @@ const handleSubmit = async () => {
                 accountId: wallet.value,
                 email: props.pro ? props.email : email.value,
                 amount: amount.value ? +amount.value : null,
-                currency: currencies.value.length > 1 ? "*" : currencies.value[0],
+                currency: currencies.value.length > 1 ? '*' : currencies.value[0],
                 user: { connect: { id: props.userId } },
             },
         });
 
         // get ID
         if (!response.id) {
-            throw new Error("Failed to create link");
+            throw new Error('Failed to create link');
         }
         linkId.value = response.id;
     } catch (error) {
-        console.error("Failed to create link:", error);
+        console.error('Failed to create link:', error);
     }
 };
 
@@ -299,7 +299,7 @@ const setAmount = (e) => {
     amount.value = +e.target.value;
 
     if (amount.value && currencies.value.length > 1) {
-        currencies.value = ["hbar"];
+        currencies.value = ['hbar'];
     }
 };
 
@@ -337,7 +337,7 @@ const detectWallet = async (event) => {
             wallet.value = detectedWallet.value;
         }
     } catch (error) {
-        console.error("Failed to detect wallet:", error);
+        console.error('Failed to detect wallet:', error);
     }
 };
 
@@ -351,7 +351,7 @@ const copyLink = async () => {
             copied.value = false;
         }, 5000);
     } catch (err) {
-        console.error("Failed to copy:", err);
+        console.error('Failed to copy:', err);
     }
 };
 </script>

@@ -1,6 +1,6 @@
 <template>
     <div
-        class="bg-background border border-border rounded-2xl w-full transition-colors duration-30"
+        class="bg-background border border-border rounded-2xl w-full transition-colors duration-30 animate-slide-up"
         :class="{
             'cursor-pointer hover:bg-background/50': handleCopy,
         }"

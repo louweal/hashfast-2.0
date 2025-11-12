@@ -37,10 +37,10 @@
                                         <button class="btn btn--dark btn--square" @click="detectWallet">Detect</button>
                                     </div>
                                 </div>
-                                <div v-if="error" class="text-red-500 mt-2">{{ error }}</div>
+                                <div v-if="error" class="text-error mt-2">{{ error }}</div>
                                 <div class="flex gap-4">
                                     <button type="submit" :disabled="creating" class="btn">
-                                        {{ creating ? "Processing..." : "Update" }}
+                                        {{ creating ? 'Processing...' : 'Update' }}
                                     </button>
                                 </div>
                             </form>
@@ -53,7 +53,7 @@
 </template>
 
 <script setup>
-import { HederaService } from "../../lib/hedera";
+import { HederaService } from '../../lib/hedera';
 
 const hederaService = new HederaService();
 const showDetailsForm = ref(true);
@@ -76,26 +76,26 @@ const detectWallet = async (event) => {
             user.value.wallet = hederaService.pairingData.accountIds[hederaService.pairingData.accountIds.length - 1];
         }
     } catch (error) {
-        console.error("Failed to detect wallet:", error);
+        console.error('Failed to detect wallet:', error);
     }
 };
 
 const updateUser = async () => {
     creating.value = true;
     try {
-        if (!user.value.wallet.startsWith("0.0.")) {
-            error.value = "Invalid Hedera Wallet ID";
-            throw new Error("Invalid Hedera Wallet ID");
+        if (!user.value.wallet.startsWith('0.0.')) {
+            error.value = 'Invalid Hedera Wallet ID';
+            throw new Error('Invalid Hedera Wallet ID');
         }
 
-        await $fetch("/api/users/" + user.value.id, {
-            method: "PATCH",
+        await $fetch('/api/users/' + user.value.id, {
+            method: 'PATCH',
             body: user.value,
         });
         showDetailsForm.value = false;
-        navigateTo("/dashboard/links");
+        navigateTo('/dashboard/links');
     } catch (error) {
-        console.error("Failed to update user:", error);
+        console.error('Failed to update user:', error);
     } finally {
         creating.value = false;
     }

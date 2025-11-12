@@ -94,25 +94,18 @@
         </div>
 
         <div
-            class="fixed top-8 left-1/2 -translate-x-1/2 flex gap-20 p-2 px-4 items-center rounded-sm border border-secondary bg-background font-medium shadow-lg opacity-0 xxxtranslate-y-20 invisible transition-all duration-300 shadow-2xl"
+            class="fixed top-8 left-1/2 -translate-x-1/2 flex gap-20 p-2 px-4 items-center rounded-sm border border-secondary bg-background font-medium opacity-0 invisible transition-all duration-300"
             :class="{
                 'opacity-100 translate-y-0 visible': copied,
             }"
         >
             <span>Payment link copied!</span>
-
-            <!-- <div class="size-8 absolute -right-4 -top-4 flex justify-center items-center" @click="linkId = null">
-                <div class="size-4 rounded-full bg-primary flex justify-center items-center cursor-pointer">
-                    <IconCross class="scale-75" />
-                </div>
-            </div> -->
         </div>
     </main>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import Tooltip from '~/components/Tooltip.vue';
 import { useAuth } from '~/composables/useAuth';
 
 const { user, loading, error, isLoggedIn, fetchUser, logout } = useAuth();
