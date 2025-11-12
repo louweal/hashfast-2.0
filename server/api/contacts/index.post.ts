@@ -6,10 +6,10 @@ const prisma = new PrismaClient();
 export default defineEventHandler(async (event) => {
     try {
         const body = await readBody(event);
-        const entry = await prisma.survey.create({ data: body });
-        return entry;
+        const contact = await prisma.contacts.create({ data: body });
+        return contact;
     } catch (e) {
         console.error(e);
-        return createError({ statusCode: 400, message: 'Survey entry creation failed' });
+        return createError({ statusCode: 400, message: 'Contact creation failed' });
     }
 });

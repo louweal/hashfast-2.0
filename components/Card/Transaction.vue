@@ -2,14 +2,14 @@
     <a
         :href="`https://hashscan.io/${network}/transaction/${transactionId}`"
         target="_blank"
-        class="flex flex-col gap-2 justify-center items-center w-full"
+        class="flex flex-col gap-2 justify-center items-center"
     >
-        <span class="lg:hidden">
+        <span class="xxxlg:hidden">
             <client-only>
                 {{ new Date(timestamp).toLocaleString() }}
             </client-only>
         </span>
-        <div class="bg-background hover:bg-background/50 border border-border rounded-sm px-5 py-4 w-full relative">
+        <div class="bg-background border border-border rounded-sm px-5 py-4 w-full relative">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 items-center lg:w-9/10 xl:w-full">
                 <div
                     class="col-span-2 lg:col-span-1 text-center lg:text-left lg:order-3 text-wide text-base font-medium"
@@ -18,35 +18,34 @@
                     {{ currency.toUpperCase() }}
                 </div>
                 <div class="text-base lg:order-1">{{ name }}</div>
-                <div class="lg:order-2 flex justify-end lg:justify-start">
-                    <!-- <client-only> -->
+                <div class="lg:order-3 flex justify-end lg:justify-start">
                     <div
-                        class="text-heading rounded-sm px-2 py-1 border border-border text-wide font-medium flex gap-2 items-center"
+                        class="relative text-heading rounded-sm px-3 py-1 pt-2 font-medium flex gap-2 items-center cursor-pointer hover:opacity-100 group"
+                        @click.stop.prevent="handleAddContact(accountId)"
                         :style="`background-color: hsl(${hue(accountId)}, 60%, 40%)`"
                     >
-                        {{ accountId }}
-                        <IconAddContact />
+                        <client-only>
+                            <span class="group-hover:opacity-100 opacity-80" v-if="contact">{{ contact.name }}</span>
+                            <span v-else class="text-wide">{{ accountId }}</span>
+                        </client-only>
+                        <div
+                            class="absolute -top-2 -right-2 bg-gray-200 rounded-full size-4 text-center text-black flex justify-center items-center leading-none text-base opacity-0 group-hover:opacity-100 duration-300 ease-in-out"
+                        >
+                            +
+                        </div>
                     </div>
-                    <!-- </client-only> -->
                 </div>
-                <div class="lg:order-4 hidden lg:block opacity-75">
-                    <client-only>
-                        {{ new Date(timestamp).toLocaleString() }}
-                    </client-only>
-                </div>
+                <div class="lg:order-4 hidden lg:block opacity-75 text-right">View on HashScan</div>
             </div>
-            <IconHashscan
-                class="absolute top-4 right-5 opacity-20 transition-opacity duration-300 hover:opacity-50 hidden 2xl:block"
-            />
         </div>
     </a>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref } from 'vue';
 
 const config = useRuntimeConfig();
-const network = ref(config.public.hederaNetwork || "testnet");
+const network = ref(config.public.hederaNetwork || 'testnet');
 
 const props = defineProps({
     transactionId: {
@@ -65,10 +64,20 @@ const props = defineProps({
         type: [String, null],
         required: false,
     },
+    handleAddContact: {
+        type: Function,
+        required: true,
+    },
 });
 
-const accountId = ref(props.transactionId.split("@")[0]);
-const timestamp = ref(props.transactionId.split("@")[1] * 1000);
+const accountId = ref(props.transactionId.split('@')[0]);
+const timestamp = ref(props.transactionId.split('@')[1] * 1000);
+
+const {
+    data: contact,
+    pending,
+    error,
+} = await useAsyncData('contact', () => $fetch(`/api/contacts/${accountId.value}`));
 
 const hue = (s) => {
     if (!s) {

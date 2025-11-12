@@ -11,12 +11,16 @@
                 <div class="flex justify-between items-center">
                     <h3 class="font-medium text-lg">{{ name }}</h3>
 
-                    <div
-                        class="flex shrink-0 justify-center items-center p-2 cursor-pointer"
-                        @click.stop="handleDelete(id)"
-                    >
-                        <IconTrash :color="archived ? '#fb7185' : undefined" />
-                    </div>
+                    <Tooltip :text="archived || (expires && new Date(expires) < new Date()) ? 'Delete' : 'Archive'">
+                        <div
+                            class="flex shrink-0 justify-center items-center p-2 cursor-pointer"
+                            @click.stop="handleDelete(id)"
+                        >
+                            <IconTrash
+                                :color="archived || (expires && new Date(expires) < new Date()) ? '#fb7185' : undefined"
+                            />
+                        </div>
+                    </Tooltip>
                 </div>
 
                 <p class="opacity-50 color-heading">{{ memo }}</p>
@@ -37,7 +41,7 @@
                     </span>
                 </div>
                 <div class="flex justify-between" v-if="expires">
-                    <span>Expires</span>
+                    <span>{{ expires && new Date(expires) < new Date() ? 'Expired' : 'Expires' }}</span>
                     <span class="text-wide font-base font-medium">
                         {{ new Date(expires).toLocaleString() }}
                     </span>
@@ -67,7 +71,7 @@
 </template>
 
 <script setup>
-import { HederaService } from "~/lib/hedera";
+import { HederaService } from '~/lib/hedera';
 
 const hederaService = new HederaService();
 
@@ -128,8 +132,6 @@ const totalUSDCAmount = ref(await hederaService.getTotalUSDCTransactionAmount(pa
 const copyLink = async () => {
     const linkUrl = `${window.location.origin}/pay/${props.id}`;
 
-    console.log("linkUrl :>> ", linkUrl);
-
     try {
         await navigator.clipboard.writeText(linkUrl);
         copied.value = true;
@@ -138,7 +140,7 @@ const copyLink = async () => {
             copied.value = false;
         }, 5000);
     } catch (err) {
-        console.error("Failed to copy:", err);
+        console.error('Failed to copy:', err);
     }
 };
 </script>

@@ -111,9 +111,9 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import Tooltip from "~/components/Tooltip.vue";
-import { useAuth } from "~/composables/useAuth";
+import { ref } from 'vue';
+import Tooltip from '~/components/Tooltip.vue';
+import { useAuth } from '~/composables/useAuth';
 
 const { user, loading, error, isLoggedIn, fetchUser, logout } = useAuth();
 await fetchUser();
@@ -126,17 +126,17 @@ const copied = ref(false);
 // get all transactions
 if (user.value) {
     try {
-        links.value = await $fetch("/api/links", {
+        links.value = await $fetch('/api/links', {
             query: { userId: user.value.id }, // filtered
         });
     } catch (error) {
-        console.error("Failed to fetch payments:", error);
+        console.error('Failed to fetch payments:', error);
     }
 }
 
 // filter links only those without payments
 const waitingLinks = computed(() => {
-    const term = searchText.value?.toLowerCase() || "";
+    const term = searchText.value?.toLowerCase() || '';
 
     return links.value.filter((link) => {
         const matchesSearch =
@@ -145,14 +145,17 @@ const waitingLinks = computed(() => {
             (link.memo && link.memo.toLowerCase().includes(term)) ||
             link.accountId.includes(term);
 
-        const matchesCategory = (!link.payments || link.payments.length === 0) && !link.archived;
+        const matchesCategory =
+            (!link.payments || link.payments.length === 0) &&
+            !link.archived &&
+            (!link.expires || new Date(link.expires) >= Date.now());
 
         return matchesSearch && matchesCategory;
     });
 });
 
 const activeLinks = computed(() => {
-    const term = searchText.value?.toLowerCase() || "";
+    const term = searchText.value?.toLowerCase() || '';
 
     return links.value.filter((link) => {
         const matchesSearch =
@@ -168,7 +171,7 @@ const activeLinks = computed(() => {
 });
 
 const archivedLinks = computed(() => {
-    const term = searchText.value?.toLowerCase() || "";
+    const term = searchText.value?.toLowerCase() || '';
 
     return links.value.filter((link) => {
         const matchesSearch =
@@ -188,14 +191,14 @@ const signOut = async () => {
     try {
         logout();
     } catch (err) {
-        console.error("Failed to sign out:", err);
+        console.error('Failed to sign out:', err);
     }
 };
 
 const handleDelete = async (id) => {
     try {
         let res = await $fetch(`/api/links/${id}`, {
-            method: "PATCH",
+            method: 'PATCH',
             body: { archived: true },
         });
 
@@ -207,19 +210,19 @@ const handleDelete = async (id) => {
             return link;
         });
     } catch (err) {
-        console.error("Failed to delete link:", err);
+        console.error('Failed to delete link:', err);
     }
 };
 
 const handlePermanentDelete = async (id) => {
     try {
         let res = await $fetch(`/api/links/${id}`, {
-            method: "DELETE",
+            method: 'DELETE',
         });
         // filter out deleted link
         links.value = links.value.filter((link) => link.id !== id);
     } catch (err) {
-        console.error("Failed to delete link:", err);
+        console.error('Failed to delete link:', err);
     }
 };
 
@@ -232,12 +235,12 @@ const handleCopy = async (id) => {
             copied.value = false;
         }, 2400);
     } catch (err) {
-        console.error("Failed to copy:", err);
+        console.error('Failed to copy:', err);
     }
 };
 
 useHead({
-    title: "Payment Requests | HashFast",
+    title: 'Payment Requests | HashFast',
 });
 </script>
 

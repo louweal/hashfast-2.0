@@ -127,7 +127,7 @@
                     Previous
                 </button>
                 <button class="btn" @click="curQuestion >= numQuestions ? handleSubmit() : handleNext()">
-                    {{ curQuestion >= numQuestions ? "Submit" : "Next" }}
+                    {{ curQuestion >= numQuestions ? 'Submit' : 'Next' }}
                 </button>
             </div>
         </div>
@@ -143,16 +143,16 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref } from 'vue';
 
 const isOpen = ref(false);
 const numQuestions = ref(5);
 const curQuestion = ref(1);
 const answer1 = ref(0);
-const answer2 = ref("");
-const answer3 = ref("");
-const answer4 = ref("");
-const answer5 = ref("");
+const answer2 = ref('');
+const answer3 = ref('');
+const answer4 = ref('');
+const answer5 = ref('');
 // const name = ref("");
 // const consent = ref(false);
 
@@ -165,8 +165,8 @@ const handleSubmit = async () => {
 
     // store answers
     try {
-        const response = await $fetch("/api/survey", {
-            method: "POST",
+        const response = await $fetch('/api/survey', {
+            method: 'POST',
             body: {
                 answer1: answer1.value.toString(),
                 answer2: answer2.value,
@@ -177,12 +177,10 @@ const handleSubmit = async () => {
             },
         });
         if (!response.id) {
-            throw new Error("Failed to create survey entry");
+            throw new Error('Failed to create survey entry');
         }
-
-        console.log("response.id :>> ", response.id);
     } catch (error) {
-        console.error("Failed to create survey entry:", error);
+        console.error('Failed to create survey entry:', error);
     }
 };
 

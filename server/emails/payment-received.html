@@ -6,7 +6,7 @@
         <title>Payment Received</title>
         <style>
             body {
-                font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
                 background-color: #1f2937;
                 color: #ffffff;
                 margin: 0;
@@ -62,11 +62,7 @@
             }
 
             a {
-                color: #9333ea;
-                text-decoration: none;
-            }
-
-            a:hover {
+                color: #fbf9ff;
                 text-decoration: underline;
             }
         </style>
@@ -79,20 +75,26 @@
             <div class="content">
                 <p>
                     Good news! Your payment request has been paid by
-                    <a href="https://hashscan.io/{{network}}/account/{{payerAccountId}}/operations" target="_blank"
+                    <a href="https://hashscan.io/{{network}}/account/{{payerAccountId}}" target="_blank"
                         >{{payerAccountId}}</a
                     >.
                 </p>
 
                 <div class="details">
-                    <p><span>Your Wallet:</span> {{accountId}}</p>
+                    <p>
+                        <span>Your Wallet:</span>
+                        <a href="https://hashscan.io/{{network}}/account/{{accountId}}" target="_blank"
+                            >{{accountId}}</a
+                        >
+                    </p>
                     <p><span>Amount:</span> {{amount}} {{currency}}</p>
                     <p><span>Date:</span> {{paymentDate}}</p>
                 </div>
 
                 <p>
-                    Thank you for using HashFast. You can view this transaction in your
-                    <a href="https://hashfast.app/dashboard" target="_blank">HashFast dashboard</a> for more details.
+                    Thank you for using HashFast! If you are a HashFast Pro user you can manage your payment request
+                    links in your
+                    <a href="https://hashfast.app/dashboard/transactions" target="_blank">Dashboard</a>!
                 </p>
             </div>
         </div>

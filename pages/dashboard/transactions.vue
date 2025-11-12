@@ -21,7 +21,7 @@
 
                     <AccountButton :userInitial="user.name?.charAt(0)" />
                 </div>
-                <div class="flex flex-wrap 2xl:flex-nowrap w-full gap-10 lg:flex-row-reverse">
+                <div class="flex flex-wrap 2xl:flex-nowrap w-full gap-10 lg:flex-row-reverse xl:w-2/3">
                     <div class="w-full lg:w-auto">
                         <div class="lg:sticky lg:top-6 w-full">
                             <CardSummary
@@ -77,6 +77,7 @@
                                     :amount="transaction.link.amount"
                                     :currency="transaction.link.currency"
                                     :createdAt="transaction.createdAt"
+                                    :handleAddContact="handleAddContact"
                                 />
                             </TransitionGroup>
                         </div>
@@ -85,34 +86,32 @@
             </div>
         </div>
 
-        <div class="fixed inset-0 flex justify-center items-center" v-if="showContactModal">
-            <div class="absolute inset-0 bg-dark/20 cursor-pointer" @click="showContactModal = false"></div>
-
-            <div class="bg-background rounded-lg border border-border p-6 z-2 relative">
-                <div class="absolute top-4 right-4 cursor-pointer" @click="showContactModal = false"><IconCross /></div>
-                <h3>Add contact</h3>
-                <form>
-                    <input type="text" id="name" name="name" />
-                    <div class="btn">Add</div>
-                </form>
-            </div>
-        </div>
+        <ModalAddressBook
+            class="opacity-0 invisible duration-300 ease-in-out"
+            :accountId="clickedAccountId"
+            :handleToggle="() => (showContactModal = !showContactModal)"
+            :userId="user.id"
+            :class="{
+                'opacity-100 visible': showContactModal,
+            }"
+        />
     </main>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useAuth } from "~/composables/useAuth";
+import { ref } from 'vue';
+import { useAuth } from '~/composables/useAuth';
 
 // const user = null;
 const { user, loading, error, isLoggedIn, fetchUser, logout } = useAuth();
 await fetchUser();
 
 const showMobileNav = ref(false);
-const currency = ref("hbar");
+const currency = ref('hbar');
 const searchText = ref(null);
 const payments = ref([]);
-const showContactModal = ref(true);
+const showContactModal = ref(false);
+const clickedAccountId = ref('');
 
 const sumAmount = computed(() => {
     return filteredTransactions.value.reduce((total, payment) => {
@@ -123,16 +122,16 @@ const sumAmount = computed(() => {
 // get all transactions
 if (user.value) {
     try {
-        payments.value = await $fetch("/api/payments", {
+        payments.value = await $fetch('/api/payments', {
             query: { userId: user.value.id }, // filtered
         });
     } catch (error) {
-        console.error("Failed to fetch payments:", error);
+        console.error('Failed to fetch payments:', error);
     }
 }
 
 const filteredTransactions = computed(() => {
-    const term = searchText.value?.toLowerCase() || "";
+    const term = searchText.value?.toLowerCase() || '';
     const selectedCurrency = currency.value;
 
     return payments.value.filter((payment) => {
@@ -151,12 +150,17 @@ const signOut = async () => {
     try {
         logout();
     } catch (err) {
-        console.error("Failed to sign out:", err);
+        console.error('Failed to sign out:', err);
     }
 };
 
+const handleAddContact = (id) => {
+    showContactModal.value = true;
+    clickedAccountId.value = id;
+};
+
 useHead({
-    title: "Transactions | HashFast",
+    title: 'Transactions | HashFast',
 });
 </script>
 

@@ -3,8 +3,8 @@
 </template>
 
 <script setup>
-import { onMounted, watch, ref } from "vue";
-import QRCode from "qrcode";
+import { onMounted, watch, ref } from 'vue';
+import QRCode from 'qrcode';
 
 const props = defineProps({
     url: {
@@ -13,21 +13,20 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(["change"]);
+const emit = defineEmits(['change']);
 
 const canvasRef = ref(null);
 
 const generateQRCode = async () => {
     let url = props.url ? props.url : window.location.href;
-    console.log("url :>> ", url);
 
     if (canvasRef.value) {
         try {
-            await QRCode.toCanvas(canvasRef.value, url, { errorCorrectionLevel: "L", width: 232 });
+            await QRCode.toCanvas(canvasRef.value, url, { errorCorrectionLevel: 'L', width: 232 });
             const dataUrl = canvasRef.value.toDataURL();
-            emit("change", dataUrl);
+            emit('change', dataUrl);
         } catch (err) {
-            console.error("QR code generation failed", err);
+            console.error('QR code generation failed', err);
         }
     }
 };
