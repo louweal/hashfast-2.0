@@ -1,12 +1,12 @@
-import { Client, AccountId, Hbar, TransferTransaction, TokenId } from "@hashgraph/sdk";
-import type { Link } from "@prisma/client";
-import { HashConnect, HashConnectConnectionState } from "hashconnect";
-import type { SessionData } from "hashconnect";
-import { useRuntimeConfig } from "nuxt/app";
-import { ref } from "vue";
-import type { Ref } from "vue";
+import { Client, AccountId, Hbar, TransferTransaction, TokenId } from '@hashgraph/sdk';
+import type { Link } from '@prisma/client';
+import { HashConnect, HashConnectConnectionState } from 'hashconnect';
+import type { SessionData } from 'hashconnect';
+import { useRuntimeConfig } from 'nuxt/app';
+import { ref } from 'vue';
+import type { Ref } from 'vue';
 
-import { LedgerId } from "@hashgraph/sdk";
+import { LedgerId } from '@hashgraph/sdk';
 
 interface Transfer {
     account: string;
@@ -35,6 +35,7 @@ export class HederaService {
     private network: string;
     private networkUrl: string;
     private usdcTokenId: string;
+    private feeAccount: string;
 
     private USD_FEE: number;
 
@@ -50,41 +51,43 @@ export class HederaService {
         this.USD_FEE = 0.01;
 
         // Initialize client based on network
-        if (config.public.hederaNetwork === "mainnet") {
+        if (config.public.hederaNetwork === 'mainnet') {
             const appMetadata = {
-                name: "HashFast",
-                description: "",
-                icons: ["https://www.hashfast.app/app-icon.svg"],
-                url: "https://www.hashfast.app",
+                name: 'HashFast',
+                description: '',
+                icons: ['https://www.hashfast.app/app-icon.svg'],
+                url: 'https://www.hashfast.app',
             };
 
             this.client = Client.forMainnet();
-            this.network = "mainnet";
-            this.networkUrl = "https://mainnet.mirrornode.hedera.com";
-            this.usdcTokenId = "0.0.456858";
+            this.network = 'mainnet';
+            this.networkUrl = 'https://mainnet.mirrornode.hedera.com';
+            this.usdcTokenId = '0.0.456858';
+            this.feeAccount = '0.0.6774573';
 
             this.hashconnect = new HashConnect(
                 LedgerId.MAINNET,
-                "b8b1efb6a5dc745fcde127bf04d22506",
+                'b8b1efb6a5dc745fcde127bf04d22506',
                 appMetadata,
                 false,
             );
         } else {
             // Testnet
             const appMetadata = {
-                name: "HashFast",
-                description: "",
-                icons: ["https://testnet.hashfast.app/app-icon.svg"],
-                url: "https://testnet.hashfast.app",
+                name: 'HashFast',
+                description: '',
+                icons: ['https://testnet.hashfast.app/app-icon.svg'],
+                url: 'https://testnet.hashfast.app',
             };
 
             this.client = Client.forTestnet();
-            this.network = "testnet";
-            this.networkUrl = "https://testnet.mirrornode.hedera.com";
-            this.usdcTokenId = "0.0.429274";
+            this.network = 'testnet';
+            this.networkUrl = 'https://testnet.mirrornode.hedera.com';
+            this.usdcTokenId = '0.0.429274';
+            this.feeAccount = '0.0.1234567';
             this.hashconnect = new HashConnect(
                 LedgerId.TESTNET,
-                "b8b1efb6a5dc745fcde127bf04d22506",
+                'b8b1efb6a5dc745fcde127bf04d22506',
                 appMetadata,
                 false,
             );
@@ -110,7 +113,7 @@ export class HederaService {
 
     setUpHashConnectEvents() {
         this.hashconnect.pairingEvent.on((newPairing) => {
-            console.log("new pairing:", newPairing);
+            console.log('new pairing:', newPairing);
             this.pairingData = newPairing;
         });
 
@@ -120,7 +123,7 @@ export class HederaService {
 
         this.hashconnect.connectionStatusChangeEvent.on((connectionStatus) => {
             this.state.value = connectionStatus;
-            console.log("state changed to:", this.state.value);
+            console.log('state changed to:', this.state.value);
         });
     }
 
@@ -130,14 +133,14 @@ export class HederaService {
     // }
 
     parseTransactionId(transactionId: string): string {
-        const [accountId, timestampPart] = transactionId.split("@");
+        const [accountId, timestampPart] = transactionId.split('@');
 
         if (!accountId || !timestampPart) {
-            throw new Error("Invalid Hedera transaction ID");
+            throw new Error('Invalid Hedera transaction ID');
         }
 
         // replace the dot between seconds and nanos with a dash
-        const timestamp = timestampPart.replace(".", "-");
+        const timestamp = timestampPart.replace('.', '-');
         return `${accountId}-${timestamp}`;
     }
 
@@ -158,26 +161,26 @@ export class HederaService {
 
         let amount = 0;
 
-        let memo = atob(paymentData["memo_base64"]);
-        let timestamp = paymentData["consensus_timestamp"];
-        let transfers = paymentData["transfers"];
-        let tokenTransfers = paymentData["token_transfers"];
+        let memo = atob(paymentData['memo_base64']);
+        let timestamp = paymentData['consensus_timestamp'];
+        let transfers = paymentData['transfers'];
+        let tokenTransfers = paymentData['token_transfers'];
 
-        if (currency == "usdc" && tokenTransfers.length > 0) {
+        if (currency == 'usdc' && tokenTransfers.length > 0) {
             // currency = "USDC";
             for (let i = 0; i < tokenTransfers.length; i++) {
                 // find the relevant token transfer
-                if (tokenTransfers[i]["token_id"] == this.usdcTokenId && tokenTransfers[i]["account"] == receiverId) {
-                    amount = tokenTransfers[i]["amount"] / 1e6;
+                if (tokenTransfers[i]['token_id'] == this.usdcTokenId && tokenTransfers[i]['account'] == receiverId) {
+                    amount = tokenTransfers[i]['amount'] / 1e6;
                     break;
                 }
             }
-        } else if (currency == "hbar" && transfers.length > 0) {
+        } else if (currency == 'hbar' && transfers.length > 0) {
             // currency = "HBAR";
             for (let i = 0; i < transfers.length; i++) {
                 // find the relevant token transfer
-                if (transfers[i]["account"] == receiverId) {
-                    amount = Number(transfers[i]["amount"]) / 100_000_000;
+                if (transfers[i]['account'] == receiverId) {
+                    amount = Number(transfers[i]['amount']) / 100_000_000;
                     break;
                 }
             }
@@ -190,7 +193,7 @@ export class HederaService {
         let amount = 0;
 
         for (let i = 0; i < paymentIds.length; i++) {
-            amount += (await this.getTransactionData(paymentIds[i], receiverId, "hbar")).amount;
+            amount += (await this.getTransactionData(paymentIds[i], receiverId, 'hbar')).amount;
         }
 
         return parseFloat(amount.toFixed(2));
@@ -200,7 +203,7 @@ export class HederaService {
         let amount = 0;
 
         for (let i = 0; i < paymentIds.length; i++) {
-            amount += (await this.getTransactionData(paymentIds[i], receiverId, "usdc")).amount;
+            amount += (await this.getTransactionData(paymentIds[i], receiverId, 'usdc')).amount;
         }
 
         return parseFloat(amount.toFixed(2));
@@ -208,25 +211,31 @@ export class HederaService {
 
     async waitForPairing(): Promise<SessionData | null> {
         return new Promise((resolve) => {
-            console.log(" waiting for pairing...");
+            console.log(' waiting for pairing...');
             this.hashconnect.pairingEvent.once((pairingData: SessionData | null) => {
                 resolve(pairingData);
             });
         });
     }
 
-    async sendPayment(link: Link) {
-        if (!link.accountId) {
-            throw new Error("Link does not have an accountId");
-        }
-        if (!link.amount) {
-            throw new Error("Link does not have an amount");
-        }
-        if (!link.currency) {
-            throw new Error("Link does not have a currency");
+    async sendPayment(link: Link, pro: boolean = false) {
+        if (pro === true) {
+            console.log('send pro payment');
+        } else {
+            console.log('send normal payment');
         }
 
-        const memo = link.memo ? link.memo : "";
+        if (!link.accountId) {
+            throw new Error('Link does not have an accountId');
+        }
+        if (!link.amount) {
+            throw new Error('Link does not have an amount');
+        }
+        if (!link.currency) {
+            throw new Error('Link does not have a currency');
+        }
+
+        const memo = link.memo ? link.memo : '';
 
         if (this.state.value === HashConnectConnectionState.Disconnected) {
             await this.initHashConnect();
@@ -241,33 +250,57 @@ export class HederaService {
         const fromAccount = AccountId.fromString(this.pairingData.accountIds[0]);
         const signer = this.hashconnect.getSigner(fromAccount as any);
 
-        if (link.currency == "hbar") {
-            const tinybarAmount = Number(link.amount) * 100_000_000;
-            const hbarFee = this.hbarPrice();
+        const hbarPrice = await this.hbarPrice();
+        const HBAR_FEE = this.USD_FEE / hbarPrice;
+        const TINYBAR_FEE = Math.floor(HBAR_FEE * 100_000_000);
 
-            const transaction = await new TransferTransaction()
-                .addHbarTransfer(fromAccount, Hbar.fromTinybars(-1 * tinybarAmount)) //Sending account
-                .addHbarTransfer(toAccount, Hbar.fromTinybars(tinybarAmount)) //Receiving account
-                .setTransactionMemo(memo)
-                .freezeWithSigner(signer as any);
+        if (link.currency == 'hbar') {
+            let tinybarAmount = Number(link.amount) * 100_000_000;
+
+            let transaction;
+            if (pro) {
+                // Pro
+                transaction = await new TransferTransaction()
+                    .addHbarTransfer(fromAccount, Hbar.fromTinybars(-1 * tinybarAmount)) //Sending account
+                    .addHbarTransfer(toAccount, Hbar.fromTinybars(tinybarAmount - TINYBAR_FEE)) //Receiving account
+                    .addHbarTransfer(this.feeAccount, Hbar.fromTinybars(TINYBAR_FEE)) // Fee
+                    .setTransactionMemo(memo)
+                    .freezeWithSigner(signer as any);
+            } else {
+                transaction = await new TransferTransaction()
+                    .addHbarTransfer(fromAccount, Hbar.fromTinybars(-1 * tinybarAmount)) //Sending account
+                    .addHbarTransfer(toAccount, Hbar.fromTinybars(tinybarAmount)) //Receiving account
+                    .setTransactionMemo(memo)
+                    .freezeWithSigner(signer as any);
+            }
 
             return await this.executeTransaction(transaction);
         }
 
-        if (link.currency == "usdc") {
+        if (link.currency == 'usdc') {
             const scaledAmount = +link.amount * 1e6;
-            const usdcAmount = Number(scaledAmount);
-
-            const transaction = await new TransferTransaction()
-                .addTokenTransfer(TokenId.fromString(this.usdcTokenId), fromAccount, -usdcAmount) //Sending account
-                .addTokenTransfer(TokenId.fromString(this.usdcTokenId), toAccount, usdcAmount) //Receiving account
-                .setTransactionMemo(memo)
-                .freezeWithSigner(signer as any);
+            let usdcAmount = Number(scaledAmount);
+            let transaction;
+            const SCALED_USDC_FEE = this.USD_FEE * 1e6;
+            if (pro) {
+                transaction = await new TransferTransaction()
+                    .addTokenTransfer(TokenId.fromString(this.usdcTokenId), fromAccount, -usdcAmount) //Sending account
+                    .addTokenTransfer(TokenId.fromString(this.usdcTokenId), toAccount, usdcAmount - SCALED_USDC_FEE) //Receiving account
+                    .addTokenTransfer(TokenId.fromString(this.usdcTokenId), this.feeAccount, SCALED_USDC_FEE) // Fee
+                    .setTransactionMemo(memo)
+                    .freezeWithSigner(signer as any);
+            } else {
+                transaction = await new TransferTransaction()
+                    .addTokenTransfer(TokenId.fromString(this.usdcTokenId), fromAccount, -usdcAmount) //Sending account
+                    .addTokenTransfer(TokenId.fromString(this.usdcTokenId), toAccount, usdcAmount) //Receiving account
+                    .setTransactionMemo(memo)
+                    .freezeWithSigner(signer as any);
+            }
 
             return await this.executeTransaction(transaction);
         }
 
-        return { transactionId: null, receipt: null }; // failed, unknown currency
+        return { transactionId: null, receipt: null };
     }
 
     async executeTransaction(transaction: TransferTransaction) {
@@ -289,20 +322,19 @@ export class HederaService {
     }
 
     async hbarPrice() {
-        // CoinGecko endpoint: get HBAR price in USD
+        // get HBAR price in USD from CoinGecko
         const resp = await fetch(
-            "https://api.coingecko.com/api/v3/simple/price?ids=hedera-hashgraph&vs_currencies=usd",
+            'https://api.coingecko.com/api/v3/simple/price?ids=hedera-hashgraph&vs_currencies=usd',
         );
         if (!resp.ok) {
-            throw new Error("Failed to fetch price: " + resp.statusText);
+            throw new Error('Failed to fetch price: ' + resp.statusText);
         }
         const data = await resp.json();
-        const hbarPriceUsd = data["hedera-hashgraph"].usd;
+        const hbarPriceUsd = data['hedera-hashgraph'].usd;
         if (hbarPriceUsd == null) {
-            throw new Error("HBAR price field missing");
+            throw new Error('HBAR price field missing');
         }
 
-        // If you assume USDC = USD, then price in USDC = price in USD
         const hbarPriceUsdc = hbarPriceUsd;
 
         return hbarPriceUsdc;

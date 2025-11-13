@@ -3,7 +3,7 @@
         <div class="container flex justify-center pt-32">
             <div v-if="link && link.id" class="flex flex-col gap-8 items-center justify-center w-full">
                 <!-- <div class="btn" @click="sendEmail('0.0.4505361@1762693361.955169462')">Send Test Email</div> -->
-                <CardPayment v-bind="publicLink" :handlePayment="handlePayment" :isPaid="isPaid" />
+                <CardPayment v-bind="publicLink" :handlePayment="handlePayment" :isPaid="isPaid" :image="user.image" />
 
                 <div
                     v-if="isPaid"
@@ -26,8 +26,8 @@
 </template>
 
 <script setup>
-import { HederaService } from "~/lib/hedera";
-import sgMail from "@sendgrid/mail";
+import { HederaService } from '~/lib/hedera';
+import sgMail from '@sendgrid/mail';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -35,7 +35,9 @@ const hederaService = new HederaService();
 
 const route = useRoute();
 
-const { data: link, pending, error } = await useAsyncData("link", () => $fetch(`/api/links/${route.params.slug}`));
+const { data: link, pending, error } = await useAsyncData('link', () => $fetch(`/api/links/${route.params.slug}`));
+const { data: user } = await useAsyncData('user', () => $fetch('/api/users/' + link.value.userId));
+
 const isPaid = ref(false);
 
 // link without email
@@ -59,9 +61,10 @@ const handlePayment = async (inputAmount, inputCurrency) => {
     }
 
     try {
-        const response = await hederaService.sendPayment(link.value);
+        const pro = link.value.userId ? true : false;
+        const response = await hederaService.sendPayment(link.value, pro);
 
-        if (typeof response !== "object") {
+        if (typeof response !== 'object') {
             throw new Error(response);
         }
 
@@ -70,12 +73,12 @@ const handlePayment = async (inputAmount, inputCurrency) => {
         if (receipt.status._code === 22) {
             isPaid.value = true;
             try {
-                await $fetch("/api/payments", {
-                    method: "POST",
+                await $fetch('/api/payments', {
+                    method: 'POST',
                     body: { transactionId, linkId: link.value.id, userId: link.value.userId },
                 });
             } catch (storeErr) {
-                console.error("Failed to store payment:", storeErr);
+                console.error('Failed to store payment:', storeErr);
             }
 
             // send email
@@ -83,22 +86,22 @@ const handlePayment = async (inputAmount, inputCurrency) => {
                 sendEmail(transactionId);
             }
         } else {
-            console.log("Payment receipt:", receipt);
+            console.log('Payment receipt:', receipt);
         }
     } catch (err) {
-        console.error("Failed to send payment:", err);
+        console.error('Failed to send payment:', err);
     }
 };
 
 const sendEmail = async (transactionId) => {
-    const [payerAccountId, timestampPart] = transactionId.split("@");
-    const timestampInSeconds = timestampPart.split(".")[0] * 1000;
-    const paymentDate = new Date(timestampInSeconds).toLocaleString("en-US");
+    const [payerAccountId, timestampPart] = transactionId.split('@');
+    const timestampInSeconds = timestampPart.split('.')[0] * 1000;
+    const paymentDate = new Date(timestampInSeconds).toLocaleString('en-US');
 
     try {
         // post to api/send-email
-        await $fetch("/api/send-email", {
-            method: "POST",
+        await $fetch('/api/send-email', {
+            method: 'POST',
             body: {
                 email: link.value.email,
                 payerAccountId,
@@ -109,7 +112,7 @@ const sendEmail = async (transactionId) => {
             },
         });
     } catch (err) {
-        console.error("Failed to send email:", err);
+        console.error('Failed to send email:', err);
     }
 };
 </script>

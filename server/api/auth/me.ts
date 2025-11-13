@@ -1,15 +1,15 @@
 // ~/server/api/auth/me.ts
-import jwt from "jsonwebtoken";
-import { PrismaClient } from "@prisma/client";
+import jwt from 'jsonwebtoken';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export default defineEventHandler(async (event) => {
-    const token = getCookie(event, "auth_token");
+    const token = getCookie(event, 'auth_token');
     if (!token) {
-        throw createError({ statusCode: 401, message: "Unauthorized" });
+        throw createError({ statusCode: 401, message: 'Unauthorized' });
     }
 
     try {
@@ -25,6 +25,7 @@ export default defineEventHandler(async (event) => {
                 email: true,
                 name: true,
                 wallet: true,
+                image: true,
                 lastLogin: true,
             },
         });
@@ -33,6 +34,6 @@ export default defineEventHandler(async (event) => {
 
         return { user };
     } catch {
-        throw createError({ statusCode: 401, message: "Invalid or expired token" });
+        throw createError({ statusCode: 401, message: 'Invalid or expired token' });
     }
 });

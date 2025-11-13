@@ -4,7 +4,10 @@
 
         <div class="flex flex-col gap-12 p-6 relative z-2">
             <div class="flex justify-between items-center gap-4">
-                <IconLogo class="opacity-80" />
+                <div v-if="image" class="">
+                    <img class="opacity-80 h-5" :src="image" height="20" />
+                </div>
+                <IconLogo class="opacity-80" v-else />
 
                 <div v-if="!isPaid" @click="flipCard" class="cursor-pointer opacity-80 hover:opacity-100 size-5">
                     <IconQR v-if="showFront" />
@@ -22,7 +25,7 @@
                 <p class="text-lg text-center">{{ name }}</p>
                 <div class="flex w-full justify-between" v-if="expires">
                     <span class="label">Expires</span>
-                    <span class="value">{{ new Date(expires).toLocaleDateString("en-US") }}</span>
+                    <span class="value">{{ new Date(expires).toLocaleDateString('en-US') }}</span>
                 </div>
                 <div class="flex w-full justify-between">
                     <span class="label">Receiver</span>
@@ -89,7 +92,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref } from 'vue';
 
 const config = useRuntimeConfig();
 const network = config.public.hederaNetwork;
@@ -129,6 +132,10 @@ const props = defineProps({
     },
     handlePayment: {
         type: Function,
+        required: false,
+    },
+    image: {
+        type: String,
         required: false,
     },
 });

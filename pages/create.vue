@@ -16,6 +16,7 @@
                     :userId="user ? user.id : null"
                     :accountId="user ? user.wallet : null"
                     :email="user ? user.email : null"
+                    :image="user ? user.image : null"
                 />
             </div>
 
@@ -29,14 +30,14 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useAuth } from "~/composables/useAuth";
+import { ref } from 'vue';
+import { useAuth } from '~/composables/useAuth';
 // const user = null;
 const { user, loading, error, isLoggedIn, fetchUser, logout } = useAuth();
 await fetchUser();
 
 useHead({
-    title: "Create link - HashFast",
+    title: 'Create link - HashFast',
 });
 
 const fileInput = ref(null);
@@ -70,7 +71,7 @@ const triggerFileInput = () => {
     if (fileInput.value) {
         fileInput.value.click();
     } else {
-        console.warn("fileInput ref is not set yet");
+        console.warn('fileInput ref is not set yet');
     }
 };
 
@@ -78,7 +79,7 @@ const handleFileChange = async (event) => {
     if (!event.target.files[0]) return;
 
     if (event.target.files[0].size > 1024 * 40) {
-        alert("Image size must be less than 40KB");
+        alert('Image size must be less than 40KB');
         return;
     }
 
@@ -90,8 +91,8 @@ const handleFileChange = async (event) => {
 };
 
 const createLink = async () => {
-    if (newLink.value.currency === "*" && newLink.value.amount) {
-        alert("Please select a currency");
+    if (newLink.value.currency === '*' && newLink.value.amount) {
+        alert('Please select a currency');
         return;
     }
 
@@ -103,19 +104,19 @@ const createLink = async () => {
 
         const bodyPayload = { ...newLink.value, expires: expirationDate };
 
-        const response = await $fetch("/api/links", {
-            method: "POST",
+        const response = await $fetch('/api/links', {
+            method: 'POST',
             body: bodyPayload,
         });
 
         // get ID
         const linkId = response.id;
         if (!linkId) {
-            throw new Error("Failed to create link");
+            throw new Error('Failed to create link');
         }
-        navigateTo("/link/share/" + linkId + "?new=true");
+        navigateTo('/link/share/' + linkId + '?new=true');
     } catch (error) {
-        console.error("Failed to create link:", error);
+        console.error('Failed to create link:', error);
     }
 };
 </script>

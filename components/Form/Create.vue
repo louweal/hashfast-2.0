@@ -119,6 +119,7 @@
                 <div class="flex flex-col gap-1 items-center mt-4 w-full xs:w-[300px]">
                     <div class="text-sm text-center opacity-30">Preview:</div>
                     <CardPayment
+                        :image="image"
                         :name="name"
                         :expires="expires"
                         :memo="memo"
