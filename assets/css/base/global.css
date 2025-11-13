@@ -1,6 +1,8 @@
 html {
-    font-family: "Source Sans 3", sans-serif;
+    font-family: 'Source Sans 3', sans-serif;
     font-weight: 300;
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
 }
 
 body {

@@ -12,7 +12,7 @@
                 </NuxtLink>
             </client-only>
             <div class="animate-slide-up bg-background p-8 rounded-lg border border-border w-full xs:w-[300px]">
-                <h2 class="text-[2rem] text-body">Your details</h2>
+                <!-- <h2 class="text-3xl font-semibold">Account</h2> -->
 
                 <form @submit.prevent="updateUser" class="flex flex-col gap-4">
                     <div class="flex flex-col gap-1">
@@ -36,11 +36,14 @@
                                 Detect
                             </div>
                         </div>
+                        <p v-if="user.wallet === detectedWallet" class="text-secondary font-medium">
+                            Successfully detected wallet
+                        </p>
                     </div>
-                    <div class="flex flex-col gap-1">
+                    <!-- <div class="flex flex-col gap-1">
                         <label for="email" class="block text-body">Your name</label>
                         <input v-model="user.name" type="text" id="name" required class="" />
-                    </div>
+                    </div> -->
                     <div class="flex flex-col gap-1">
                         <label for="email" class="block text-body">Image</label>
                         <div @click="triggerFileInput">
@@ -117,6 +120,7 @@ const detectWallet = async (event) => {
         if (hederaService.pairingData) {
             // get last item in array
             user.value.wallet = hederaService.pairingData.accountIds[hederaService.pairingData.accountIds.length - 1];
+            detectedWallet.value = user.value.wallet;
         }
     } catch (error) {
         console.error('Failed to detect wallet:', error);

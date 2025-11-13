@@ -1,7 +1,7 @@
 <template>
     <main class="min-h-dvh flex justify-center items-center">
         <div class="container flex flex-col justify-center items-center gap-6">
-            <Logo />
+            <h1 class="text-4xl font-semibold">Sign in</h1>
             <div class="animate-slide-up bg-background p-8 rounded-lg border border-border w-full xs:w-[300px]">
                 <div class="flex flex-col gap-4">
                     <form @submit.prevent="handleLogin" class="space-y-4">
@@ -13,7 +13,7 @@
                             <label for="password">Password</label>
                             <input v-model="password" type="password" id="password" required />
                         </div>
-                        <button type="submit" class="btn w-full">Log in</button>
+                        <button type="submit" class="btn w-full">Sign in</button>
                         <p v-if="error" class="text-error">{{ error }}</p>
                     </form>
                 </div>

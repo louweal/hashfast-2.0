@@ -19,7 +19,7 @@
         "@prisma/client": "^5.19.1",
         "@sendgrid/mail": "^8.1.6",
         "bcrypt": "^6.0.0",
-        "hashconnect": "^3.0.13",
+        "hashconnect": "^3.0.14",
         "jsonwebtoken": "^9.0.2",
         "nuxt": "^3.13.0",
         "qrcode": "^1.5.4",

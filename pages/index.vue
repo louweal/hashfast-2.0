@@ -10,6 +10,7 @@
                 { title: 'More features', url: '/pro' },
             ]"
         />
+        <CTA />
 
         <Footer />
     </main>
@@ -17,6 +18,6 @@
 
 <script setup>
 useHead({
-    title: "HashFast",
+    title: 'HashFast',
 });
 </script>

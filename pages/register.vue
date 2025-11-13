@@ -1,7 +1,7 @@
 <template>
     <main class="min-h-dvh flex justify-center items-center">
         <div class="container flex flex-col justify-center items-center gap-6">
-            <Logo />
+            <h1 class="text-4xl font-semibold">Register</h1>
             <div class="animate-slide-up bg-background p-8 rounded-lg border border-border w-full xs:w-[300px]">
                 <div class="flex flex-col gap-4" v-if="showCreateForm">
                     <form @submit.prevent="createUser" class="space-y-4">
@@ -30,7 +30,7 @@
                         </div>
                         <div v-if="error" class="text-error mt-2">{{ error }}</div>
                         <div class="flex gap-4">
-                            <button type="submit" :disabled="creating" class="btn">
+                            <button type="submit" :disabled="creating" class="btn w-full">
                                 {{ creating ? 'Processing...' : 'Register' }}
                             </button>
                         </div>
@@ -51,7 +51,7 @@
                                     v-model="user.wallet"
                                     type="text"
                                     id="wallet"
-                                    class="fgrow"
+                                    class="grow"
                                     placeholder="Type or click 'Detect'"
                                     required
                                 />

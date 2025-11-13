@@ -15,10 +15,10 @@
                     <p>It's 100% free and no sign up required.</p>
                     <NuxtLink to="/" class="btn btn-primary w-full">Discover HashFast</NuxtLink>
                 </div>
-                <div class="flex items-center gap-2" v-else>
+                <!-- <div class="flex items-center gap-2" v-else>
                     <IconShield />
                     <span class="leading-[0.9]">Safe payment using HashPack</span>
-                </div>
+                </div> -->
             </div>
             <div v-else>Link not found</div>
         </div>

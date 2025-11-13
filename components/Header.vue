@@ -1,5 +1,5 @@
 <template>
-    <div class="header fixed top-0 left-0 right-0 py-4 px-5">
+    <div class="header fixed top-0 left-0 right-0 py-4 px-5 z-3">
         <div class="flex justify-between items-center">
             <Logo :homeUrl="user ? '/dashboard/links' : '/'" />
 
@@ -24,8 +24,8 @@
 
 <script setup>
 // import { HashConnectConnectionState } from "hashconnect";
-import { HederaService } from "~/lib/hedera";
-import Hamburger from "./Hamburger.vue";
+import { HederaService } from '~/lib/hedera';
+import Hamburger from './Hamburger.vue';
 const { user, loading, error, isLoggedIn, fetchUser, logout } = useAuth();
 await fetchUser();
 
@@ -36,7 +36,7 @@ const signOut = async () => {
     try {
         logout();
     } catch (err) {
-        console.error("Failed to sign out:", err);
+        console.error('Failed to sign out:', err);
     }
 };
 </script>

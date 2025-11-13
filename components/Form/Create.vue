@@ -116,7 +116,7 @@
                     </div>
                 </form>
 
-                <div class="flex flex-col gap-1 items-center mt-4 w-full xs:w-[300px]">
+                <div class="flex flex-col gap-1 items-center w-full xs:w-[300px]">
                     <div class="text-sm text-center opacity-30">Preview:</div>
                     <CardPayment
                         :image="image"
@@ -129,29 +129,19 @@
                         :preview="true"
                     />
 
-                    <div class="flex items-center gap-3 mt-4">
-                        <div v-if="pro" class="text-sm opacity-50 text-center">
-                            <div class="flex items-center gap-1">
-                                <p>
-                                    Fees apply for
-                                    <NuxtLink to="/pro" class="font-medium text-secondary">Pro</NuxtLink> users.
-                                </p>
-                                <Tooltip
-                                    :text="`Fee: $0.01. Paid in ${
-                                        currency === '*' ? 'HBAR or USDC' : currency.toUpperCase()
-                                    }.`"
-                                >
-                                    <IconQuestion />
-                                </Tooltip>
-                            </div>
-                            <!-- <p>
-                                Fee:
-                                <span class="font-medium" v-if="currency === '*'"
-                                    >{{ hbarFee }} HBAR or {{ usdFee }} USDC</span
-                                >
-                                <span class="font-medium" v-else-if="currency === 'hbar'">{{ hbarFee }} HBAR</span>
-                                <span class="font-medium" v-else>{{ usdFee }} USDC</span>
-                            </p> -->
+                    <div class="flex items-center gap-3 mt-4" v-if="pro">
+                        <div class="flex items-center gap-1 text-sm opacity-50 text-center">
+                            <p>
+                                Fees apply for
+                                <NuxtLink to="/pro" class="font-medium text-secondary">Pro</NuxtLink> users.
+                            </p>
+                            <Tooltip
+                                :text="`Fee: $0.01. Paid in ${
+                                    currency === '*' ? 'HBAR or USDC' : currency.toUpperCase()
+                                }.`"
+                            >
+                                <IconQuestion />
+                            </Tooltip>
                         </div>
                     </div>
                 </div>
@@ -218,7 +208,7 @@ const props = defineProps({
     },
 });
 
-const name = ref('Drinks');
+const name = ref(null);
 const memo = ref('');
 const expires = ref(null);
 const wallet = ref(props.accountId || '0.0.1234567');

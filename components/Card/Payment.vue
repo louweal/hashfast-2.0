@@ -2,7 +2,13 @@
     <div class="card-gradient w-[300px]" :class="{ 'card-gradient--preview': preview, isFlipping: isFlipping }">
         <div class="card-gradient__blur"><div class="card-gradient__bg"></div></div>
 
-        <div class="flex flex-col gap-12 p-6 relative z-2">
+        <div
+            v-if="archived || (expires && new Date(expires) < new Date())"
+            class="flex flex-col gap-12 p-6 relative z-2 text-center font-medium"
+        >
+            <p>This payment request is no longer active.</p>
+        </div>
+        <div v-else class="flex flex-col gap-12 p-6 relative z-2">
             <div class="flex justify-between items-center gap-4">
                 <div v-if="image" class="">
                     <img class="opacity-80 h-5" :src="image" height="20" />
@@ -22,7 +28,7 @@
                 v-if="showFront"
                 key="front"
             >
-                <p class="text-lg text-center">{{ name }}</p>
+                <p class="text-lg text-center" v-if="name">{{ name }}</p>
                 <div class="flex w-full justify-between" v-if="expires">
                     <span class="label">Expires</span>
                     <span class="value">{{ new Date(expires).toLocaleDateString('en-US') }}</span>
@@ -113,6 +119,10 @@ const props = defineProps({
     expires: {
         type: String,
         required: false,
+    },
+    archived: {
+        type: Boolean,
+        default: false,
     },
     memo: {
         type: String,
