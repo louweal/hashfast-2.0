@@ -9,9 +9,6 @@ export default defineNuxtConfig({
         public: {
             hederaNetwork: process.env.HEDERA_NETWORK,
         },
-        // Private keys (only available on server-side)
-        // databaseUrl: process.env.DATABASE_URL,
-        // jwtSecret: process.env.JWT_SECRET,
     },
     app: {
         head: {
@@ -36,11 +33,6 @@ export default defineNuxtConfig({
                     content: 'Safely receive HBAR and USDC on Hedera',
                 },
             ],
-            // script: [
-            //     {
-            //         src: "...",
-            //     },
-            // ],
         },
     },
     nitro: {

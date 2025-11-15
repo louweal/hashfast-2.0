@@ -75,8 +75,6 @@ import { HederaService } from '~/lib/hedera';
 
 const hederaService = new HederaService();
 
-const copied = ref(false);
-
 const props = defineProps({
     id: {
         type: String,
@@ -128,20 +126,4 @@ const paymentIds = props.payments.map((payment) => payment.transactionId);
 
 const totalHBARAmount = ref(await hederaService.getTotalHBARTransactionAmount(paymentIds, props.accountId));
 const totalUSDCAmount = ref(await hederaService.getTotalUSDCTransactionAmount(paymentIds, props.accountId));
-
-// const copyLink = async () => {
-//     copied.value = false;
-//     const linkUrl = `${window.location.origin}/pay/${props.id}`;
-
-//     try {
-//         await navigator.clipboard.writeText(linkUrl);
-//         copied.value = true;
-
-//         setTimeout(() => {
-//             copied.value = false;
-//         }, 5000);
-//     } catch (err) {
-//         console.error('Failed to copy:', err);
-//     }
-// };
 </script>

@@ -133,8 +133,6 @@
 </template>
 
 <script setup>
-import Testimonial from '../components/Testimonial.vue';
-
 useHead({
     title: 'HashFast Pro',
 });

@@ -5,10 +5,7 @@
         <Hero
             title="Fast payments for everyone"
             description="Quickly receive HBAR and USDC on Hedera from anyone."
-            :links="[
-                { title: 'Create new link', url: '/create' },
-                // { title: 'More features', url: '/pro' },
-            ]"
+            :links="[{ title: 'Create new link', url: '/create' }]"
         />
         <CTA
             title="Upgrade to Pro"

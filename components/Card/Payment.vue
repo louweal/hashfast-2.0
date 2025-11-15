@@ -164,5 +164,3 @@ function flipCard() {
     }, 300);
 }
 </script>
-
-<style scoped></style>

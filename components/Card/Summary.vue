@@ -27,9 +27,7 @@ const props = defineProps({
     },
     currency: {
         type: String,
-        default: "hbar",
+        default: 'hbar',
     },
 });
 </script>
-
-<style scoped></style>

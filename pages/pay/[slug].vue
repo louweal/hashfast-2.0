@@ -2,7 +2,6 @@
     <main>
         <div class="container flex justify-center pt-32">
             <div v-if="link && link.id" class="flex flex-col gap-8 items-center justify-center w-full">
-                <!-- <div class="btn" @click="sendEmail('0.0.4505361@1762693361.955169462')">Send Test Email</div> -->
                 <CardPayment
                     v-bind="publicLink"
                     :handlePayment="handlePayment"
@@ -20,10 +19,6 @@
                     <p>It's 100% free and no sign up required.</p>
                     <NuxtLink to="/" class="btn btn-primary w-full">Discover HashFast</NuxtLink>
                 </div>
-                <!-- <div class="flex items-center gap-2" v-else>
-                    <IconShield />
-                    <span class="leading-[0.9]">Safe payment using HashPack</span>
-                </div> -->
             </div>
             <div v-else>Link not found</div>
         </div>
@@ -121,9 +116,3 @@ const sendEmail = async (transactionId) => {
     }
 };
 </script>
-
-<style scoped>
-.thank-you {
-    /* width: min(calc(100vw - 2rem), 280px); */
-}
-</style>

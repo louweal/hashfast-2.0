@@ -89,8 +89,8 @@ const hue = (s) => {
     }
     let hash = 0;
     for (let i = 0; i < s.length; i++) {
-        hash = (hash * 31 + s.charCodeAt(i)) | 0; // 31 = prime multiplier
+        hash = (hash * 31 + s.charCodeAt(i)) | 0;
     }
-    return 240 + (Math.abs(hash) % 60); // hue between 0–359
+    return 240 + (Math.abs(hash) % 60);
 };
 </script>

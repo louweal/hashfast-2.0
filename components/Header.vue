@@ -23,7 +23,6 @@
 </template>
 
 <script setup>
-// import { HashConnectConnectionState } from "hashconnect";
 import { HederaService } from '~/lib/hedera';
 const { user, loading, error, isLoggedIn, fetchUser, logout } = useAuth();
 await fetchUser();

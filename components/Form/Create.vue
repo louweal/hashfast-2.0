@@ -1,204 +1,169 @@
 <template>
-    <div class="">
-        <div class="flex flex-col gap-12 border border-border rounded-lg p-6 sm:p-8 bg-background">
-            <div class="flex gap-16 flex-wrap flex-col-reverse md:flex-nowrap md:flex-row w-full">
-                <form class="flex flex-col gap-6 xs:w-xs">
-                    <div class="flex flex-col gap-1" v-if="pro">
-                        <label for="name" class="text-body/50">Description </label>
-                        <div class="relative">
-                            <input type="text" id="name" v-model="name" placeholder="Drinks" />
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col gap-1">
-                        <label for="wallet" class="text-body/50">Amount</label>
-                        <div class="relative">
-                            <input
-                                type="number"
-                                min="0"
-                                id="amount"
-                                @input="(e) => setAmount(e)"
-                                :value="amount"
-                                :min="minAmount"
-                            />
-                            <div class="absolute top-2 right-2">
-                                <div class="flex gap-1">
-                                    <span
-                                        class="btn btn--transparent btn--small"
-                                        :class="{
-                                            'is-active': currencies.includes('hbar'),
-                                        }"
-                                        @click="setCurrency('hbar')"
-                                        >HBAR</span
-                                    >
-                                    <span
-                                        class="btn btn--transparent btn--small"
-                                        :class="{
-                                            'is-active': currencies.includes('usdc'),
-                                        }"
-                                        @click="setCurrency('usdc')"
-                                        >USDC</span
-                                    >
-                                </div>
-                            </div>
-                        </div>
-                        <div class="error" v-if="amount && amount < minAmount">
-                            <IconError />
-                            <span>The minimum amount is {{ minAmount }} {{ currency.toUpperCase() }}</span>
-                        </div>
-                    </div>
-                    <div class="flex flex-col gap-1">
-                        <label for="wallet" class="text-body/50"
-                            >Your Wallet Address<span class="required">*</span></label
-                        >
-                        <div class="relative">
-                            <input
-                                type="text"
-                                id="wallet"
-                                v-model="wallet"
-                                placeholder="0.0.1234567"
-                                :class="{
-                                    'border-secondary!': wallet === detectedWallet,
-                                }"
-                            />
-
-                            <div
-                                class="absolute top-2 right-2 btn btn--transparent btn--small"
-                                :class="{
-                                    'is-active': wallet !== detectedWallet,
-                                }"
-                                @click="detectWallet"
-                            >
-                                Detect
-                            </div>
-                        </div>
-                        <div class="error" v-if="!isWallet(wallet)">
-                            <IconError />
-                            <span>Please enter a valid wallet address</span>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col gap-1" v-if="pro">
-                        <label for="expires" class="flex items-center gap-1 leading-[0.9]">Expiration Date</label>
-                        <div class="relative">
-                            <input type="date" id="expires" v-model="expires" :min="today" />
-                        </div>
-                        <div class="error" v-if="expires < today">
-                            <IconError />
-                            <span>Invalid expiration date</span>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col gap-1" v-if="pro">
-                        <label for="memo" class="flex items-center gap-1 leading-[0.9]">
-                            <span>Memo</span>
-                        </label>
-                        <div class="relative">
-                            <input type="text" id="memo" v-model="memo" />
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col gap-1" v-if="!pro">
-                        <label for="email" class="flex items-center gap-1 leading-[0.9]">
-                            <span>Email<span class="required">*</span></span>
-                            <Tooltip text="You get an email notification whenever you receive payment.">
-                                <IconQuestion />
-                            </Tooltip>
-                        </label>
-                        <div class="relative">
-                            <input type="email" id="email" v-model="email" required />
-                        </div>
-                        <div class="error" v-if="!isEmail(email)">
-                            <IconError />
-
-                            <span>Please enter a valid email address</span>
-                        </div>
-                    </div>
-                </form>
-
-                <div class="flex flex-col gap-1 items-center w-full xs:w-[300px]">
-                    <div class="text-sm text-center opacity-30">Preview:</div>
-                    <CardPayment
-                        :image="image"
-                        :name="name"
-                        :expires="expires"
-                        :memo="memo"
-                        :amount="amount ? +amount : null"
-                        :currency="currencies.length > 1 ? '*' : currencies[0]"
-                        :accountId="wallet"
-                        :preview="true"
-                    />
-
-                    <div class="flex items-center gap-3 mt-4" v-if="pro">
-                        <div class="flex items-center gap-1 text-sm opacity-50 text-center">
-                            <p>
-                                Fees apply for
-                                <NuxtLink to="/pro" class="font-medium text-secondary">Pro</NuxtLink> users.
-                            </p>
-                            <Tooltip
-                                :text="`Fee: $0.01. Paid in ${
-                                    currency === '*' ? 'HBAR or USDC' : currency.toUpperCase()
-                                }.`"
-                            >
-                                <IconQuestion />
-                            </Tooltip>
-                        </div>
+    <div class="flex flex-col gap-12 border border-border rounded-lg p-6 sm:p-8 bg-background">
+        <div class="flex gap-16 flex-wrap flex-col-reverse md:flex-nowrap md:flex-row w-full">
+            <form class="flex flex-col gap-6 xs:w-xs">
+                <div class="flex flex-col gap-1" v-if="pro">
+                    <label for="name" class="text-body/50">Description </label>
+                    <div class="relative">
+                        <input type="text" id="name" v-model="name" placeholder="Drinks" />
                     </div>
                 </div>
-            </div>
 
-            <button
-                class="btn"
-                :disabled="
-                    !isWallet(wallet) ||
-                    (!pro && !isEmail(email)) ||
-                    !isValidDate(expires) ||
-                    (amount && amount < minAmount)
-                "
-                @click="handleSubmit"
-            >
-                Create Payment Request Link
-            </button>
+                <div class="flex flex-col gap-1">
+                    <label for="wallet" class="text-body/50">Amount</label>
+                    <div class="relative">
+                        <input
+                            type="number"
+                            min="0"
+                            id="amount"
+                            @input="(e) => setAmount(e)"
+                            :value="amount"
+                            :min="minAmount"
+                        />
+                        <div class="absolute top-2 right-2">
+                            <div class="flex gap-1">
+                                <span
+                                    class="btn btn--transparent btn--small"
+                                    :class="{
+                                        'is-active': currencies.includes('hbar'),
+                                    }"
+                                    @click="setCurrency('hbar')"
+                                    >HBAR</span
+                                >
+                                <span
+                                    class="btn btn--transparent btn--small"
+                                    :class="{
+                                        'is-active': currencies.includes('usdc'),
+                                    }"
+                                    @click="setCurrency('usdc')"
+                                    >USDC</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="error" v-if="amount && amount < minAmount">
+                        <IconError />
+                        <span>The minimum amount is {{ minAmount }} {{ currency.toUpperCase() }}</span>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label for="wallet" class="text-body/50">Your Wallet Address<span class="required">*</span></label>
+                    <div class="relative">
+                        <input
+                            type="text"
+                            id="wallet"
+                            v-model="wallet"
+                            placeholder="0.0.1234567"
+                            :class="{
+                                'border-secondary!': wallet === detectedWallet,
+                            }"
+                        />
 
-            <div
-                v-if="linkId"
-                class="flex justify-between gap-3 lg:gap-20 p-2 pl-4 items-center rounded-sm border border-secondary bg-background font-medium"
-            >
-                <span>Payment link created!</span>
-                <button
-                    class="btn btn--transparent btn--small flex gap-2 items-center cursor-pointer"
-                    @click="copyLink"
-                >
-                    {{ copied ? 'Copied!' : 'Copy link' }} <IconCopy />
-                </button>
+                        <div
+                            class="absolute top-2 right-2 btn btn--transparent btn--small"
+                            :class="{
+                                'is-active': wallet !== detectedWallet,
+                            }"
+                            @click="detectWallet"
+                        >
+                            Detect
+                        </div>
+                    </div>
+                    <div class="error" v-if="!isWallet(wallet)">
+                        <IconError />
+                        <span>Please enter a valid wallet address</span>
+                    </div>
+                </div>
 
-                <div class="size-8 absolute -right-4 -top-4 flex justify-center items-center" @click="linkId = null">
-                    <div
-                        class="size-4 rounded-full bg-dark border border-white flex justify-center items-center cursor-pointer"
-                    >
-                        <IconCross class="scale-75" />
+                <div class="flex flex-col gap-1" v-if="pro">
+                    <label for="expires" class="flex items-center gap-1 leading-[0.9]">Expiration Date</label>
+                    <div class="relative">
+                        <input type="date" id="expires" v-model="expires" :min="today" />
+                    </div>
+                    <div class="error" v-if="expires < today">
+                        <IconError />
+                        <span>Invalid expiration date</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-1" v-if="pro">
+                    <label for="memo" class="flex items-center gap-1 leading-[0.9]">
+                        <span>Memo</span>
+                    </label>
+                    <div class="relative">
+                        <input type="text" id="memo" v-model="memo" />
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-1" v-if="!pro">
+                    <label for="email" class="flex items-center gap-1 leading-[0.9]">
+                        <span>Email<span class="required">*</span></span>
+                        <Tooltip text="You get an email notification whenever you receive payment.">
+                            <IconQuestion />
+                        </Tooltip>
+                    </label>
+                    <div class="relative">
+                        <input type="email" id="email" v-model="email" required />
+                    </div>
+                    <div class="error" v-if="!isEmail(email)">
+                        <IconError />
+
+                        <span>Please enter a valid email address</span>
+                    </div>
+                </div>
+            </form>
+
+            <div class="flex flex-col gap-1 items-center w-full xs:w-[300px]">
+                <div class="text-sm text-center opacity-30">Preview:</div>
+                <CardPayment
+                    :image="image"
+                    :name="name"
+                    :expires="expires"
+                    :memo="memo"
+                    :amount="amount ? +amount : null"
+                    :currency="currencies.length > 1 ? '*' : currencies[0]"
+                    :accountId="wallet"
+                    :preview="true"
+                />
+
+                <div class="flex items-center gap-3 mt-4" v-if="pro">
+                    <div class="flex items-center gap-1 text-sm opacity-50 text-center">
+                        <p>
+                            Fees apply for
+                            <NuxtLink to="/pro" class="font-medium text-secondary">Pro</NuxtLink> users.
+                        </p>
+                        <Tooltip
+                            :text="`Fee: $0.01. Paid in ${currency === '*' ? 'HBAR or USDC' : currency.toUpperCase()}.`"
+                        >
+                            <IconQuestion />
+                        </Tooltip>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- <div
+        <button
+            class="btn"
+            :disabled="
+                !isWallet(wallet) ||
+                (!pro && !isEmail(email)) ||
+                !isValidDate(expires) ||
+                (amount && amount < minAmount)
+            "
+            @click="handleSubmit"
+        >
+            Create Payment Request Link
+        </button>
+
+        <div
             v-if="linkId"
-            class="fixed top-64 lg:top-8 left-1/2 -translate-x-1/2 min-w-72! xs:w-120 flex justify-between gap-3 lg:gap-20 p-2 pl-4 items-center rounded-sm border border-secondary bg-background font-medium z-5"
+            class="flex justify-between gap-3 lg:gap-20 p-2 pl-4 items-center rounded-sm border border-secondary bg-background font-medium"
         >
             <span>Payment link created!</span>
             <button class="btn btn--transparent btn--small flex gap-2 items-center cursor-pointer" @click="copyLink">
                 {{ copied ? 'Copied!' : 'Copy link' }} <IconCopy />
             </button>
-
-            <div class="size-8 absolute -right-4 -top-4 flex justify-center items-center" @click="linkId = null">
-                <div
-                    class="size-4 rounded-full bg-dark border border-white flex justify-center items-center cursor-pointer"
-                >
-                    <IconCross class="scale-75" />
-                </div>
-            </div>
-        </div> -->
+        </div>
     </div>
 </template>
 

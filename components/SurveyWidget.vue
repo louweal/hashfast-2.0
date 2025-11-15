@@ -151,8 +151,6 @@ const answer2 = ref('');
 const answer3 = ref('');
 const answer4 = ref('');
 const answer5 = ref('');
-// const name = ref("");
-// const consent = ref(false);
 
 const handleNext = () => {
     curQuestion.value++;

@@ -12,8 +12,6 @@
                 </NuxtLink>
             </client-only>
             <div class="animate-slide-up bg-background p-8 rounded-lg border border-border w-full xs:w-[300px]">
-                <!-- <h2 class="text-3xl font-semibold">Account</h2> -->
-
                 <form @submit.prevent="updateUser" class="flex flex-col gap-4">
                     <div class="flex flex-col gap-1">
                         <label for="password" class="block text-body">Hedera Account ID ({{ network }})</label>
@@ -40,10 +38,7 @@
                             Successfully detected wallet
                         </p>
                     </div>
-                    <!-- <div class="flex flex-col gap-1">
-                        <label for="email" class="block text-body">Your name</label>
-                        <input v-model="user.name" type="text" id="name" required class="" />
-                    </div> -->
+
                     <div class="flex flex-col gap-1">
                         <label for="email" class="block text-body">Image</label>
                         <div @click="triggerFileInput">
