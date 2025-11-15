@@ -22,7 +22,7 @@ const generateQRCode = async () => {
 
     if (canvasRef.value) {
         try {
-            await QRCode.toCanvas(canvasRef.value, url, { errorCorrectionLevel: 'L', width: 232 });
+            await QRCode.toCanvas(canvasRef.value, url, { errorCorrectionLevel: 'L', width: 250 });
             const dataUrl = canvasRef.value.toDataURL();
             emit('change', dataUrl);
         } catch (err) {

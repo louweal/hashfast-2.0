@@ -3,7 +3,12 @@
         <div class="container flex justify-center pt-32">
             <div v-if="link && link.id" class="flex flex-col gap-8 items-center justify-center w-full">
                 <!-- <div class="btn" @click="sendEmail('0.0.4505361@1762693361.955169462')">Send Test Email</div> -->
-                <CardPayment v-bind="publicLink" :handlePayment="handlePayment" :isPaid="isPaid" :image="user.image" />
+                <CardPayment
+                    v-bind="publicLink"
+                    :handlePayment="handlePayment"
+                    :isPaid="isPaid"
+                    :image="user ? user.image : null"
+                />
 
                 <div
                     v-if="isPaid"

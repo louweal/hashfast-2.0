@@ -32,6 +32,7 @@
     &.btn--outline {
         background-color: transparent;
         border: 1px solid #f9fafb;
+        box-shadow: none;
 
         &:hover {
             border-color: var(--color-light);
@@ -55,6 +56,9 @@
 
     &.btn--transparent {
         background-color: transparent;
+        box-shadow: none;
+        backdrop-filter: blur(20px);
+        background-color: rgba(17, 24, 39, 0.4);
 
         &:hover {
             background-color: #a855f7;

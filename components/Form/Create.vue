@@ -159,11 +159,32 @@
             >
                 Create Payment Request Link
             </button>
+
+            <div
+                v-if="linkId"
+                class="flex justify-between gap-3 lg:gap-20 p-2 pl-4 items-center rounded-sm border border-secondary bg-background font-medium"
+            >
+                <span>Payment link created!</span>
+                <button
+                    class="btn btn--transparent btn--small flex gap-2 items-center cursor-pointer"
+                    @click="copyLink"
+                >
+                    {{ copied ? 'Copied!' : 'Copy link' }} <IconCopy />
+                </button>
+
+                <div class="size-8 absolute -right-4 -top-4 flex justify-center items-center" @click="linkId = null">
+                    <div
+                        class="size-4 rounded-full bg-dark border border-white flex justify-center items-center cursor-pointer"
+                    >
+                        <IconCross class="scale-75" />
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div
+        <!-- <div
             v-if="linkId"
-            class="fixed top-8 left-1/2 -translate-x-1/2 flex gap-20 p-2 pl-4 items-center rounded-sm border border-border bg-background font-medium"
+            class="fixed top-64 lg:top-8 left-1/2 -translate-x-1/2 min-w-72! xs:w-120 flex justify-between gap-3 lg:gap-20 p-2 pl-4 items-center rounded-sm border border-secondary bg-background font-medium z-5"
         >
             <span>Payment link created!</span>
             <button class="btn btn--transparent btn--small flex gap-2 items-center cursor-pointer" @click="copyLink">
@@ -171,11 +192,13 @@
             </button>
 
             <div class="size-8 absolute -right-4 -top-4 flex justify-center items-center" @click="linkId = null">
-                <div class="size-4 rounded-full bg-primary flex justify-center items-center cursor-pointer">
+                <div
+                    class="size-4 rounded-full bg-dark border border-white flex justify-center items-center cursor-pointer"
+                >
                     <IconCross class="scale-75" />
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -261,19 +284,24 @@ const handleSubmit = async () => {
         return;
     }
 
+    const body = {
+        name: name.value,
+        memo: memo.value,
+        expires: expires.value ? new Date(expires.value) : null,
+        accountId: wallet.value,
+        email: props.pro ? props.email : email.value,
+        amount: amount.value ? +amount.value : null,
+        currency: currencies.value.length > 1 ? '*' : currencies.value[0],
+    };
+
+    if (props.userId) {
+        body['user'] = { connect: { id: props.userId } };
+    }
+
     try {
         const response = await $fetch('/api/links', {
             method: 'POST',
-            body: {
-                name: name.value,
-                memo: memo.value,
-                expires: expires.value ? new Date(expires.value) : null,
-                accountId: wallet.value,
-                email: props.pro ? props.email : email.value,
-                amount: amount.value ? +amount.value : null,
-                currency: currencies.value.length > 1 ? '*' : currencies.value[0],
-                user: { connect: { id: props.userId } },
-            },
+            body: body,
         });
 
         // get ID
@@ -281,6 +309,18 @@ const handleSubmit = async () => {
             throw new Error('Failed to create link');
         }
         linkId.value = response.id;
+
+        // copy link
+        copyLink();
+
+        // reset form
+        name.value = null;
+        memo.value = '';
+        expires.value = null;
+        wallet.value = props.accountId || '0.0.1234567';
+        amount.value = 10;
+        currencies.value = ['hbar'];
+        email.value = 'your@email.com';
     } catch (error) {
         console.error('Failed to create link:', error);
     }

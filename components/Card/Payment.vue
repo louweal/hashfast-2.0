@@ -89,7 +89,7 @@
                 <div v-if="isPaid"><p class="text-lg text-secondary text-center">Payment received!</p></div>
                 <button v-else class="btn">Pay now</button>
             </form>
-            <div class="bg-white" key="back" v-else>
+            <div class="bg-white flex justify-center items-center" key="back" v-else>
                 <QrCode />
             </div>
         </div>

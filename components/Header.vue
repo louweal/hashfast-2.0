@@ -25,7 +25,6 @@
 <script setup>
 // import { HashConnectConnectionState } from "hashconnect";
 import { HederaService } from '~/lib/hedera';
-import Hamburger from './Hamburger.vue';
 const { user, loading, error, isLoggedIn, fetchUser, logout } = useAuth();
 await fetchUser();
 

@@ -22,7 +22,6 @@
 
             <form v-if="curQuestion === 1" class="flex flex-col gap-5">
                 <h3 class="text-base">How would you rate your overall experience?</h3>
-                <p>In the next questions you can share any suggestions for improvement.</p>
 
                 <client-only>
                     <div class="flex gap-2 justify-center items-center">
@@ -43,11 +42,11 @@
                         </RatingButton>
                     </div>
                 </client-only>
+                <p>In the next questions you can share any suggestions for improvement.</p>
             </form>
             <form v-else-if="curQuestion === 2" class="flex flex-col gap-5">
                 <h3 class="font-regular text-base">
-                    Did you <strong>create</strong> a payment request link? What works well, and what challenges have
-                    you encountered?
+                    Did you create a payment request link? What works well, and what challenges have you encountered?
                 </h3>
 
                 <textarea
@@ -62,8 +61,7 @@
             </form>
             <form v-else-if="curQuestion === 3" class="flex flex-col gap-5">
                 <h3 class="text-base">
-                    Did you <strong>pay</strong> a payment request? What works well, and what challenges have you
-                    encountered?
+                    Did you pay a payment request? What works well, and what challenges have you encountered?
                 </h3>
 
                 <textarea

@@ -3,8 +3,8 @@
         <Header />
 
         <Hero
-            title="Discover the possibilities of HashFast Pro"
-            description="HashFast Pro makes your and the lifes of anyone around you a little easier by allowing you to create customized payment pages for all transactions on Hedera."
+            title="Unlock more features"
+            description="Create fully customized payment requests and track every single payment from one powerful dashboard. More features. More clarity. More confidence."
             :links="[{ title: 'Learn more', url: '#features' }]"
         />
 
@@ -14,48 +14,52 @@
                     <h2 class="text-4xl font-semibold" id="features">Features</h2>
 
                     <p class="text-center text-xl">
-                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quidem delectus iusto deserunt, odit
-                        nulla molestiae fugiat vitae aut autem ullam animi accusantium laudantium, aliquid dignissimos
-                        labore magnam veritatis?
+                        Add details, set deadlines, customize your look — and manage all payments from a powerful
+                        dashboard. Additional features will be added in the near future.
                     </p>
                 </div>
 
                 <div class="grid lg:grid-cols-12 gap-5">
                     <div class="lg:col-span-9">
-                        <img src="/images/features-visual-placeholder.png" alt="features" />
+                        <img src="/images/features-visual.png" alt="features" />
                     </div>
 
                     <div class="lg:col-span-3 animate-slide-up">
-                        <div class="sticky flex flex-col gap-7 top-20">
+                        <div class="sticky flex flex-col gap-8 top-20 items-start">
                             <div class="flex flex-col gap-1">
-                                <div class="flex gap-2 items-center">
-                                    <IconLogo />
-                                    <h3 class="font-semibold text-lg">Customize payment pages</h3>
+                                <div class="flex gap-2">
+                                    <IconList class="mt-2" />
+                                    <h3 class="font-semibold text-xl">Advanced Payment Requests</h3>
                                 </div>
                                 <p class="text-base">
-                                    Add custom text and images to your payment page. Set an expiration date, and much
-                                    more.
+                                    Add clear descriptions, expiration dates, memos, and custom logos to make every
+                                    request polished and professional.
                                 </p>
                             </div>
 
                             <div class="flex flex-col gap-1">
-                                <div class="flex gap-2 items-center">
-                                    <IconLogo />
-                                    <h3 class="font-semibold text-lg">Dashboard</h3>
+                                <div class="flex gap-2">
+                                    <IconPalette class="mt-0" />
+                                    <h3 class="font-semibold text-xl">Branded Experience</h3>
                                 </div>
-                                <p class="text-base">Manage your payment links: create, update, and delete.</p>
+                                <p class="text-base">
+                                    Personalize your requests with your own logo and details, giving them a consistent,
+                                    trustworthy look.
+                                </p>
                             </div>
 
                             <div class="flex flex-col gap-1">
-                                <div class="flex gap-2 items-center">
-                                    <IconLogo />
-                                    <h3 class="font-semibold text-lg">Feature 3</h3>
+                                <div class="flex gap-2">
+                                    <IconDashboard class="mt-1" />
+                                    <h3 class="font-semibold text-xl">All-in-One Dashboard</h3>
                                 </div>
                                 <p class="text-base">
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, aut explicabo.
-                                    Consequuntur, quaerat itaque.
+                                    Track all your sent requests and incoming payments in one organized, easy-to-use
+                                    dashboard.
                                 </p>
                             </div>
+
+                            <NuxtLink to="/register" class="btn">Get started</NuxtLink>
                         </div>
                     </div>
                 </div>
@@ -68,12 +72,18 @@
                     <h2 class="text-4xl font-semibold" id="features">Pricing</h2>
 
                     <p class="text-center text-xl">
-                        Lorem ipsum dolor sit, amet consectetur elit. Quidem delectus iusto deserunt, odit nulla ipsa
-                        molestiae fugiat vitae aut autem ullam animi accusantium laudantium, recusandae aliquid
-                        dignissimos labore magnam veritatis?
+                        Our pricing is simple: each transaction has a fixed fee of only
+                        <span class="font-medium">$0.01</span>. For HBAR transactions the fee is the equivalent of $0.01
+                        in HBAR at the time of the transaction as reported by
+                        <a
+                            class="opacity-75 duration-300 hover:opacity-100"
+                            target="_blank"
+                            href="https://api.coingecko.com/api/v3/simple/price?ids=hedera-hashgraph&vs_currencies=usd"
+                            >CoinGecko</a
+                        >.
                     </p>
                 </div>
-                <NuxtLink to="/register" class="btn">Get started</NuxtLink>
+                <NuxtLink to="/register" class="btn">Sign up now</NuxtLink>
             </div>
         </section>
 
@@ -81,19 +91,49 @@
             <div class="container flex flex-col gap-12">
                 <h2 class="text-4xl font-semibold text-center" id="features">Testimonials</h2>
 
-                <div class="grid lg:grid-cols-12 gap-5 border">
-                    <div class="lg:col-span-8 lg:col-start-3 border">todo</div>
+                <div class="grid lg:grid-cols-12 gap-5">
+                    <div class="lg:col-span-8 lg:col-start-3">
+                        <div class="grid lg:grid-cols-2 gap-5">
+                            <div class="flex flex-col gap-5">
+                                <Testimonial
+                                    name="John Doe"
+                                    text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, aut explicabo. Consequuntur, quaerat itaque."
+                                />
+                                <Testimonial
+                                    name="John Doe"
+                                    text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, aut explicabo. Consequuntur, quaerat itaque."
+                                />
+                            </div>
+                            <div class="flex flex-col gap-5">
+                                <Testimonial
+                                    name="John Doe"
+                                    text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, aut explicabo. Consequuntur, quaerat itaque. Quia, aut explicabo. Consequuntur, quaerat itaque."
+                                />
+                                <Testimonial
+                                    name="John Doe"
+                                    text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia, aut explicabo. Consequuntur, quaerat itaque."
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <CTA />
+        <CTA
+            title="Not convinced yet?"
+            description="No worries, your can always use our free service. Create your first payment request now!"
+            :links="[{ title: 'Create new link', url: '/create' }]"
+            image="/images/create-free.png"
+        />
 
         <Footer />
     </main>
 </template>
 
 <script setup>
+import Testimonial from '../components/Testimonial.vue';
+
 useHead({
     title: 'HashFast Pro',
 });
