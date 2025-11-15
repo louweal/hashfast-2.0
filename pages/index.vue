@@ -2,6 +2,8 @@
     <main>
         <Header />
 
+        <div class="btn" @click="test()">Connect wallet</div>
+
         <Hero
             title="Fast payments for everyone"
             description="Quickly receive HBAR and USDC on Hedera from anyone."
@@ -19,7 +21,15 @@
 </template>
 
 <script setup>
+import { HederaService } from '~/lib/hedera';
+const hederaService = new HederaService();
+
 useHead({
     title: 'HashFast',
 });
+
+const test = async () => {
+    // init dappconnector
+    await hederaService.initDAppConnector();
+};
 </script>

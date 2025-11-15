@@ -1,15 +1,12 @@
 import { Client, AccountId, Hbar, TransferTransaction, TokenId } from '@hashgraph/sdk';
 import type { Link } from '@prisma/client';
+import { HashConnect, HashConnectConnectionState } from 'hashconnect';
+import type { SessionData } from 'hashconnect';
 import { useRuntimeConfig } from 'nuxt/app';
 import { ref } from 'vue';
 import type { Ref } from 'vue';
+
 import { LedgerId } from '@hashgraph/sdk';
-import {
-    HederaSessionEvent,
-    HederaJsonRpcMethod,
-    DAppConnector,
-    HederaChainId,
-} from '@hashgraph/hedera-wallet-connect';
 
 interface Transfer {
     account: string;
@@ -42,11 +39,11 @@ export class HederaService {
 
     private USD_FEE: number;
 
-    // private hashconnect: HashConnect;
-    private dAppConnector: DAppConnector;
+    private hashconnect: HashConnect;
 
-    // public state: Ref<HashConnectConnectionState> = ref(HashConnectConnectionState.Disconnected);
-    // public pairingData?: SessionData | null;
+    // public state: HashConnectConnectionState = HashConnectConnectionState.Disconnected
+    public state: Ref<HashConnectConnectionState> = ref(HashConnectConnectionState.Disconnected);
+    public pairingData?: SessionData | null;
 
     constructor() {
         const config = useRuntimeConfig();
@@ -68,13 +65,11 @@ export class HederaService {
             this.usdcTokenId = '0.0.456858';
             this.feeAccount = '0.0.6774573';
 
-            this.dAppConnector = new DAppConnector(
-                appMetadata,
+            this.hashconnect = new HashConnect(
                 LedgerId.MAINNET,
                 'b8b1efb6a5dc745fcde127bf04d22506',
-                Object.values(HederaJsonRpcMethod),
-                [HederaSessionEvent.ChainChanged, HederaSessionEvent.AccountsChanged],
-                [HederaChainId.Mainnet, HederaChainId.Testnet],
+                appMetadata,
+                false,
             );
         } else {
             // Testnet
@@ -90,53 +85,47 @@ export class HederaService {
             this.networkUrl = 'https://testnet.mirrornode.hedera.com';
             this.usdcTokenId = '0.0.429274';
             this.feeAccount = '0.0.1234567';
-            this.dAppConnector = new DAppConnector(
-                appMetadata,
+            this.hashconnect = new HashConnect(
                 LedgerId.TESTNET,
                 'b8b1efb6a5dc745fcde127bf04d22506',
-                Object.values(HederaJsonRpcMethod),
-                [HederaSessionEvent.ChainChanged, HederaSessionEvent.AccountsChanged],
-                [HederaChainId.Mainnet, HederaChainId.Testnet],
+                appMetadata,
+                false,
             );
         }
     }
 
-    async initDAppConnector() {
-        await this.dAppConnector.init({ logger: 'error' });
+    async initHashConnect() {
+        //register events
+        this.setUpHashConnectEvents();
+
+        //initialize
+        await this.hashconnect.init();
+
+        //open pairing modal
+        this.hashconnect.openPairingModal();
     }
 
-    // async initHashConnect() {
-    //     //register events
-    //     this.setUpHashConnectEvents();
+    async disconnectHashConnect() {
+        await this.hashconnect.disconnect();
+        this.pairingData = null;
+        this.state.value = HashConnectConnectionState.Disconnected;
+    }
 
-    //     //initialize
-    //     await this.hashconnect.init();
+    setUpHashConnectEvents() {
+        this.hashconnect.pairingEvent.on((newPairing) => {
+            console.log('new pairing:', newPairing);
+            this.pairingData = newPairing;
+        });
 
-    //     //open pairing modal
-    //     this.hashconnect.openPairingModal();
-    // }
+        this.hashconnect.disconnectionEvent.on((data) => {
+            this.pairingData = null;
+        });
 
-    // async disconnectHashConnect() {
-    //     await this.hashconnect.disconnect();
-    //     this.pairingData = null;
-    //     this.state.value = HashConnectConnectionState.Disconnected;
-    // }
-
-    // setUpHashConnectEvents() {
-    //     this.hashconnect.pairingEvent.on((newPairing) => {
-    //         console.log('new pairing:', newPairing);
-    //         this.pairingData = newPairing;
-    //     });
-
-    //     this.hashconnect.disconnectionEvent.on((data) => {
-    //         this.pairingData = null;
-    //     });
-
-    //     this.hashconnect.connectionStatusChangeEvent.on((connectionStatus) => {
-    //         this.state.value = connectionStatus;
-    //         console.log('state changed to:', this.state.value);
-    //     });
-    // }
+        this.hashconnect.connectionStatusChangeEvent.on((connectionStatus) => {
+            this.state.value = connectionStatus;
+            console.log('state changed to:', this.state.value);
+        });
+    }
 
     // isPaired() {
     //     console.log(this.state);
@@ -220,14 +209,14 @@ export class HederaService {
         return parseFloat(amount.toFixed(2));
     }
 
-    // async waitForPairing(): Promise<SessionData | null> {
-    //     return new Promise((resolve) => {
-    //         console.log(' waiting for pairing...');
-    //         this.hashconnect.pairingEvent.once((pairingData: SessionData | null) => {
-    //             resolve(pairingData);
-    //         });
-    //     });
-    // }
+    async waitForPairing(): Promise<SessionData | null> {
+        return new Promise((resolve) => {
+            console.log(' waiting for pairing...');
+            this.hashconnect.pairingEvent.once((pairingData: SessionData | null) => {
+                resolve(pairingData);
+            });
+        });
+    }
 
     async sendPayment(link: Link, pro: boolean = false) {
         if (pro === true) {
