@@ -19,7 +19,7 @@
                 <div class="flex justify-between items-center">
                     <h1 class="text-3xl font-semibold">Transactions</h1>
 
-                    <AccountButton :userInitial="user.name?.charAt(0)" />
+                    <AccountButton :userInitial="user.email?.charAt(0)" />
                 </div>
                 <div class="flex flex-wrap 2xl:flex-nowrap w-full gap-10 lg:flex-row-reverse xl:w-2/3">
                     <div class="w-full lg:w-auto">

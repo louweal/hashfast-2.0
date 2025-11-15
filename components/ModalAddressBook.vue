@@ -8,9 +8,6 @@
             <div class="absolute top-4 right-4 cursor-pointer" @click="handleToggle()"><IconCross /></div>
             <div class="text-heading">
                 <span class="opacity-50">{{ !contact ? 'Add' : 'Update' }} name for {{ accountId }}:</span>
-                <!-- <a class="opacity-80 font-medium" :href="`https://www.hashscan.io/${network}/account/${accountId}`">{{
-                    accountId
-                }}</a> -->
             </div>
             <form class="flex flex-col gap-3">
                 <input type="text" id="name" name="name" v-model="newName" placeholder="Name" />
@@ -23,10 +20,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-
 const config = useRuntimeConfig();
-const network = config.public.hederaNetwork;
 
 const props = defineProps({
     accountId: {
@@ -53,11 +47,11 @@ const {
     immediate: false, // Don’t fetch until accountId is available
 });
 
-const newName = ref('');
+const newName = ref(null);
 
 // Initialize once when contact loads
 watchEffect(() => {
-    if (contact.value && !newName.value) newName.value = contact.value.name ?? '';
+    if (contact.value && newName.value === null) newName.value = contact.value.name ?? '';
 });
 
 const handleCreate = async () => {

@@ -3,7 +3,7 @@
         to="/account"
         class="account-button rounded-full size-12 text-3xl flex justify-center items-center font-medium text-white opacity-60 hover:opacity-100 duration-300 ease-in-out"
     >
-        {{ userInitial }}
+        {{ userInitial.toUpperCase() }}
     </NuxtLink>
 </template>
 

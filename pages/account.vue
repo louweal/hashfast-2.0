@@ -14,7 +14,10 @@
             <div class="animate-slide-up bg-background p-8 rounded-lg border border-border w-full xs:w-[300px]">
                 <form @submit.prevent="updateUser" class="flex flex-col gap-4">
                     <div class="flex flex-col gap-1">
-                        <label for="password" class="block text-body">Hedera Account ID ({{ network }})</label>
+                        <label for="password" class="block text-body"
+                            >Hedera Account ID
+                            <span v-if="network != 'mainnet'">({{ network }})</span>
+                        </label>
                         <div class="relative">
                             <input
                                 v-model="user.wallet"
@@ -22,6 +25,9 @@
                                 id="wallet"
                                 class="grow"
                                 placeholder="Type or click 'Detect'"
+                                :class="{
+                                    'border-secondary!': user.wallet === detectedWallet,
+                                }"
                                 required
                             />
                             <div
@@ -42,19 +48,21 @@
                     <div class="flex flex-col gap-1">
                         <label for="email" class="block text-body">Image</label>
                         <div @click="triggerFileInput">
-                            <div>
-                                <img
-                                    v-if="imageUrl"
-                                    class=""
-                                    :src="imageUrl"
-                                    width="50"
-                                    height="50"
-                                    title="Upload icon"
-                                />
-                                <div v-else class="cursor-pointer py-3">
-                                    <div v-if="user.image"><img class="" :src="user.image" height="20" /></div>
-                                    <IconLogo v-else />
+                            <div class="cursor-pointer py-3">
+                                <div v-if="user.image" class="flex gap-2 w-full justify-between items-center">
+                                    <img class="" :src="user.image" height="20" />
+                                    <div
+                                        class="text-error cursor-pointer"
+                                        @click.prevent.stop="
+                                            user.image = null;
+                                            fileInput.value = null;
+                                            imageFile.value = null;
+                                        "
+                                    >
+                                        Reset
+                                    </div>
                                 </div>
+                                <IconLogo v-else />
                             </div>
 
                             <input
@@ -95,8 +103,6 @@ const imageFile = ref(null);
 
 // get previous url (history 1 back)
 const router = useRouter();
-
-// get previous url
 const previousUrl = router.options.history.state.back;
 
 // fetch user data
@@ -104,7 +110,6 @@ const { user, loading, error: userError, isLoggedIn, fetchUser } = useAuth();
 await fetchUser();
 
 let error = ref(null);
-const imageUrl = ref(user.image);
 
 const detectWallet = async (event) => {
     event.preventDefault();
@@ -144,15 +149,19 @@ const updateUser = async () => {
 };
 
 const triggerFileInput = () => {
+    console.log('trigger file input click');
     if (fileInput.value) {
         fileInput.value.click();
     } else {
-        console.warn('fileInput ref is not set yet');
+        // console.warn('fileInput ref is not set yet');
     }
 };
 
 const handleFileChange = async (event) => {
+    console.log('handle file change');
     if (!event.target.files[0]) return;
+
+    console.log('hello');
 
     if (event.target.files[0].size > 1024 * 40) {
         alert('Image size must be less than 40KB');

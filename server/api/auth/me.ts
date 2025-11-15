@@ -23,7 +23,6 @@ export default defineEventHandler(async (event) => {
             select: {
                 id: true,
                 email: true,
-                name: true,
                 wallet: true,
                 image: true,
                 lastLogin: true,

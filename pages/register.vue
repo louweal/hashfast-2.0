@@ -40,23 +40,37 @@
                     <h2 class="text-lg font-medium text-body">Enter your details</h2>
 
                     <form @submit.prevent="updateUser" class="space-y-4">
-                        <div class="flex flex-col gap-2">
+                        <!-- <div class="flex flex-col gap-2">
                             <label for="email" class="block text-body">Name</label>
                             <input v-model="user.name" type="text" id="name" required class="" />
-                        </div>
+                        </div> -->
                         <div class="flex flex-col gap-2">
-                            <label for="password" class="block text-body">Hedera Wallet ID</label>
-                            <div class="flex gap-3">
+                            <label for="password" class="block text-body">Hedera Account ID</label>
+                            <div class="relative">
                                 <input
                                     v-model="user.wallet"
                                     type="text"
                                     id="wallet"
                                     class="grow"
                                     placeholder="Type or click 'Detect'"
+                                    :class="{
+                                        'border-secondary!': user.wallet === detectedWallet,
+                                    }"
                                     required
                                 />
-                                <button class="btn btn--dark btn--square" @click="detectWallet">Detect</button>
+                                <div
+                                    class="absolute top-2 right-2 btn btn--transparent btn--small"
+                                    :class="{
+                                        'is-active': user.wallet !== detectedWallet,
+                                    }"
+                                    @click="detectWallet"
+                                >
+                                    Detect
+                                </div>
                             </div>
+                            <p v-if="user.wallet === detectedWallet" class="text-secondary font-medium">
+                                Successfully detected wallet
+                            </p>
                         </div>
                         <div v-if="error" class="text-error mt-2">{{ error }}</div>
                         <div class="flex gap-4">
@@ -94,11 +108,12 @@ const newUser = ref({
 let userId = null;
 
 const user = ref({
-    name: '',
+    // name: '',
     wallet: '',
 });
 
 let error = ref(null);
+const detectedWallet = ref(null);
 
 const detectWallet = async (event) => {
     event.preventDefault();
@@ -109,6 +124,7 @@ const detectWallet = async (event) => {
         if (hederaService.pairingData) {
             // get last item in array
             user.value.wallet = hederaService.pairingData.accountIds[hederaService.pairingData.accountIds.length - 1];
+            detectedWallet.value = user.value.wallet;
         }
     } catch (error) {
         console.error('Failed to detect wallet:', error);

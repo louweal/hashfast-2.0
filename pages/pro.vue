@@ -5,7 +5,7 @@
         <Hero
             title="Unlock more features"
             description="Create fully customized payment requests and track every single payment from one powerful dashboard. More features. More clarity. More confidence."
-            :links="[{ title: 'Learn more', url: '#features' }]"
+            :links="[{ title: 'Pro Features', url: '#features' }]"
         />
 
         <section class="py-20">

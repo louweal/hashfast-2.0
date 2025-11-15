@@ -27,8 +27,13 @@ export function useAuth() {
             await $fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
             user.value = null;
 
-            // refresh page
-            location.reload();
+            // go to home if on dashboard
+            if (window.location.pathname.startsWith('/dashboard')) {
+                navigateTo('/');
+            } else {
+                // reload page
+                location.reload();
+            }
         } catch (err) {
             console.error('Failed to logout:', err);
         }

@@ -19,7 +19,7 @@
                 <div class="flex justify-between items-center">
                     <h1 class="text-3xl font-semibold">Links</h1>
 
-                    <AccountButton :userInitial="user.name?.charAt(0)" />
+                    <AccountButton :userInitial="user.email?.charAt(0)" />
                 </div>
                 <div class="flex flex-col gap-10 w-full grow">
                     <div class="flex gap-5 w-full">
