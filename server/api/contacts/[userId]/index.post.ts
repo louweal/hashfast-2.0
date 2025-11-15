@@ -4,6 +4,12 @@ import { createError } from 'h3';
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
+    const { userId } = event.context.params ?? {};
+
+    if (!userId) {
+        throw createError({ statusCode: 400, statusMessage: 'Missing userId' });
+    }
+
     try {
         const body = await readBody(event);
         const contact = await prisma.contacts.create({ data: body });

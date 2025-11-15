@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 const config = useRuntimeConfig();
 const network = ref(config.public.hederaNetwork || 'testnet');
@@ -72,16 +72,24 @@ const props = defineProps({
         type: Function,
         required: true,
     },
+    userId: {
+        type: String,
+        required: true,
+    },
 });
 
-const accountId = ref(props.transactionId.split('@')[0]);
-const timestamp = ref(props.transactionId.split('@')[1] * 1000);
+const accountId = computed(() => props.transactionId.split('@')[0]);
+const timestamp = computed(() => props.transactionId.split('@')[1] * 1000);
 
 const {
     data: contact,
     pending,
     error,
-} = await useAsyncData('contact', () => $fetch(`/api/contacts/${accountId.value}`));
+} = useAsyncData(
+    () => `contact-${props.userId}-${accountId.value}`,
+    () => $fetch(`/api/contacts/${props.userId}/${accountId.value}`),
+    { watch: [accountId] }, // optional: refetch when accountId changes
+);
 
 const hue = (s) => {
     if (!s) {

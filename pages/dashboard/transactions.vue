@@ -77,6 +77,7 @@
                                     :amount="transaction.link.amount"
                                     :currency="transaction.link.currency"
                                     :createdAt="transaction.createdAt"
+                                    :userId="user.id"
                                     :handleAddContact="handleAddContact"
                                 />
                             </TransitionGroup>

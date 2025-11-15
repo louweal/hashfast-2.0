@@ -63,7 +63,8 @@ model Survey {
 }
 
 model Contacts {
-  accountId  String   @id
+  accountId  String
   name       String
   userId     String
+  @@unique([accountId, userId])
 }

@@ -48,7 +48,7 @@ const {
     refresh,
     pending,
     error,
-} = await useAsyncData('name', () => $fetch(`/api/contacts/${props.accountId}`), {
+} = await useAsyncData('name', () => $fetch(`/api/contacts/${props.userId}/${props.accountId}`), {
     watch: [() => props.accountId],
     immediate: false, // Don’t fetch until accountId is available
 });
@@ -66,7 +66,7 @@ const handleCreate = async () => {
     }
 
     try {
-        const response = await $fetch('/api/contacts', {
+        const response = await $fetch('/api/contacts/' + props.userId, {
             method: 'POST',
             body: {
                 accountId: props.accountId,
@@ -87,7 +87,7 @@ const handleUpdate = async () => {
     }
 
     try {
-        const response = await $fetch(`/api/contacts/${props.accountId}`, {
+        const response = await $fetch(`/api/contacts/${props.userId}/${props.accountId}`, {
             method: 'PATCH',
             body: {
                 name: newName.value,
