@@ -32,8 +32,8 @@
                                     <h3 class="font-semibold text-xl">Advanced Payment Requests</h3>
                                 </div>
                                 <p class="text-base">
-                                    Add clear descriptions, expiration dates, memos, and custom logos to make every
-                                    request polished and professional.
+                                    Add descriptions, expiration dates, memos, and custom logos to make every request
+                                    polished and professional.
                                 </p>
                             </div>
 
@@ -72,9 +72,10 @@
                     <h2 class="text-4xl font-semibold" id="features">Pricing</h2>
 
                     <p class="text-center text-xl">
-                        Our pricing is simple: each transaction has a fixed fee of only
-                        <span class="font-medium">$0.01</span>. For HBAR transactions the fee is the equivalent of $0.01
-                        in HBAR at the time of the transaction as reported by
+                        Our pricing is simple: Each HashFast Pro transaction has a fixed fee of
+                        <span class="font-medium text-base">$0.01</span>. For HBAR transactions the fee is the
+                        equivalent of <span class="font-medium text-base">$0.01</span> in HBAR at the time of the
+                        transaction as reported by
                         <a
                             class="opacity-75 duration-300 hover:opacity-100"
                             target="_blank"
