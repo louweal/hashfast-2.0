@@ -15,29 +15,12 @@
             image="/images/create-pro.png"
         />
 
-        <div class="btn" @click="openModal()">Open modal</div>
-
         <Footer />
     </main>
 </template>
 
 <script setup>
-import { HederaService } from '~/lib/hedera';
-const hederaService = new HederaService();
-
 useHead({
     title: 'HashFast',
 });
-
-const test = async () => {
-    // init dappconnector
-    await hederaService.initDAppConnector();
-};
-
-const openModal = async () => {
-    console.log('openmodal');
-    await hederaService.initDAppConnector();
-
-    await hederaService.connect();
-};
 </script>
