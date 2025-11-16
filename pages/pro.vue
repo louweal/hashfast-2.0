@@ -4,7 +4,7 @@
 
         <Hero
             title="Unlock more features"
-            description="Create fully customized payment requests and track every single payment from one powerful dashboard. More features. More clarity. More confidence."
+            description="Create fully customized payment requests and track every single payment from one powerful dashboard."
             :links="[{ title: 'Pro Features', url: '#features' }]"
         />
 
@@ -15,7 +15,7 @@
 
                     <p class="text-center text-xl">
                         Add details, set deadlines, customize your look — and manage all payments from a powerful
-                        dashboard. Additional features will be added in the near future.
+                        dashboard.
                     </p>
                 </div>
 
