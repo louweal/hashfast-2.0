@@ -1,7 +1,7 @@
 // send email using sendgrid
-import fs from "fs";
-import path from "path";
-import sgMail from "@sendgrid/mail";
+import fs from 'fs';
+import path from 'path';
+import sgMail from '@sendgrid/mail';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
@@ -10,26 +10,29 @@ const network = process.env.HEDERA_NETWORK as string;
 export default defineEventHandler(async (event) => {
     const body = await readBody(event);
     const { email, accountId, payerAccountId, amount, currency, paymentDate } = body;
-
-    console.log("sending email");
     // sgMail.setDataResidency('eu');
 
     const subject = `Payment received: +${amount} ${currency}`;
 
-    const textContent = `Good news!
+    const textContent = `Payment Received: +${amount} ${currency}
 
-Your payment request has been paid by ${payerAccountId}.
+Your payment request has been paid!
 
-Details:
-- Sender Wallet: ${payerAccountId}
-- Your Wallet: ${accountId}
-- Amount: ${amount} ${currency}
-- Date: ${paymentDate}
+Transaction:
+${amount} ${currency} from ${payerAccountId} (https://hashscan.io/${network}/account/${payerAccountId})
+to ${accountId} (https://hashscan.io/${network}/account/${accountId}).
 
-Thank you for using HashFast!`;
+Date: ${paymentDate}
 
-    const templatePath = path.resolve("server/emails/payment-received.html");
-    let htmlTemplate = fs.readFileSync(templatePath, "utf8");
+Thank you for using HashFast!
+
+HashFast Pro users can manage payment request settings in the Dashboard.
+
+Go to Dashboard:
+https://hashfast.app/dashboard/transactions`;
+
+    const templatePath = path.resolve('server/emails/payment-received.html');
+    let htmlTemplate = fs.readFileSync(templatePath, 'utf8');
 
     const htmlContent = htmlTemplate
         .replace(/{{payerAccountId}}/g, payerAccountId)
@@ -49,7 +52,7 @@ Thank you for using HashFast!`;
     sgMail
         .send(msg as any)
         .then(() => {
-            console.log("Email sent");
+            console.log('Email sent');
         })
         .catch((error) => {
             console.error(error);

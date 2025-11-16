@@ -32,6 +32,26 @@ export default defineNuxtConfig({
                     name: 'description',
                     content: 'Safely receive HBAR and USDC on Hedera',
                 },
+                {
+                    name: 'og:title',
+                    content: 'HashFast',
+                },
+                {
+                    name: 'og:description',
+                    content: 'Safely receive HBAR and USDC on Hedera',
+                },
+                {
+                    name: 'og:image',
+                    content: 'https://www.hashfast.app/images/og-image.png',
+                },
+                // {
+                //     name: 'og:url',
+                //     content: 'https://www.hashfast.app',
+                // },
+                {
+                    name: 'og:type',
+                    content: 'website',
+                },
             ],
         },
     },

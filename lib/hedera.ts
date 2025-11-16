@@ -115,7 +115,7 @@ export class HederaService {
             const appMetadata = {
                 name: 'HashFast',
                 description: '',
-                icons: ['https://testnet.hashfast.app/app-icon.svg'],
+                icons: ['https://www.hashfast.app/app-icon.svg'],
                 url: 'http://localhost:3000', // todo
             };
 

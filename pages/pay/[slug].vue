@@ -35,7 +35,7 @@ const route = useRoute();
 const { data: link, pending, error } = await useAsyncData('link', () => $fetch(`/api/links/${route.params.slug}`));
 const { data: user } = await useAsyncData('user', () => $fetch('/api/users/' + link.value.userId));
 
-const isPaid = ref(true);
+const isPaid = ref(false);
 
 // link without email
 const publicLink = computed(() => {
@@ -112,4 +112,20 @@ const sendEmail = async (transactionId) => {
         console.error('Failed to send email:', err);
     }
 };
+
+useHead({
+    title: 'Payment Request | HashFast',
+    meta: [
+        {
+            hid: 'description',
+            name: 'description',
+            content:
+                'You received a request to pay ' +
+                link.value.amount +
+                ' ' +
+                link.value.currency.toUpperCase() +
+                ' on Hedera.',
+        },
+    ],
+});
 </script>
