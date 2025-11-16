@@ -41,7 +41,7 @@ export default defineNuxtConfig({
                     content: 'Safely receive HBAR and USDC on Hedera',
                 },
                 {
-                    name: 'og:image',
+                    property: 'og:image',
                     content: 'https://www.hashfast.app/images/og-image.png',
                 },
                 // {
@@ -49,7 +49,7 @@ export default defineNuxtConfig({
                 //     content: 'https://www.hashfast.app',
                 // },
                 {
-                    name: 'og:type',
+                    property: 'og:type',
                     content: 'website',
                 },
             ],
