@@ -36,7 +36,7 @@
                 <div class="flex w-full justify-between">
                     <span class="label">Receiver</span>
                     <a
-                        class="value"
+                        class="value hover:opacity-75 transition-opacity duration-300 ease-in-out"
                         v-if="accountId"
                         :href="`https://hashscan.io/${network}/account/${accountId}/operations`"
                         target="_blank"

@@ -124,7 +124,7 @@
         <CTA
             title="Not convinced yet?"
             description="No worries, your can always use our free service. Create your first payment request now!"
-            :links="[{ title: 'Create new link', url: '/create' }]"
+            :links="[{ title: 'Create payment request', url: '/create' }]"
             image="/images/create-free.png"
         />
 

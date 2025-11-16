@@ -14,9 +14,9 @@
                     class="thank-you w-full xs:w-[300px] rounded-lg border border-border p-6 bg-background flex flex-col gap-5"
                 >
                     <h3 class="font-semibold text-lg">Thank you for using HashFast</h3>
-                    <p>Did you know that you can create your own payment request links to share with others?</p>
-
-                    <p>It's 100% free and no sign up required.</p>
+                    <p class="text-base">
+                        Did you know that you can create your own payment request links to share with others?
+                    </p>
                     <NuxtLink to="/" class="btn btn-primary w-full">Discover HashFast</NuxtLink>
                 </div>
             </div>
@@ -35,7 +35,7 @@ const route = useRoute();
 const { data: link, pending, error } = await useAsyncData('link', () => $fetch(`/api/links/${route.params.slug}`));
 const { data: user } = await useAsyncData('user', () => $fetch('/api/users/' + link.value.userId));
 
-const isPaid = ref(false);
+const isPaid = ref(true);
 
 // link without email
 const publicLink = computed(() => {

@@ -53,11 +53,7 @@ export default defineNuxtConfig({
     },
     vite: {
         resolve: {
-            alias: {
-                // Redirect the broken import to the correct path
-                '@reown/appkit/adapters': '@reown/appkit',
-                // WcHelpersUtil: '@reown/appkit/dist/esm/utils/WcHelpersUtil',
-            },
+            alias: {},
         },
     },
 });

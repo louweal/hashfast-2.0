@@ -42,7 +42,6 @@
                                     class="bg-background! grow"
                                 />
                             </form>
-                            <!-- <NuxtLink to="/create" class="btn h-[47px]!">New link</NuxtLink> -->
                         </div>
 
                         <ul class="flex gap-10 text-lg font-medium">

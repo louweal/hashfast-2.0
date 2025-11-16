@@ -1,14 +1,17 @@
-import { Client, AccountId, Hbar, TransferTransaction, TokenId } from '@hashgraph/sdk';
+import { Client, AccountId, Hbar, TransferTransaction, TransactionId, TokenId } from '@hashgraph/sdk';
+import type { SessionTypes } from '@walletconnect/types';
 import type { Link } from '@prisma/client';
 import { useRuntimeConfig } from 'nuxt/app';
 import { ref } from 'vue';
 import type { Ref } from 'vue';
+
 import { LedgerId } from '@hashgraph/sdk';
 import {
     HederaSessionEvent,
     HederaJsonRpcMethod,
     DAppConnector,
     HederaChainId,
+    DAppSigner,
 } from '@hashgraph/hedera-wallet-connect';
 
 interface Transfer {
@@ -33,6 +36,28 @@ interface MirrorNodeResponse {
     transactions: TransactionRecord[];
 }
 
+export interface Transaction {
+    id: string;
+    type: 'transfer' | 'mint' | 'burn' | 'mission' | 'donation';
+    amount: number;
+    from: string;
+    to: string;
+    timestamp: string;
+    status: 'pending' | 'success' | 'failed';
+    memo?: string;
+}
+
+export interface WalletState {
+    isConnected: boolean;
+    accountId: string | null;
+    balance: {
+        hbar: number;
+        usdc: number;
+    };
+    transactions: Transaction[];
+    signer?: DAppSigner;
+}
+
 export class HederaService {
     private client: Client;
     private network: string;
@@ -44,6 +69,8 @@ export class HederaService {
 
     // private hashconnect: HashConnect;
     private dAppConnector: DAppConnector;
+    // private sessionTopic: string | null = null;
+    private state: WalletState;
 
     // public state: Ref<HashConnectConnectionState> = ref(HashConnectConnectionState.Disconnected);
     // public pairingData?: SessionData | null;
@@ -52,6 +79,13 @@ export class HederaService {
         const config = useRuntimeConfig();
 
         this.USD_FEE = 0.01;
+
+        this.state = {
+            isConnected: false,
+            accountId: null,
+            balance: { hbar: 0, usdc: 0 },
+            transactions: [],
+        };
 
         // Initialize client based on network
         if (config.public.hederaNetwork === 'mainnet') {
@@ -82,7 +116,7 @@ export class HederaService {
                 name: 'HashFast',
                 description: '',
                 icons: ['https://testnet.hashfast.app/app-icon.svg'],
-                url: 'https://testnet.hashfast.app',
+                url: 'http://localhost:3000', // todo
             };
 
             this.client = Client.forTestnet();
@@ -99,49 +133,188 @@ export class HederaService {
                 [HederaChainId.Mainnet, HederaChainId.Testnet],
             );
         }
+
+        this.dAppConnector.onSessionIframeCreated = (session) => {
+            this.handleNewSession(session);
+        };
+    }
+
+    handleNewSession(session: SessionTypes.Struct) {
+        const sessionAccount = session.namespaces?.hedera?.accounts?.[0];
+        const sessionParts = sessionAccount?.split(':');
+        const accountId = sessionParts.pop();
+        const network = sessionParts.pop() || 'testnet';
+
+        if (!accountId) {
+            console.log('No accountId found in session');
+            return;
+        } else {
+            // Save the accountId and network in local storage for later use
+            localStorage.setItem('hederaAccountId', accountId);
+            localStorage.setItem('hederaNetwork', network);
+            console.log('sessionAccount is', accountId, network);
+        }
     }
 
     async initDAppConnector() {
-        await this.dAppConnector.init({ logger: 'error' });
+        try {
+            await this.dAppConnector.init({ logger: 'error' });
+
+            console.log('DAppConnector initialized');
+        } catch (error) {
+            console.error('Error initializing DAppConnector:', error);
+            throw error;
+        }
+    }
+    async openModal(): Promise<WalletState> {
+        if (!this.dAppConnector) {
+            throw new Error('DAppConnector not available');
+        }
+
+        try {
+            console.log('🔗 Opening WalletConnect modal...');
+            console.log('📱 Make sure you have HashPack or Blade wallet installed');
+            console.log("🌐 If using browser extension, ensure it's enabled");
+
+            // Open the WalletConnect modal
+            const session = await this.dAppConnector.openModal();
+            // Once connected, handle and store the session information
+            this.handleNewSession(session);
+
+            return this.state;
+        } catch (error) {
+            console.error('❌ Error connecting wallet:', error);
+
+            // Provide helpful error messages
+            if (error instanceof Error && error.message?.includes('scheme')) {
+                console.error('💡 Solution: Install HashPack or Blade wallet extension');
+                console.error('🔗 HashPack: https://hashpack.app/');
+                console.error('🔗 Blade: https://blade.xyz/');
+            }
+
+            throw error;
+        }
     }
 
-    // async initHashConnect() {
-    //     //register events
-    //     this.setUpHashConnectEvents();
+    // Get signer for the connected account
+    getSigner(): DAppSigner | null {
+        return this.state.signer || null;
+    }
 
-    //     //initialize
-    //     await this.hashconnect.init();
+    async sendPayment(link: Link, pro: boolean = false) {
+        if (pro === true) {
+            console.log('send pro payment');
+        } else {
+            console.log('send normal payment');
+        }
 
-    //     //open pairing modal
-    //     this.hashconnect.openPairingModal();
-    // }
+        if (!link.accountId) {
+            throw new Error('Link does not have an accountId');
+        }
+        if (!link.amount) {
+            throw new Error('Link does not have an amount');
+        }
+        if (!link.currency) {
+            throw new Error('Link does not have a currency');
+        }
 
-    // async disconnectHashConnect() {
-    //     await this.hashconnect.disconnect();
-    //     this.pairingData = null;
-    //     this.state.value = HashConnectConnectionState.Disconnected;
-    // }
+        await this.initDAppConnector();
+        await this.openModal();
 
-    // setUpHashConnectEvents() {
-    //     this.hashconnect.pairingEvent.on((newPairing) => {
-    //         console.log('new pairing:', newPairing);
-    //         this.pairingData = newPairing;
-    //     });
+        const hederaAccountId = localStorage.getItem('hederaAccountId');
+        console.log('hederaAccountId :>> ', hederaAccountId);
 
-    //     this.hashconnect.disconnectionEvent.on((data) => {
-    //         this.pairingData = null;
-    //     });
+        while (!hederaAccountId) {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            console.log('waiting for connection...');
+        }
 
-    //     this.hashconnect.connectionStatusChangeEvent.on((connectionStatus) => {
-    //         this.state.value = connectionStatus;
-    //         console.log('state changed to:', this.state.value);
-    //     });
-    // }
+        const toAccount = link.accountId as string;
+        const fromAccount = hederaAccountId as string;
+        // get accountId from localstorage
+        const signer = this.dAppConnector.signers.find(
+            (signer_) => signer_.getAccountId().toString() === hederaAccountId,
+        );
 
-    // isPaired() {
-    //     console.log(this.state);
-    //     return this.state === HashConnectConnectionState.Connected || this.state === HashConnectConnectionState.Paired;
-    // }
+        console.log(signer);
+
+        if (!signer) {
+            throw new Error('Signer not found');
+        }
+
+        let transaction;
+
+        if (link.currency == 'hbar') {
+            const hbarPrice = await this.hbarPrice();
+            const HBAR_FEE = this.USD_FEE / hbarPrice;
+            const TINYBAR_FEE = Math.floor(HBAR_FEE * 100_000_000);
+
+            let tinybarAmount = Number(link.amount) * 100_000_000;
+
+            if (pro) {
+                // Pro
+                transaction = new TransferTransaction()
+                    .addHbarTransfer(fromAccount, Hbar.fromTinybars(-1 * tinybarAmount)) //Sending account
+                    .addHbarTransfer(toAccount, Hbar.fromTinybars(tinybarAmount - TINYBAR_FEE)) //Receiving account
+                    .addHbarTransfer(this.feeAccount, Hbar.fromTinybars(TINYBAR_FEE)); // Fee
+            } else {
+                transaction = new TransferTransaction()
+                    .addHbarTransfer(fromAccount, Hbar.fromTinybars(-1 * tinybarAmount)) //Sending account
+                    .addHbarTransfer(toAccount, Hbar.fromTinybars(tinybarAmount)); //Receiving account
+            }
+        } else if (link.currency == 'usdc') {
+            const scaledAmount = +link.amount * 1e6;
+            let usdcAmount = Number(scaledAmount);
+            const SCALED_USDC_FEE = this.USD_FEE * 1e6;
+            if (pro) {
+                transaction = new TransferTransaction()
+                    .addTokenTransfer(TokenId.fromString(this.usdcTokenId), fromAccount, -usdcAmount) //Sending account
+                    .addTokenTransfer(TokenId.fromString(this.usdcTokenId), toAccount, usdcAmount - SCALED_USDC_FEE) //Receiving account
+                    .addTokenTransfer(TokenId.fromString(this.usdcTokenId), this.feeAccount, SCALED_USDC_FEE); // Fee
+            } else {
+                transaction = new TransferTransaction()
+                    .addTokenTransfer(TokenId.fromString(this.usdcTokenId), fromAccount, -usdcAmount) //Sending account
+                    .addTokenTransfer(TokenId.fromString(this.usdcTokenId), toAccount, usdcAmount); //Receiving account
+            }
+        } else {
+            return { transactionId: null, receipt: null };
+        }
+
+        if (link.memo) {
+            transaction = transaction.setTransactionMemo(link.memo);
+        }
+
+        transaction = transaction.setNodeAccountIds([
+            new AccountId(3),
+            new AccountId(4),
+            new AccountId(6),
+            new AccountId(7),
+        ]);
+
+        const signedTx = await transaction.freezeWithSigner(signer as any);
+        const executedTx = await signedTx.executeWithSigner(signer as any);
+        const transactionId = executedTx.transactionId.toString();
+        const receipt = await executedTx.getReceiptWithSigner(signer as any);
+        return { transactionId, receipt };
+    }
+
+    async executeTransaction(transaction: TransferTransaction) {
+        // if (!this.pairingData) return;
+
+        // const fromAccount = AccountId.fromString(this.state.accountId as string);
+        const signer = this.state.signer;
+
+        try {
+            const response = await transaction.executeWithSigner(signer as any);
+            const transactionId = response.transactionId.toString();
+            const receipt = await response.getReceiptWithSigner(signer as any);
+            return { transactionId, receipt };
+        } catch (e) {
+            console.log(e);
+
+            return { transactionId: null, receipt: null };
+        }
+    }
 
     parseTransactionId(transactionId: string): string {
         const [accountId, timestampPart] = transactionId.split('@');
@@ -218,118 +391,6 @@ export class HederaService {
         }
 
         return parseFloat(amount.toFixed(2));
-    }
-
-    // async waitForPairing(): Promise<SessionData | null> {
-    //     return new Promise((resolve) => {
-    //         console.log(' waiting for pairing...');
-    //         this.hashconnect.pairingEvent.once((pairingData: SessionData | null) => {
-    //             resolve(pairingData);
-    //         });
-    //     });
-    // }
-
-    async sendPayment(link: Link, pro: boolean = false) {
-        if (pro === true) {
-            console.log('send pro payment');
-        } else {
-            console.log('send normal payment');
-        }
-
-        if (!link.accountId) {
-            throw new Error('Link does not have an accountId');
-        }
-        if (!link.amount) {
-            throw new Error('Link does not have an amount');
-        }
-        if (!link.currency) {
-            throw new Error('Link does not have a currency');
-        }
-
-        const memo = link.memo ? link.memo : '';
-
-        if (this.state.value === HashConnectConnectionState.Disconnected) {
-            await this.initHashConnect();
-
-            await this.waitForPairing();
-        }
-
-        if (!this.pairingData) return;
-        // let accountId = this.pairingData ? this.pairingData.accountIds[0] : "";
-
-        const toAccount = AccountId.fromString(link.accountId);
-        const fromAccount = AccountId.fromString(this.pairingData.accountIds[0]);
-        const signer = this.hashconnect.getSigner(fromAccount as any);
-
-        const hbarPrice = await this.hbarPrice();
-        const HBAR_FEE = this.USD_FEE / hbarPrice;
-        const TINYBAR_FEE = Math.floor(HBAR_FEE * 100_000_000);
-
-        if (link.currency == 'hbar') {
-            let tinybarAmount = Number(link.amount) * 100_000_000;
-
-            let transaction;
-            if (pro) {
-                // Pro
-                transaction = await new TransferTransaction()
-                    .addHbarTransfer(fromAccount, Hbar.fromTinybars(-1 * tinybarAmount)) //Sending account
-                    .addHbarTransfer(toAccount, Hbar.fromTinybars(tinybarAmount - TINYBAR_FEE)) //Receiving account
-                    .addHbarTransfer(this.feeAccount, Hbar.fromTinybars(TINYBAR_FEE)) // Fee
-                    .setTransactionMemo(memo)
-                    .freezeWithSigner(signer as any);
-            } else {
-                transaction = await new TransferTransaction()
-                    .addHbarTransfer(fromAccount, Hbar.fromTinybars(-1 * tinybarAmount)) //Sending account
-                    .addHbarTransfer(toAccount, Hbar.fromTinybars(tinybarAmount)) //Receiving account
-                    .setTransactionMemo(memo)
-                    .freezeWithSigner(signer as any);
-            }
-
-            return await this.executeTransaction(transaction);
-        }
-
-        if (link.currency == 'usdc') {
-            const scaledAmount = +link.amount * 1e6;
-            let usdcAmount = Number(scaledAmount);
-            let transaction;
-            const SCALED_USDC_FEE = this.USD_FEE * 1e6;
-            if (pro) {
-                transaction = await new TransferTransaction()
-                    .addTokenTransfer(TokenId.fromString(this.usdcTokenId), fromAccount, -usdcAmount) //Sending account
-                    .addTokenTransfer(TokenId.fromString(this.usdcTokenId), toAccount, usdcAmount - SCALED_USDC_FEE) //Receiving account
-                    .addTokenTransfer(TokenId.fromString(this.usdcTokenId), this.feeAccount, SCALED_USDC_FEE) // Fee
-                    .setTransactionMemo(memo)
-                    .freezeWithSigner(signer as any);
-            } else {
-                transaction = await new TransferTransaction()
-                    .addTokenTransfer(TokenId.fromString(this.usdcTokenId), fromAccount, -usdcAmount) //Sending account
-                    .addTokenTransfer(TokenId.fromString(this.usdcTokenId), toAccount, usdcAmount) //Receiving account
-                    .setTransactionMemo(memo)
-                    .freezeWithSigner(signer as any);
-            }
-
-            return await this.executeTransaction(transaction);
-        }
-
-        return { transactionId: null, receipt: null };
-    }
-
-    async executeTransaction(transaction: TransferTransaction) {
-        if (!this.pairingData) return;
-
-        const fromAccount = AccountId.fromString(this.pairingData.accountIds[0]); // assumes paired and takes first paired account id
-        const signer = this.hashconnect.getSigner(fromAccount as any);
-
-        try {
-            const response = await transaction.executeWithSigner(signer as any);
-            const transactionId = response.transactionId.toString();
-            const receipt = await response.getReceiptWithSigner(signer as any);
-            return { transactionId, receipt };
-        } catch (e) {
-            console.log(e);
-
-            return { transactionId: null, receipt: null };
-        }
     }
 
     async hbarPrice() {

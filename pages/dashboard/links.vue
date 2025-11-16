@@ -31,7 +31,7 @@
                                 class="bg-background! grow"
                             />
                         </form>
-                        <NuxtLink to="/create" class="btn h-[47px]!">New link</NuxtLink>
+                        <NuxtLink to="/create" class="btn h-[47px]!">New payment request</NuxtLink>
                     </div>
 
                     <div class="grid lg:grid-cols-3 gap-20">
