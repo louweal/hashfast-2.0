@@ -126,6 +126,17 @@ useHead({
                 link.value.currency.toUpperCase() +
                 ' on Hedera.',
         },
+        // og:description
+        {
+            hid: 'og:description',
+            name: 'og:description',
+            content:
+                'You received a request to pay ' +
+                link.value.amount +
+                ' ' +
+                link.value.currency.toUpperCase() +
+                ' on Hedera.',
+        },
     ],
 });
 </script>
