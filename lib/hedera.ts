@@ -2,8 +2,6 @@ import { Client, AccountId, Hbar, TransferTransaction, TransactionId, TokenId } 
 import type { SessionTypes } from '@walletconnect/types';
 import type { Link } from '@prisma/client';
 import { useRuntimeConfig } from 'nuxt/app';
-import { ref } from 'vue';
-import type { Ref } from 'vue';
 
 import { LedgerId } from '@hashgraph/sdk';
 import {
@@ -67,13 +65,8 @@ export class HederaService {
 
     private USD_FEE: number;
 
-    // private hashconnect: HashConnect;
     private dAppConnector: DAppConnector;
-    // private sessionTopic: string | null = null;
     private state: WalletState;
-
-    // public state: Ref<HashConnectConnectionState> = ref(HashConnectConnectionState.Disconnected);
-    // public pairingData?: SessionData | null;
 
     constructor() {
         const config = useRuntimeConfig();
@@ -160,7 +153,7 @@ export class HederaService {
         try {
             await this.dAppConnector.init({ logger: 'error' });
 
-            console.log('DAppConnector initialized');
+            // console.log('DAppConnector initialized');
         } catch (error) {
             console.error('Error initializing DAppConnector:', error);
             throw error;
@@ -172,9 +165,9 @@ export class HederaService {
         }
 
         try {
-            console.log('🔗 Opening WalletConnect modal...');
-            console.log('📱 Make sure you have HashPack or Blade wallet installed');
-            console.log("🌐 If using browser extension, ensure it's enabled");
+            // console.log('🔗 Opening WalletConnect modal...');
+            // console.log('📱 Make sure you have HashPack or Blade wallet installed');
+            // console.log("🌐 If using browser extension, ensure it's enabled");
 
             // Open the WalletConnect modal
             const session = await this.dAppConnector.openModal();
@@ -183,13 +176,13 @@ export class HederaService {
 
             return this.state;
         } catch (error) {
-            console.error('❌ Error connecting wallet:', error);
+            console.error('Error connecting wallet:', error);
 
             // Provide helpful error messages
             if (error instanceof Error && error.message?.includes('scheme')) {
-                console.error('💡 Solution: Install HashPack or Blade wallet extension');
-                console.error('🔗 HashPack: https://hashpack.app/');
-                console.error('🔗 Blade: https://blade.xyz/');
+                console.error('Solution: Install HashPack or Blade wallet extension');
+                console.error('HashPack: https://hashpack.app/');
+                console.error('Blade: https://blade.xyz/');
             }
 
             throw error;
@@ -296,24 +289,6 @@ export class HederaService {
         const transactionId = executedTx.transactionId.toString();
         const receipt = await executedTx.getReceiptWithSigner(signer as any);
         return { transactionId, receipt };
-    }
-
-    async executeTransaction(transaction: TransferTransaction) {
-        // if (!this.pairingData) return;
-
-        // const fromAccount = AccountId.fromString(this.state.accountId as string);
-        const signer = this.state.signer;
-
-        try {
-            const response = await transaction.executeWithSigner(signer as any);
-            const transactionId = response.transactionId.toString();
-            const receipt = await response.getReceiptWithSigner(signer as any);
-            return { transactionId, receipt };
-        } catch (e) {
-            console.log(e);
-
-            return { transactionId: null, receipt: null };
-        }
     }
 
     parseTransactionId(transactionId: string): string {

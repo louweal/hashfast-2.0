@@ -30,7 +30,7 @@ export default defineNuxtConfig({
             meta: [
                 {
                     name: 'description',
-                    content: 'Safely receive HBAR and USDC on Hedera',
+                    content: 'Pay easily, safely, and securely on Hedera.',
                 },
                 {
                     name: 'og:title',
@@ -38,7 +38,7 @@ export default defineNuxtConfig({
                 },
                 {
                     name: 'og:description',
-                    content: 'Safely receive HBAR and USDC on Hedera',
+                    content: 'Pay easily, safely, and securely on Hedera.',
                 },
                 {
                     property: 'og:image',
