@@ -65,20 +65,20 @@ const handlePayment = async (inputAmount, inputCurrency) => {
             throw new Error(response);
         }
 
-        const { transactionId, receipt } = response;
+        const { transactionId, receipt, nettoAmount } = response;
 
         if (receipt.status._code === 22) {
             isPaid.value = true;
 
             // send email
             if (link.value.email) {
-                await sendEmail(transactionId);
+                await sendEmail(transactionId, nettoAmount);
             }
 
             try {
                 const payment = await $fetch('/api/payments', {
                     method: 'POST',
-                    body: { transactionId, linkId: link.value.id, userId: link.value.userId },
+                    body: { transactionId, linkId: link.value.id, amount: nettoAmount, userId: link.value.userId },
                 });
             } catch (storeErr) {
                 console.error('Failed to store payment:', storeErr);
@@ -91,21 +91,24 @@ const handlePayment = async (inputAmount, inputCurrency) => {
     }
 };
 
-const sendEmail = async (transactionId) => {
+const sendEmail = async (transactionId, nettoAmount) => {
     const [payerAccountId, timestampPart] = transactionId.split('@');
     const timestampInSeconds = timestampPart.split('.')[0] * 1000;
     const paymentDate = new Date(timestampInSeconds).toLocaleString('en-US');
+    const pro = link.value.userId ? true : false;
 
     try {
         await $fetch('/api/send-email', {
             method: 'POST',
             body: {
                 email: link.value.email,
-                payerAccountId,
-                accountId: link.value.accountId,
-                paymentDate,
-                amount: link.value.amount,
+                name: link.value.name,
+                amount: Math.round(nettoAmount * 100) / 100, // rounded nettoAmount,
                 currency: link.value.currency.toUpperCase(),
+                requestId: route.params.slug,
+                transactionId: transactionId,
+                paymentDate,
+                pro,
             },
         });
     } catch (err) {

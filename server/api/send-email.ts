@@ -7,39 +7,62 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event);
-    const { email, accountId, payerAccountId, amount, currency, paymentDate } = body;
-    // sgMail.setDataResidency('eu');
+    const { email, name, amount, currency, paymentDate, pro, transactionId, requestId } = body;
     const network = process.env.HEDERA_NETWORK as string;
+    const subdomain = network === 'testnet' ? 'testnet' : 'www';
 
     const subject = `Payment received: +${amount} ${currency}`;
 
-    const textContent = `Payment Received: +${amount} ${currency}
+    let textContent = `Payment Received: +${amount} ${currency}
 
 Your payment request has been paid!
 
-Transaction:
-${amount} ${currency} from ${payerAccountId} (${`https://hashscan.io/${network}/account/${payerAccountId}`})
-to ${accountId} (${`https://hashscan.io/${network}/account/${accountId}`}).
+Request URL:
+https://${subdomain}.hashfast.app/pay/${requestId}
+
+Transaction URL:
+https://hashscan.io/${network}/transaction/${transactionId}
 
 Date: ${paymentDate}
 
 Thank you for using HashFast!
+`;
 
-HashFast Pro users can manage payment request settings in the Dashboard.
+    if (pro) {
+        textContent = `Payment Received: +${amount} ${currency}
 
-Go to Dashboard:
-${`https://hashfast.app/dashboard/transactions`}`;
+Your payment request for '${name}' has been paid!
 
-    const templatePath = path.resolve('server/emails/payment-received.html');
-    let htmlTemplate = fs.readFileSync(templatePath, 'utf8');
+Request URL:
+https://${subdomain}.hashfast.app/pay/${requestId}
+
+Transaction URL:
+https://hashscan.io/${network}/transaction/${transactionId}
+
+Date: ${paymentDate}
+
+Thank you for using HashFast!`;
+    }
+
+    let templatePath;
+
+    if (pro) {
+        templatePath = path.resolve('server/emails/payment-received-pro.html');
+    } else {
+        templatePath = path.resolve('server/emails/payment-received-free.html');
+    }
+
+    const htmlTemplate = fs.readFileSync(templatePath, 'utf8');
 
     const htmlContent = htmlTemplate
-        .replace(/{{payerAccountId}}/g, payerAccountId)
-        .replace(/{{accountId}}/g, accountId)
+        .replace(/{{name}}/g, name)
         .replace(/{{amount}}/g, amount)
         .replace(/{{currency}}/g, currency)
+        .replace(/{{requestId}}/g, requestId)
+        .replace(/{{transactionId}}/g, transactionId)
         .replace(/{{paymentDate}}/g, paymentDate)
-        .replace(/{{network}}/g, network);
+        .replace(/{{network}}/g, network)
+        .replace(/{{subdomain}}/g, subdomain);
 
     const msg = {
         to: email,

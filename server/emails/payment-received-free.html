@@ -102,12 +102,14 @@
     <body>
         <div class="container">
             <div class="content text-center">
-                <img
-                    src="https://www.hashfast.app/images/email-logo-hashfast.png"
-                    alt="HashFast Logo"
-                    width="191"
-                    height="35"
-                />
+                <a href="https://{{subdomain}}.hashfast.app" target="_blank">
+                    <img
+                        src="https://{{subdomain}}.hashfast.app/images/email-logo-hashfast.png"
+                        alt="HashFast Logo"
+                        width="191"
+                        height="35"
+                    />
+                </a>
             </div>
             <div class="header">
                 <h1>Payment Received: +{{amount}} {{currency}}</h1>
@@ -117,33 +119,27 @@
 
                 <div class="details">
                     <p>
-                        <span>Transaction:</span>
-                        <span
-                            >{{amount}} {{currency}} from
-                            <a href="https://hashscan.io/{{network}}/account/{{payerAccountId}}" target="_blank"
-                                >{{payerAccountId}}</a
-                            >
-                            to
-                            <a href="https://hashscan.io/{{network}}/account/{{accountId}}" target="_blank"
-                                >{{accountId}}</a
-                            >.
+                        <span>Request URL:</span>
+                        <span>
+                            <a href="https://{{subdomain}}.hashfast.app/pay/{{requestId}}" target="_blank">
+                                https://hashfast.app/pay/{{requestId}}
+                            </a>
                         </span>
                     </p>
-                    <!-- <p><span>Amount:</span> {{amount}} {{currency}}</p> -->
+                    <p>
+                        <span>Transaction URL:</span>
+                        <span>
+                            <a href="https://hashscan.io/{{network}}/transaction/{{transactionId}}" target="_blank">
+                                https://hashscan.io/{{network}}/transaction/{{transactionId}}
+                            </a>
+                        </span>
+                    </p>
                     <p><span>Date:</span> {{paymentDate}}</p>
                 </div>
 
                 <p class="text-center text-lg">Thank you for using HashFast!</p>
 
-                <p class="text-center footer">
-                    HashFast Pro users can manage payment request settings in the Dashboard. <br /><br />
-                </p>
-
-                <p class="text-center">
-                    <a class="btn" href="https://hashfast.app/dashboard/transactions" target="_blank"
-                        >Go to Dashboard</a
-                    >
-                </p>
+                <br />
             </div>
         </div>
     </body>

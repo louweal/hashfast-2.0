@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 
 const config = useRuntimeConfig();
 const network = ref(config.public.hederaNetwork || 'testnet');
@@ -57,7 +57,7 @@ const props = defineProps({
         required: true,
     },
     amount: {
-        type: String,
+        type: Number,
         required: true,
     },
     currency: {
@@ -73,6 +73,10 @@ const props = defineProps({
         required: true,
     },
     userId: {
+        type: String,
+        required: true,
+    },
+    userAccountId: {
         type: String,
         required: true,
     },

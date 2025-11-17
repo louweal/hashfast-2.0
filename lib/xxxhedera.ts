@@ -194,25 +194,6 @@ export class HederaService {
         return this.state.signer || null;
     }
 
-    async hbarPrice() {
-        // get HBAR price in USD from CoinGecko
-        const resp = await fetch(
-            'https://api.coingecko.com/api/v3/simple/price?ids=hedera-hashgraph&vs_currencies=usd',
-        );
-        if (!resp.ok) {
-            throw new Error('Failed to fetch price: ' + resp.statusText);
-        }
-        const data = await resp.json();
-        const hbarPriceUsd = data['hedera-hashgraph']?.usd;
-        if (hbarPriceUsd == null) {
-            throw new Error('HBAR price field missing');
-        }
-
-        const hbarPriceUsdc = hbarPriceUsd;
-
-        return hbarPriceUsdc;
-    }
-
     async sendPayment(link: Link, pro: boolean = false) {
         if (pro === true) {
             console.log('send pro payment');
@@ -235,9 +216,6 @@ export class HederaService {
 
         const hederaAccountId = localStorage.getItem('hederaAccountId');
         console.log('hederaAccountId :>> ', hederaAccountId);
-        let nettoAmount: number;
-
-        nettoAmount = Number(link.amount);
 
         while (!hederaAccountId) {
             await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -272,8 +250,6 @@ export class HederaService {
                     .addHbarTransfer(fromAccount, Hbar.fromTinybars(-1 * tinybarAmount)) //Sending account
                     .addHbarTransfer(toAccount, Hbar.fromTinybars(tinybarAmount - TINYBAR_FEE)) //Receiving account
                     .addHbarTransfer(this.feeAccount, Hbar.fromTinybars(TINYBAR_FEE)); // Fee
-
-                nettoAmount = (tinybarAmount - TINYBAR_FEE) / 100_000_000;
             } else {
                 transaction = new TransferTransaction()
                     .addHbarTransfer(fromAccount, Hbar.fromTinybars(-1 * tinybarAmount)) //Sending account
@@ -288,15 +264,13 @@ export class HederaService {
                     .addTokenTransfer(TokenId.fromString(this.usdcTokenId), fromAccount, -usdcAmount) //Sending account
                     .addTokenTransfer(TokenId.fromString(this.usdcTokenId), toAccount, usdcAmount - SCALED_USDC_FEE) //Receiving account
                     .addTokenTransfer(TokenId.fromString(this.usdcTokenId), this.feeAccount, SCALED_USDC_FEE); // Fee
-
-                nettoAmount = (usdcAmount - SCALED_USDC_FEE) / 1e6;
             } else {
                 transaction = new TransferTransaction()
                     .addTokenTransfer(TokenId.fromString(this.usdcTokenId), fromAccount, -usdcAmount) //Sending account
                     .addTokenTransfer(TokenId.fromString(this.usdcTokenId), toAccount, usdcAmount); //Receiving account
             }
         } else {
-            return { transactionId: null, receipt: null, nettoAmount };
+            return { transactionId: null, receipt: null };
         }
 
         if (link.memo) {
@@ -314,7 +288,7 @@ export class HederaService {
         const executedTx = await signedTx.executeWithSigner(signer as any);
         const transactionId = executedTx.transactionId.toString();
         const receipt = await executedTx.getReceiptWithSigner(signer as any);
-        return { transactionId, receipt, nettoAmount };
+        return { transactionId, receipt };
     }
 
     parseTransactionId(transactionId: string): string {
@@ -329,56 +303,87 @@ export class HederaService {
         return `${accountId}-${timestamp}`;
     }
 
-    /** Fetch HBAR or USDC amount for a single transaction */
-    private async fetchTransactionAmount(
-        transactionId: string,
-        receiverId: string,
-        currency: 'hbar' | 'usdc',
-    ): Promise<number> {
-        const txId = this.parseTransactionId(transactionId);
-        const res = await fetch(`${this.networkUrl}/api/v1/transactions/${txId}`);
-        if (!res.ok) throw new Error(`Mirror node fetch failed: ${res.status}`);
-
-        const data = await res.json();
-        const tx = data.transactions[0];
-        if (!tx) return 0;
-
-        if (currency === 'hbar') {
-            const transfer = tx.transfers?.find((t: any) => t.account === receiverId);
-            return transfer ? Number(transfer.amount) / 100_000_000 : 0;
-        } else {
-            const tokenTransfer = tx.token_transfers?.find(
-                (t: any) => t.token_id === this.usdcTokenId && t.account === receiverId,
-            );
-            return tokenTransfer ? tokenTransfer.amount / 1e6 : 0;
+    async getAllTransactionData(transactionId: string): Promise<any> {
+        let txId = this.parseTransactionId(transactionId);
+        const url = `${this.networkUrl}/api/v1/transactions/${txId}`;
+        const res = await fetch(url);
+        if (!res.ok) {
+            throw new Error(`Mirror node fetch failed: ${res.status}`);
         }
+
+        const data: MirrorNodeResponse = await res.json();
+        return data.transactions[0];
     }
 
-    /** Get total HBAR amount for multiple transactions */
-    async getTotalHBARTransactionAmount(transactionIds: string[], receiverId: string): Promise<number> {
-        const amounts = await Promise.all(
-            transactionIds.map((id) => this.fetchTransactionAmount(id, receiverId, 'hbar')),
-        );
-        return parseFloat(amounts.reduce((a, b) => a + b, 0).toFixed(2));
-    }
+    async getTransactionData(transactionId: string, receiverId: string, currency: string): Promise<TransactionData> {
+        let paymentData = await this.getAllTransactionData(transactionId);
 
-    /** Get total USDC amount for multiple transactions */
-    async getTotalUSDCTransactionAmount(transactionIds: string[], receiverId: string): Promise<number> {
-        const amounts = await Promise.all(
-            transactionIds.map((id) => this.fetchTransactionAmount(id, receiverId, 'usdc')),
-        );
-        return parseFloat(amounts.reduce((a, b) => a + b, 0).toFixed(2));
-    }
+        let amount = 0;
 
-    /** Get single transaction amount (HBAR or USDC) */
-    async getSingleTransactionAmount(transactionId: string, receiverId: string, currency: string): Promise<number> {
-        // fetch HBAR
-        if (currency === 'hbar') {
-            const hbarAmount = await this.fetchTransactionAmount(transactionId, receiverId, 'hbar');
-            if (hbarAmount > 0) return parseFloat(hbarAmount.toFixed(2));
+        let memo = atob(paymentData['memo_base64']);
+        let timestamp = paymentData['consensus_timestamp'];
+        let transfers = paymentData['transfers'];
+        let tokenTransfers = paymentData['token_transfers'];
+
+        if (currency == 'usdc' && tokenTransfers.length > 0) {
+            // currency = "USDC";
+            for (let i = 0; i < tokenTransfers.length; i++) {
+                // find the relevant token transfer
+                if (tokenTransfers[i]['token_id'] == this.usdcTokenId && tokenTransfers[i]['account'] == receiverId) {
+                    amount = tokenTransfers[i]['amount'] / 1e6;
+                    break;
+                }
+            }
+        } else if (currency == 'hbar' && transfers.length > 0) {
+            // currency = "HBAR";
+            for (let i = 0; i < transfers.length; i++) {
+                // find the relevant token transfer
+                if (transfers[i]['account'] == receiverId) {
+                    amount = Number(transfers[i]['amount']) / 100_000_000;
+                    break;
+                }
+            }
         }
-        // Otherwise fetch USDC
-        const usdcAmount = await this.fetchTransactionAmount(transactionId, receiverId, 'usdc');
-        return parseFloat(usdcAmount.toFixed(2));
+
+        return { amount, currency, memo, timestamp };
+    }
+
+    async getTotalHBARTransactionAmount(paymentIds: string[], receiverId: string): Promise<number> {
+        let amount = 0;
+
+        for (let i = 0; i < paymentIds.length; i++) {
+            amount += (await this.getTransactionData(paymentIds[i], receiverId, 'hbar')).amount;
+        }
+
+        return parseFloat(amount.toFixed(2));
+    }
+
+    async getTotalUSDCTransactionAmount(paymentIds: string[], receiverId: string): Promise<number> {
+        let amount = 0;
+
+        for (let i = 0; i < paymentIds.length; i++) {
+            amount += (await this.getTransactionData(paymentIds[i], receiverId, 'usdc')).amount;
+        }
+
+        return parseFloat(amount.toFixed(2));
+    }
+
+    async hbarPrice() {
+        // get HBAR price in USD from CoinGecko
+        const resp = await fetch(
+            'https://api.coingecko.com/api/v3/simple/price?ids=hedera-hashgraph&vs_currencies=usd',
+        );
+        if (!resp.ok) {
+            throw new Error('Failed to fetch price: ' + resp.statusText);
+        }
+        const data = await resp.json();
+        const hbarPriceUsd = data['hedera-hashgraph'].usd;
+        if (hbarPriceUsd == null) {
+            throw new Error('HBAR price field missing');
+        }
+
+        const hbarPriceUsdc = hbarPriceUsd;
+
+        return hbarPriceUsdc;
     }
 }

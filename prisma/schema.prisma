@@ -41,6 +41,7 @@ model Link {
 
 model Payment {
   transactionId String   @id
+  amount        Decimal?  @db.Decimal(18, 8)
   linkId        String
   link          Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
   userId        String?

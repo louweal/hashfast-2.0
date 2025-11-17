@@ -26,7 +26,7 @@
                         <div class="lg:sticky lg:top-6 w-full">
                             <CardSummary
                                 :numTransactions="filteredTransactions.length"
-                                :sumAmount="sumAmount"
+                                :sumAmount="Math.round(sumAmount * 100) / 100"
                                 :currency="currency"
                             />
                         </div>
@@ -72,11 +72,12 @@
                                     :key="transaction.transactionId"
                                     :lastLogin="user.lastLogin"
                                     :transactionId="transaction.transactionId"
+                                    :amount="Math.round(transaction.amount * 100) / 100"
                                     :name="transaction.link.name"
-                                    :amount="transaction.link.amount"
                                     :currency="transaction.link.currency"
                                     :createdAt="transaction.createdAt"
                                     :userId="user.id"
+                                    :userAccountId="user.wallet"
                                     :handleAddContact="handleAddContact"
                                 />
                             </TransitionGroup>
@@ -101,6 +102,8 @@
 <script setup>
 import { ref } from 'vue';
 import { useAuth } from '~/composables/useAuth';
+import { HederaService } from '../../lib/hedera';
+const hederaService = new HederaService();
 
 // const user = null;
 const { user, loading, error, isLoggedIn, fetchUser, logout } = useAuth();
@@ -115,7 +118,7 @@ const clickedAccountId = ref('');
 
 const sumAmount = computed(() => {
     return filteredTransactions.value.reduce((total, payment) => {
-        return total + +payment.link.amount;
+        return total + +payment.amount;
     }, 0);
 });
 
