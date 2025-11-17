@@ -11,7 +11,7 @@
 
                 <div
                     v-if="isPaid"
-                    class="thank-you w-full xs:w-[300px] rounded-lg border border-border p-6 bg-background flex flex-col gap-5"
+                    class="thank-you w-full xs:w-[300px] rounded-lg border border-border p-6 bg-background flex flex-col gap-5 items-start"
                 >
                     <h3 class="font-semibold text-lg">Thank you for using HashFast</h3>
                     <p class="text-base">

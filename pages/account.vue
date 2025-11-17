@@ -114,13 +114,15 @@ let error = ref(null);
 const detectWallet = async (event) => {
     event.preventDefault();
     try {
-        await hederaService.initHashConnect();
-        await hederaService.waitForPairing();
+        await hederaService.initDAppConnector();
+        await hederaService.openModal();
 
-        if (hederaService.pairingData) {
-            // get last item in array
-            user.value.wallet = hederaService.pairingData.accountIds[hederaService.pairingData.accountIds.length - 1];
-            detectedWallet.value = user.value.wallet;
+        // get hederaAccountId from localstorage
+        const hederaAccountId = localStorage.getItem('hederaAccountId');
+
+        if (hederaAccountId) {
+            detectedWallet.value = hederaAccountId;
+            user.value.wallet = detectedWallet.value;
         }
     } catch (error) {
         console.error('Failed to detect wallet:', error);

@@ -69,6 +69,9 @@
                             Detect
                         </div>
                     </div>
+                    <p v-if="wallet === detectedWallet" class="text-secondary font-medium">
+                        Successfully detected wallet
+                    </p>
                     <div class="error" v-if="!isWallet(wallet)">
                         <IconError />
                         <span>Please enter a valid wallet address</span>
@@ -323,13 +326,14 @@ const setCurrency = (currency) => {
 const detectWallet = async (event) => {
     event.preventDefault();
     try {
-        await hederaService.initHashConnect();
-        await hederaService.waitForPairing();
+        await hederaService.initDAppConnector();
+        await hederaService.openModal();
 
-        if (hederaService.pairingData) {
-            // get last item in array
-            detectedWallet.value =
-                hederaService.pairingData.accountIds[hederaService.pairingData.accountIds.length - 1];
+        // get hederaAccountId from localstorage
+        const hederaAccountId = localStorage.getItem('hederaAccountId');
+
+        if (hederaAccountId) {
+            detectedWallet.value = hederaAccountId;
             wallet.value = detectedWallet.value;
         }
     } catch (error) {
