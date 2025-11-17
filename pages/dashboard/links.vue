@@ -1,15 +1,15 @@
 <template>
     <main class="bg-background min-h-dvh" v-if="user">
-        <div class="fixed top-4 left-8 lg:hidden">
+        <div class="fixed top-4 left-4 lg:hidden">
             <NuxtLink to="/">
                 <IconLogo :width="20 * 1.55" :height="25 * 1.55" />
             </NuxtLink>
         </div>
 
-        <div class="fixed top-6 right-8 lg:hidden z-20" @click="showMobileNav = !showMobileNav">
+        <div class="fixed top-6 right-4 lg:hidden z-20" @click="showMobileNav = !showMobileNav">
             <Hamburger :active="showMobileNav" />
         </div>
-        <div class="grid lg:grid-cols-12 gap-x-5 lg:min-h-dvh pt-16 p-6 pb-0 lg:pt-6">
+        <div class="grid lg:grid-cols-12 gap-x-5 lg:min-h-dvh pt-16 p-4 pb-0 lg:pt-6">
             <div class="lg:col-span-2 h-full">
                 <MobileNav :active="showMobileNav" activeLink="links" :handleSignOut="signOut" />
             </div>
@@ -31,7 +31,13 @@
                                 class="bg-background! grow"
                             />
                         </form>
-                        <NuxtLink to="/create" class="btn h-[47px]!">New payment request</NuxtLink>
+                        <NuxtLink to="/create" class="btn h-[47px]!">
+                            <span>
+                                New
+                                <span class="hidden lg:inline">payment</span>
+                                request
+                            </span>
+                        </NuxtLink>
                     </div>
 
                     <div class="grid lg:grid-cols-3 gap-20">

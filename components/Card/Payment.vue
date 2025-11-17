@@ -58,6 +58,7 @@
                                 type="number"
                                 min="0"
                                 id="amount"
+                                step="any"
                                 v-model="inputAmount"
                                 placeholder="..."
                                 class="w-full min-w-0"

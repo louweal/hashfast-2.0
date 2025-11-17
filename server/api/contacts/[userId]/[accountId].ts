@@ -4,8 +4,6 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
-    console.log('route params:', event.context.params);
-
     const { userId, accountId } = event.context.params ?? {};
 
     if (!userId) {

@@ -1,4 +1,4 @@
-import { Client, AccountId, Hbar, TransferTransaction, TransactionId, TokenId } from '@hashgraph/sdk';
+import { Client, AccountId, Hbar, TransferTransaction, TokenId } from '@hashgraph/sdk';
 import type { SessionTypes } from '@walletconnect/types';
 import type { Link } from '@prisma/client';
 import { useRuntimeConfig } from 'nuxt/app';
@@ -12,27 +12,27 @@ import {
     DAppSigner,
 } from '@hashgraph/hedera-wallet-connect';
 
-interface Transfer {
-    account: string;
-    amount: number;
-}
+// interface Transfer {
+//     account: string;
+//     amount: number;
+// }
 
-interface TransactionRecord {
-    result: string;
-    transfers: Transfer[];
-    memo: number;
-}
+// interface TransactionRecord {
+//     result: string;
+//     transfers: Transfer[];
+//     memo: number;
+// }
 
-interface TransactionData {
-    amount: number;
-    currency: string;
-    memo: string;
-    timestamp: string;
-}
+// interface TransactionData {
+//     amount: number;
+//     currency: string;
+//     memo: string;
+//     timestamp: string;
+// }
 
-interface MirrorNodeResponse {
-    transactions: TransactionRecord[];
-}
+// interface MirrorNodeResponse {
+//     transactions: TransactionRecord[];
+// }
 
 export interface Transaction {
     id: string;
@@ -85,7 +85,7 @@ export class HederaService {
             const appMetadata = {
                 name: 'HashFast',
                 description: '',
-                icons: ['https://www.hashfast.app/app-icon.svg'],
+                icons: ['https://www.hashfast.app/app-icon.png'],
                 url: 'https://www.hashfast.app',
             };
 
@@ -108,8 +108,8 @@ export class HederaService {
             const appMetadata = {
                 name: 'HashFast',
                 description: '',
-                icons: ['https://www.hashfast.app/app-icon.svg'],
-                url: 'http://localhost:3000', // todo
+                icons: ['https://www.hashfast.app/app-icon.png'],
+                url: 'https://testnet.hashfast.app',
             };
 
             this.client = Client.forTestnet();
@@ -152,8 +152,6 @@ export class HederaService {
     async initDAppConnector() {
         try {
             await this.dAppConnector.init({ logger: 'error' });
-
-            // console.log('DAppConnector initialized');
         } catch (error) {
             console.error('Error initializing DAppConnector:', error);
             throw error;
@@ -165,10 +163,6 @@ export class HederaService {
         }
 
         try {
-            // console.log('🔗 Opening WalletConnect modal...');
-            // console.log('📱 Make sure you have HashPack or Blade wallet installed');
-            // console.log("🌐 If using browser extension, ensure it's enabled");
-
             // Open the WalletConnect modal
             const session = await this.dAppConnector.openModal();
             // Once connected, handle and store the session information
