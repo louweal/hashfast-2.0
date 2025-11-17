@@ -1,6 +1,10 @@
 // send email using sendgrid
-import fs from 'fs';
-import path from 'path';
+
+//@ts-ignore
+import htmlTemplateFree from '../emails/payment-received-free.html';
+//@ts-ignore
+import htmlTemplatePro from '../emails/payment-received-pro.html';
+
 import sgMail from '@sendgrid/mail';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
@@ -44,15 +48,15 @@ Date: ${paymentDate}
 Thank you for using HashFast!`;
     }
 
-    let templatePath;
+    let templateName;
 
     if (pro) {
-        templatePath = path.resolve('server/emails/payment-received-pro.html');
+        templateName = '/emails/payment-received-pro.html';
     } else {
-        templatePath = path.resolve('server/emails/payment-received-free.html');
+        templateName = '/emails/payment-received-free.html';
     }
 
-    const htmlTemplate = fs.readFileSync(templatePath, 'utf8');
+    const htmlTemplate = pro ? htmlTemplatePro : htmlTemplateFree;
 
     const htmlContent = htmlTemplate
         .replace(/{{name}}/g, name)
