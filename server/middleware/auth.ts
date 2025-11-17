@@ -13,6 +13,7 @@ export default defineEventHandler(async (event) => {
         { path: '/create', method: 'ANY' },
         { path: '/pro', method: 'ANY' },
         { pathPrefix: '/pay/', method: 'ANY' },
+        { pathPrefix: '/api/send-email', method: 'POST' },
         { pathPrefix: '/api/contacts', method: 'GET' },
         { pathPrefix: '/api/auth', method: 'ANY' },
         { pathPrefix: '/api/survey', method: 'POST' },

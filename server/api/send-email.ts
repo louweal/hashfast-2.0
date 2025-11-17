@@ -5,12 +5,11 @@ import sgMail from '@sendgrid/mail';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
-const network = process.env.HEDERA_NETWORK as string;
-
 export default defineEventHandler(async (event) => {
     const body = await readBody(event);
     const { email, accountId, payerAccountId, amount, currency, paymentDate } = body;
     // sgMail.setDataResidency('eu');
+    const network = process.env.HEDERA_NETWORK as string;
 
     const subject = `Payment received: +${amount} ${currency}`;
 
@@ -19,8 +18,8 @@ export default defineEventHandler(async (event) => {
 Your payment request has been paid!
 
 Transaction:
-${amount} ${currency} from ${payerAccountId} (https://hashscan.io/${network}/account/${payerAccountId})
-to ${accountId} (https://hashscan.io/${network}/account/${accountId}).
+${amount} ${currency} from ${payerAccountId} (${`https://hashscan.io/${network}/account/${payerAccountId}`})
+to ${accountId} (${`https://hashscan.io/${network}/account/${accountId}`}).
 
 Date: ${paymentDate}
 
@@ -29,7 +28,7 @@ Thank you for using HashFast!
 HashFast Pro users can manage payment request settings in the Dashboard.
 
 Go to Dashboard:
-https://hashfast.app/dashboard/transactions`;
+${`https://hashfast.app/dashboard/transactions`}`;
 
     const templatePath = path.resolve('server/emails/payment-received.html');
     let htmlTemplate = fs.readFileSync(templatePath, 'utf8');
@@ -52,7 +51,7 @@ https://hashfast.app/dashboard/transactions`;
     sgMail
         .send(msg as any)
         .then(() => {
-            console.log('Email sent');
+            console.log('Email sent from ' + process.env.SENDGRID_SENDER + ' to ' + email);
         })
         .catch((error) => {
             console.error(error);

@@ -69,18 +69,19 @@ const handlePayment = async (inputAmount, inputCurrency) => {
 
         if (receipt.status._code === 22) {
             isPaid.value = true;
+
+            // send email
+            if (link.value.email) {
+                await sendEmail(transactionId);
+            }
+
             try {
-                await $fetch('/api/payments', {
+                const payment = await $fetch('/api/payments', {
                     method: 'POST',
                     body: { transactionId, linkId: link.value.id, userId: link.value.userId },
                 });
             } catch (storeErr) {
                 console.error('Failed to store payment:', storeErr);
-            }
-
-            // send email
-            if (link.value.email) {
-                sendEmail(transactionId);
             }
         } else {
             console.log('Payment receipt:', receipt);
@@ -96,7 +97,6 @@ const sendEmail = async (transactionId) => {
     const paymentDate = new Date(timestampInSeconds).toLocaleString('en-US');
 
     try {
-        // post to api/send-email
         await $fetch('/api/send-email', {
             method: 'POST',
             body: {
