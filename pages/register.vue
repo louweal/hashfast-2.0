@@ -2,6 +2,7 @@
     <main class="min-h-dvh flex justify-center items-center">
         <div class="container flex flex-col justify-center items-center gap-6">
             <h1 class="text-4xl font-semibold">Register</h1>
+            <p>Register now to become a HashFast Pro user.</p>
             <div class="animate-slide-up bg-background p-8 rounded-lg border border-border w-full xs:w-[300px]">
                 <div class="flex flex-col gap-4" v-if="showCreateForm">
                     <form @submit.prevent="createUser" class="space-y-4">
@@ -86,6 +87,15 @@
 
                     <NuxtLink to="/login" class="btn self-start">Login</NuxtLink>
                 </div>
+            </div>
+            <div class="flex items-center gap-1 text-sm opacity-50 text-center">
+                <p>
+                    Fees apply for
+                    <NuxtLink to="/pro" class="font-medium text-secondary">Pro</NuxtLink> users.
+                </p>
+                <Tooltip :text="`Fee per transaction: $0.01`">
+                    <IconQuestion />
+                </Tooltip>
             </div>
         </div>
     </main>

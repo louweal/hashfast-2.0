@@ -85,7 +85,7 @@ export class HederaService {
             const appMetadata = {
                 name: 'HashFast',
                 description: '',
-                icons: ['https://www.hashfast.app/app-icon.png'],
+                // icons: ['https://www.hashfast.app/app-icon.png'],
                 url: 'https://www.hashfast.app',
             };
 
@@ -108,7 +108,7 @@ export class HederaService {
             const appMetadata = {
                 name: 'HashFast',
                 description: '',
-                icons: ['https://www.hashfast.app/app-icon.png'],
+                // icons: ['https://www.hashfast.app/app-icon.png'],
                 url: 'https://testnet.hashfast.app',
             };
 

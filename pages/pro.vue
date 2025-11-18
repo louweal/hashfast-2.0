@@ -3,9 +3,9 @@
         <Header />
 
         <Hero
-            title="Unlock more features"
+            title="Unlock more features with HashFast Pro"
             description="Create fully customized payment requests and track every single payment from one powerful dashboard."
-            :links="[{ title: 'Pro Features', url: '#features' }]"
+            :links="[{ title: 'All features', url: '#features' }]"
         />
 
         <section class="py-20">

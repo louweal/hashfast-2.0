@@ -165,8 +165,8 @@ const handleFileChange = async (event) => {
 
     console.log('hello');
 
-    if (event.target.files[0].size > 1024 * 40) {
-        alert('Image size must be less than 40KB');
+    if (event.target.files[0].size > 1024 * 80) {
+        alert('Image size must be less than 80KB');
         return;
     }
 

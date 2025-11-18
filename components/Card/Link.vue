@@ -124,6 +124,11 @@ const props = defineProps({
 
 const paymentIds = props.payments.map((payment) => payment.transactionId);
 
-const totalHBARAmount = ref(await hederaService.getTotalHBARTransactionAmount(paymentIds, props.accountId));
-const totalUSDCAmount = ref(await hederaService.getTotalUSDCTransactionAmount(paymentIds, props.accountId));
+const totalHBARAmount = ref(null);
+const totalUSDCAmount = ref(null);
+
+if (props.payments.length > 0) {
+    totalHBARAmount.value = await hederaService.getTotalHBARTransactionAmount(paymentIds, props.accountId);
+    totalUSDCAmount.value = await hederaService.getTotalUSDCTransactionAmount(paymentIds, props.accountId);
+}
 </script>

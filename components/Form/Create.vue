@@ -129,18 +129,16 @@
                     :preview="true"
                 />
 
-                <div class="flex items-center gap-3 mt-4" v-if="pro">
-                    <div class="flex items-center gap-1 text-sm opacity-50 text-center">
-                        <p>
-                            Fees apply for
-                            <NuxtLink to="/pro" class="font-medium text-secondary">Pro</NuxtLink> users.
-                        </p>
-                        <Tooltip
-                            :text="`Fee: $0.01. Paid in ${currency === '*' ? 'HBAR or USDC' : currency.toUpperCase()}.`"
-                        >
-                            <IconQuestion />
-                        </Tooltip>
-                    </div>
+                <div class="flex items-center gap-1 text-sm opacity-50 text-center mt-4" v-if="pro">
+                    <p>
+                        Fees apply for
+                        <NuxtLink to="/pro" class="font-medium text-secondary">Pro</NuxtLink> users.
+                    </p>
+                    <Tooltip
+                        :text="`Fee: $0.01. Paid in ${currency === '*' ? 'HBAR or USDC' : currency.toUpperCase()}.`"
+                    >
+                        <IconQuestion />
+                    </Tooltip>
                 </div>
             </div>
         </div>
