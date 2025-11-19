@@ -6,7 +6,7 @@
             <nav>
                 <ul v-if="!user" class="flex gap-7 items-center">
                     <li>
-                        <NuxtLink to="/login" class="btn btn--dark">Login</NuxtLink>
+                        <NuxtLink to="/login" class="btn btn--dark">Log in</NuxtLink>
                     </li>
                 </ul>
                 <ul v-else class="flex gap-7 items-center">
