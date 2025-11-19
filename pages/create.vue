@@ -36,5 +36,16 @@ await fetchUser();
 
 useHead({
     title: 'Create link | HashFast',
+    meta: [
+        {
+            name: 'description',
+            content: 'Create a payment request link to share with others.',
+        },
+        // og:description
+        {
+            name: 'og:description',
+            content: 'Create a payment request link to share with others.',
+        },
+    ],
 });
 </script>
