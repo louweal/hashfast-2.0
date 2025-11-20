@@ -100,12 +100,15 @@
         </div>
 
         <div
-            class="fixed top-8 left-1/2 -translate-x-1/2 flex gap-20 p-2 px-4 items-center rounded-sm border border-secondary bg-background font-medium opacity-0 invisible transition-all duration-300"
+            class="fixed top-8 left-1/2 -translate-x-1/2 flex gap-20 p-2 px-4 items-center rounded-sm border border-secondary bg-background opacity-0 invisible transition-all duration-300"
             :class="{
                 'opacity-100 translate-y-0 visible': copied,
             }"
         >
-            <span>Payment link copied!</span>
+            <div>
+                <p class="font-medium font-base">Payment link copied!</p>
+                <p class="opacity-60">You can now share the link via email, Whatsapp, etc.</p>
+            </div>
         </div>
     </main>
 </template>

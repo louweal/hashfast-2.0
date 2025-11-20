@@ -158,12 +158,30 @@
 
         <div
             v-if="linkId"
-            class="flex justify-between gap-3 lg:gap-20 p-2 pl-4 items-center rounded-sm border border-secondary bg-background font-medium"
+            class="flex flex-wrap w-full justify-stretch gap-3 p-2 pl-4 items-center rounded-sm xxxborder xxxborder-secondary bg-dark"
         >
-            <span>Payment link created!</span>
-            <button class="btn btn--transparent btn--small flex gap-2 items-center cursor-pointer" @click="copyLink">
-                {{ copied ? 'Copied!' : 'Copy link' }} <IconCopy />
-            </button>
+            <div>
+                <p class="font-medium font-base">Payment link created!</p>
+                <p class="opacity-60">Copy the link to share with the recipient(s) .</p>
+            </div>
+            <form class="grow">
+                <div class="relative w-full">
+                    <client-only>
+                        <input
+                            type="text"
+                            :value="`https://${subdomain}.hashfast.app/pay/${linkId}`"
+                            class="w-full grow pr-28!"
+                            readonly
+                        />
+                    </client-only>
+                    <button
+                        class="absolute top-2 right-2 btn btn--transparent btn--small flex gap-2 items-center cursor-pointer"
+                        @click.stop.prevent="copyLink"
+                    >
+                        {{ copied ? 'Copied!' : 'Copy link' }} <IconCopy />
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </template>
@@ -171,6 +189,9 @@
 <script setup>
 import { ref } from 'vue';
 import { HederaService } from '~/lib/hedera';
+
+const config = useRuntimeConfig();
+const subdomain = ref(config.public.hederaNetwork == 'testnet' ? 'testnet' : 'www');
 
 const hederaService = new HederaService();
 

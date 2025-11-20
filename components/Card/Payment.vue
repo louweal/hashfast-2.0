@@ -62,6 +62,7 @@
                                 v-model="inputAmount"
                                 placeholder="..."
                                 class="w-full min-w-0"
+                                required
                             />
                             <div class="absolute top-2 right-2">
                                 <div class="flex gap-1">
@@ -80,10 +81,15 @@
                                         :class="{
                                             'is-active': inputCurrency === 'usdc',
                                         }"
+                                        @click="inputCurrency = 'usdc'"
                                         >USDC</span
                                     >
                                 </div>
                             </div>
+                        </div>
+                        <div class="error" v-if="!inputAmount">
+                            <IconError />
+                            <p class="text-error">Please enter an amount</p>
                         </div>
                     </div>
                 </div>
@@ -153,7 +159,7 @@ const props = defineProps({
 
 const showFront = ref(true);
 const isFlipping = ref(false);
-const inputAmount = ref(null);
+const inputAmount = ref(1);
 const inputCurrency = ref(props.currency);
 
 function flipCard() {
