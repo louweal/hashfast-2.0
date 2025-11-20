@@ -159,7 +159,7 @@ const props = defineProps({
 
 const showFront = ref(true);
 const isFlipping = ref(false);
-const inputAmount = ref(1);
+const inputAmount = ref(null);
 const inputCurrency = ref(props.currency);
 
 function flipCard() {
