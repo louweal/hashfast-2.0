@@ -1,6 +1,6 @@
 # HashFast
 
-HashFast makes it easy to request and receive payments on Hedera.
+HashFast makes it easy to request and receive payments on Hedera. Features include automatic wallet address detection and instant email notifications.
 
 **Mainnet**: [www.hashfast.app](https://www.hashfast.app)
 
