@@ -2,8 +2,9 @@
 
 HashFast makes it easy to request and receive payments on Hedera.
 
-[www.hashfast.app](https://www.hashfast.app)
-[testnet.hashfast.app](http://testnet.hashfast.app)
+**Mainnet**: [www.hashfast.app](https://www.hashfast.app)
+
+**Testnet**: [testnet.hashfast.app](https://testnet.hashfast.app)
 
 ### Installation
 
