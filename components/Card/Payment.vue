@@ -87,7 +87,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="error" v-if="!inputAmount">
+                        <div class="error" v-if="!inputAmount && !preview">
                             <IconError />
                             <p class="text-error">Please enter an amount</p>
                         </div>
