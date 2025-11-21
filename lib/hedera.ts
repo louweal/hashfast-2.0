@@ -11,6 +11,7 @@ import {
     HederaChainId,
     DAppSigner,
 } from '@hashgraph/hedera-wallet-connect';
+import { th } from 'zod/v4/locales';
 
 // interface Transfer {
 //     account: string;
@@ -330,8 +331,16 @@ export class HederaService {
         currency: 'hbar' | 'usdc',
     ): Promise<number> {
         const txId = this.parseTransactionId(transactionId);
-        const res = await fetch(`${this.networkUrl}/api/v1/transactions/${txId}`);
-        if (!res.ok) throw new Error(`Mirror node fetch failed: ${res.status}`);
+        let res = await fetch(`${this.networkUrl}/api/v1/transactions/${txId}`);
+        if (!res.ok) {
+            // try other network
+            const otherNetworkUrl =
+                this.network === 'mainnet'
+                    ? 'https://testnet.mirrornode.hedera.com'
+                    : 'https://mainnet.mirrornode.hedera.com';
+            res = await fetch(`${otherNetworkUrl}/api/v1/transactions/${txId}`);
+            if (!res.ok) throw new Error('Failed to fetch transaction');
+        }
 
         const data = await res.json();
         const tx = data.transactions[0];
